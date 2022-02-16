@@ -1,0 +1,46 @@
+.depth-offering{padding:15px 0px;}
+.hfn-depth-involve {border: 1px solid #eee; padding: 15px 30px 0px; min-height: 700px; background: #f9f9f9; }
+.hfn-depth-involve h5 {font-size:24px; margin-top: 0px;}
+.hfn-depth-involve p{ font-family: gotham-book;  color: #999;  font-size: 16px;}
+.offer-middle-content{  overflow: hidden; margin-bottom: 20px; max-height:252px; }
+.hfn-depth-title {font-size: 16px; color:#333;  margin-bottom: 4px; }
+.hfn-depth-content {  font-size: 14px;  line-height: 26px; color:#888;  font-family: gotham-book;}
+.depth-desc { color: #888; }
+.app-link-margin a {margin-right:5px;}
+.offer-bottom-content{position: absolute; bottom: 0; right: 0; left: 0; padding: 0 40px 12px;}
+.hfn-depth-involve:hover{    box-shadow: 1px 1px 6px #ccc;}
+.bg-fff{background:#fff;}
+.offeringvideopopup-img{cursor:pointer;}
+.mfp-iframe-holder .mfp-close {  top: -40px !important; }
+/*share css*/
+.offer-bottom-content .hfn-blog-share-block{float:right;}
+.offer-bottom-content .hfn-blog-share-pop{width: 140px; margin: 0px auto 14px -108px;}
+.essb_links{ margin: 0 0 1em 0;}
+
+
+.hfn-offer-img{
+  display: inline-block;
+  position: relative;
+}
+.hfn-offer-img img {
+  max-width: 100%;
+}
+.hfn-offer-img .offer-thumb {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%,-50%);
+  width:42px;
+  height: 42px;
+}
+.hfn-offer-img .offer-thumb .material-icons{color: #fff; font-size:42px; cursor:pointer;}
+.hfn-offer-img:hover{opacity:0.7}
+
+@media screen and (max-width: 767px) {
+.offer-bottom-content{position: relative; bottom: 0; right: 0; left: 0; padding: 0;}
+.hfn-depth-involve {min-height: auto;}
+.offer-middle-content{  overflow: auto; max-height:none; }
+.depth-offering { padding:15px 0px; max-width: 420px; margin: 0px auto;}
+}
+
+
+ 

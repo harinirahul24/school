@@ -1,0 +1,329 @@
+.ipd-section.contact-info {
+     background: #f0f8ff;
+}
+ .clips{
+     padding-bottom:30px!important;
+}
+ .site-main p {
+     margin: 0px 0 0px!important;
+}
+ .num-india,.num-us{
+     color:#000!important;
+}
+ .aligncenters {
+     margin: -24px 0 0 0;
+}
+ .aligncenterm{
+     margin-top: 75px;
+     margin-left: 125px;
+}
+ .site-link{
+     color: #334346 !important;
+}
+ .st-content {
+     padding: 30px 0px;
+}
+ .ipd-magazines-title,.iyd-magazines-title{
+     font-size:30px;
+     color:#59a276;
+}
+ .ipdarticle{
+     color:#59a276;
+    ;
+}
+ p.ipd-banner-intro {
+     font-size: 20px;
+     font-weight: 600;
+     line-height: 30px;
+     padding: 15px 0 0px!important;
+}
+ h1.iyd-about-daaji-title, h1.iyd-video-title, h1.iyd-magazines-title, h1.iyd-about-meditation-title, h1.ipd-title {
+     padding-bottom: 30px;
+     color: #444;
+}
+ h5.link-details{
+     color:#3bbbd2!important;
+}
+ h1.ipd-title.audio-content, h4.title-name, h5.link-details {
+     color: #fff;
+}
+/*h1 {
+     font-size: 30px!important;
+}
+ h2 {
+     font-size: 26px!important;
+}
+*/
+ /*h2.text-center{
+     color:#59a276;
+     padding-bottom:20px;
+     font-size:20px!important;
+}*/
+/*h1, h2 {
+     line-height: 35px;
+     color: #59a276;
+}
+*/
+
+ .video-section, .section-title {
+     background: rgba(101, 181, 214, 0.8)!important;
+}
+ .video-new-clips-section {
+     background: #6ab6d7;
+     padding-top: 80px;
+}
+ .video-title-header {
+     color: #fff!important;
+}
+ .and-app-icon, .ios-icon {
+     float: left;
+}
+ .iyd-app-section {
+     box-shadow: 0px 0px 5px #000;
+     background-color: #ffffff!important;
+}
+ h1.iyd-app-title {
+     color: #fff;
+}
+ .about-section-title, .get-app, .yoga-tools, .learn-yoga {
+     color: #fff;
+}
+ .ipd-map-section {
+     background: url("//cdn-prod.heartfulness.org/hfn/images/ipd/heartspots-bg.png")no-repeat center;
+     background-size: cover;
+     height: 510px;
+     box-shadow: 0px 0px 0px #668889;
+     transform: scaleX(-1);
+}
+ .hh-img-section{
+     margin-top: -80px;
+}
+ .hh-img-section,.ipd-map-title{
+     transform: scaleX(-1);
+}
+ .ipd-about-content, .audio-section, .section-title, .iyd-magazines-section {
+     box-shadow: 0px 0px 1px #668889!important;
+}
+ .iyd-about-section, .iyd-app-section, .iyd-video-section, .iyd-magazines-section, .ipd-section {
+     padding-top: 40px;
+     padding-bottom: 80px;
+}
+ .home-main-banner {
+     background: url(//cdn-prod.heartfulness.org/hfn/images/ipd/ipd-home-banner-1.jpg) no-repeat center center;
+     background-size: cover;
+     height: 670px;
+}
+ .banner-text {
+     background: rgba(166, 126, 125, 0.4);
+     padding: 20px 25px;
+     height: 670px!important;
+     box-shadow: 0px 0px 5px #fff;
+}
+ h1.banner-heading {
+     color: #fff;
+     font-weight: 600;
+}
+ h2.date-info {
+     color: #fff;
+     font-weight: 600;
+}
+ h2.ipd-live-cast-link, h2.ipd-live-cast-head {
+     color: #444;
+     font-weight: 600;
+     margin-top:25px;
+}
+ a.ipd-live-cast-link-head {
+     font-size: 22px;
+     background: aliceblue;
+     color: #000!important;
+     padding: 10px;
+     border-radius: 30px;
+}
+
+ a.ipd-live-cast-link-head:hover{
+     background:#2a6496!important;
+     color:#fff!important;
+}
+ p.ipd-banner-intro {
+     color: #fff;
+}
+ .hh-img-section {
+     width: 500px;
+     float: right;
+     margin-top: -115px;
+}
+ .ipd-articles-section {
+     padding: 40px 0px;
+     box-shadow: 0px -1px 5px #000;
+     background: #fff!important;
+}
+/*5 Columns*/
+ .col-xs-15, .col-sm-15, .col-md-15, .col-lg-15 {
+     position: relative;
+     min-height: 1px;
+     padding-right: 10px;
+     padding-left: 10px;
+}
+ .col-xs-15 {
+     width: 20%;
+     float: left;
+}
+ @media (min-width: 768px) {
+     .col-sm-15 {
+         width: 20%;
+         float: left;
+    }
+}
+ @media (min-width: 992px) {
+     .col-md-15 {
+         width: 20%;
+         float: left;
+    }
+}
+ @media (min-width: 1200px) {
+     .col-lg-15 {
+         width: 20%;
+         float: left;
+    }
+}
+ @media (min-width: 1500px) {
+}
+img.shadow-img:hover {
+     box-shadow: 0px 0px 5px 0px #000;
+     -webkit-box-shadow: 0px 0px 5px 0px #000;
+     -moz-box-shadow: 0px 0px 5px 0px #000;
+}
+img.shadows-img:hover{
+     box-shadow: 0px 0px 5px 0px #fff;
+     -webkit-box-shadow: 0px 0px 5px 0px #fff;
+     -moz-box-shadow: 0px 0px 5px 0px #fff;
+}
+ img.shadow-img {
+     margin: 0 auto!important;
+}
+
+ h2.ipd-live-cast-link{
+     color:#444!important;
+}
+ h2.ipd-live-cast-link {
+     margin-bottom: 35px;
+     margin-top: 30px;
+}
+ a.ipd-live-cast-link-head {
+     font-size: 20px;
+     background: aliceblue;
+     color:#000!important;
+     padding: 10px;
+     border-radius: 30px;
+}
+ a.ipd-live-cast-link:hover{
+     color:#fff!important;
+}
+ a.ipd-live-cast-link{
+     color:#0073b7!important;
+}
+ h2.ipd-live-cast-link, h2.ipd-live-cast-head{
+     color: #444;
+     font-weight:600;
+     margin-top: 0px!important;
+}
+ p.ipd-banner-intro{
+     font-size: 20px;
+     font-weight: 600;
+     line-height:30px;
+     padding: 15px 0 0px!important;
+}
+ h1.banner-heading{
+     color: #fff;
+     font-weight:600;
+     margin-top: 0px!important;
+}
+ h2.date-info{
+     color: #fff;
+     font-weight:600;
+     margin-top: 0px!important;
+}
+ .navbar-brand img {
+     max-width: 60% !important;
+}
+ .top-contact-info.fixed {
+     display:none!important;
+}
+ #main-nav.iyd-menu {
+     top: 0px !important;
+}
+ .sti .sti-share-box {
+     display: block!important;
+}
+ .about-section-title, .get-app, .yoga-tools, .learn-yoga {
+     color:#fff;
+}
+ .magazines-section {
+     padding-top: 40px;
+     padding-bottom: 40px;
+}
+ .iyd-infographic-section {
+     background: #7dcefd;
+     padding-top:40px;
+     padding-bottom:40px;
+}
+ .infographic-section-title {
+     color: #fff;
+     padding: 18px;
+}
+ .right-img-section {
+     margin-top: 150px;
+}
+ .view-more-infographics {
+     border: 2px solid;
+     border-radius: 5%;
+     font-size: 16px;
+     color: #fff !important;
+     padding: 5px;
+}
+ .infographics-btn {
+     margin-top: 440px;
+}
+ @media(max-width:767px) {
+     .home-main-banner {
+         margin-top:0px;
+    }
+}
+ @media (max-width:550px) {
+     .home-main-banner{
+         background-position:61%;
+    }
+}
+ @media (max-width: 440px){
+     a.ipd-live-cast-link-head {
+         font-size: 18px!important;
+    }
+}
+ @media (max-width:390px) {
+     a.ipd-live-cast-link-head {
+         font-size:15px!important;
+    }
+     p.ipd-banner-intro {
+         color: #fff;
+         font-size: 17px!important;
+    }
+     h2.ipd-live-cast-link {
+         margin-bottom: 10px;
+         margin-top: 20px;
+    }
+     .banner-text {
+         padding: 20px 10px;
+    }
+     .aligncenters{
+         width:95%;
+    }
+     .aligncenter{
+         width:85%;
+         margin-top:150px!important;
+    }
+}
+ @media (max-width:991px) {
+     img.shadow-img {
+         width:50%;
+    }
+}

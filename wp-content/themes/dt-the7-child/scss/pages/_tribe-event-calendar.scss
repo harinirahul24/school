@@ -1,0 +1,22 @@
+#tribe-community-events {
+    font-family: gotham-book!important;
+}
+#add-new, #my-events {
+    font-size: 22px;
+}
+.events-community-post-title label, .events-community-post-content label, .tribe-events-community-details label {
+    font-size: 16px;
+    color: #999;
+    font-family: gotham-book;
+    font-weight: normal;
+}
+/*#tribe-community-events .button {
+    display: inline-block;
+    border: none;
+    background: #fd5a63;
+}*/
+
+select.chosen{
+    display: inherit;
+    border: 1px solid #ccc;
+}

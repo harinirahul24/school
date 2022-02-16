@@ -1,0 +1,209 @@
+.row-kb{
+     margin-bottom: 0px!important;
+}
+ .icon-intro p{
+     font-size: 18px!important;
+     line-height: 30px;
+}
+ .custom-reg-btn {
+     color: #fff!important;
+     margin-top: 10px;
+     padding: 15px 30px;
+     font-family: gotham-light;
+     font-size: 20px;
+}
+ .padd-bottom20{
+     padding-bottom:20px!important;
+}
+ .padd-bottom40{
+     padding-bottom:40px!important;
+}
+
+ .theme-bg {
+     background: #1ca0f2;
+}
+ @media screen and (max-width: 768px) {
+     .retreat-benefits-box {
+         width: 100%!important;
+    }
+     .icon-intro p{
+         padding-bottom:20px;
+         text-align:center;
+    }
+    .benefit-icon, .wr-icon{text-align: text-center;}
+}
+ @media screen and (max-width: 510px) {
+     span.bullets-block{
+         display:inline-block;
+         text-align:left;
+         float:inherit;
+    }
+     h1.banner-info {
+         font-size: 48px!important;
+    }
+     span.sm-font {
+         font-size: 33px!important;
+    }
+     span.md-font {
+         font-size: 24px!important;
+    }
+     h2.wellness-retreats-intro-body {
+         font-size: 15px !important;
+         line-height: 38px!important;
+    }
+     h1.wellness-retreats-section-title {
+         font-size: 35px!important;
+    }
+}
+ .retreat-benefits-box-text {
+     color: #000;
+     font-family: gotham-book;
+}
+ h2.section-sub-heading {
+     font-size: 30px;
+     color: #333;
+}
+ p.time-info {
+     color: #3e383a;
+     font-weight: bold;
+}
+ .time-icon {
+     color: #b35575;
+     font-size: 15px;
+     padding-right: 10px;
+}
+ p.tick-icon-font {
+     font-size: 16px!important;
+}
+ .tick-icon {
+     font-size: 15px;
+     padding-right: 10px;
+     color: #444;
+}
+ .pf-info {
+     display: inline-block;
+     background: #fff;
+     border-radius: 10px;
+     padding: 10px;
+     margin-bottom: 20px;
+     box-shadow: 0 2px 5px 0 rgba(0, 0, 0, .16), 0 2px 10px 0 rgba(0, 0, 0, .12);
+}
+ .retreat-benefits-box {
+     margin: 0px auto;
+     background: #ebe5ec;
+     padding: 10px 20px;
+     margin-top: 10px;
+     box-shadow: 0 2px 5px 0 rgba(0, 0, 0, .16), 0 2px 10px 0 rgba(0, 0, 0, .12);
+     display: table;
+}
+ .bullet-icon {
+     font-size: 10px!important;
+     color: #444;
+     padding-right: 10px;
+}
+ span.theme-black {
+     color: #000!important;
+     font-family: gotham-light!important;
+}
+ span.theme-white {
+     color: #fff!important;
+     font-family: gotham-light!important;
+}
+ span.theme-gray {
+     color: #444!important;
+     font-family: gotham-light!important;
+}
+ span.sm-font {
+     font-size: 50px;
+}
+ span.md-font {
+     font-size: 28px;
+}
+ p.xs-font {
+     font-size: 10px!important;
+     color: #777;
+     margin: 0px;
+     line-height: 2;
+}
+ .wellness-retreats-banner {
+     background: url(//cdn-prod.heartfulness.org/hfn/images/wellness-retreats-banner-img.jpg) no-repeat center;
+     background-size: cover;
+     height: 320px;
+}
+ .main-gallery {
+     background: #fff;
+     box-shadow: 0 2px 2px rgba(0, 0, 0, 0.25);
+}
+ .gallery-cell {
+     width: 100%;
+}
+/*
+ .testimonial {
+     background: #fff!important;
+     text-align: center;
+     max-width: 850px;
+     margin: 80px auto 100px auto;
+     padding: 0 20px;
+     line-height: 30px;
+}
+ .testimonial-quote {
+     display: block;
+     font-size: 24px;
+     font-weight: 300;
+     padding: 10px 0;
+}
+ .testimonial-author {
+     display: block;
+     font-weight: bold;
+     color: #494b4c;
+     font-family: gotham-book;
+}
+*/
+ .flickity-page-dots {
+     bottom: 25px;
+}
+ .flickity-page-dots .dot.is-selected {
+     background: #1ca0f2;
+}
+ .wellness-retreats-banner-section, .wellness-retreats-benefits, .wellness-retreats-program-details, .wellness-retreats-testimonials, .wellness-retreats-program-directors {
+     background: #f6f7f8;
+}
+ .wellness-retreats-intro, .wellness-retreats-banner, .wellness-retreats-benefits, .about-wellness-retreats, .wellness-retreats-program-details, .about-hfn-institute, .wellness-retreats-testimonials, .wellness-retreats-beneficiaries, .wellness-retreats-program-directors, .wellness-retreats-program-faculties, .wellness-retreats-cme-info {
+     padding: 70px 0px;
+}
+ h1.banner-info {
+     font-family: gotham-light;
+     font-size: 58px;
+     line-height: 60px;
+}
+
+
+ h2.wellness-retreats-intro-body {
+     font-family: gotham-light;
+     font-size: 28px;
+     line-height: 50px;
+     color: #333;
+}
+ h1.wellness-retreats-section-title {
+     font-size: 50px;
+     font-family: gotham-light;
+     line-height: 50px;
+     color: #1ca0f2;
+     padding-bottom: 20px;
+}
+ #reg-scheme{
+     height: 30px;
+     font-size: 16px;
+     font-family: gotham-light;
+}
+ .register-dropdwn{
+     padding-top: 10px;
+}
+ @media screen and (max-width: 510px){
+     h1.banner-info.text-center {
+         font-size: 40px!important;
+    }
+     span.theme-black {
+         letter-spacing:2px!important;
+    }
+}

@@ -1,0 +1,319 @@
+.hfn-header-container, .hfn-container, .hfn-footer-container{
+    margin: 0 auto!important;
+    max-width: 1280px!important;
+
+}
+.fl-page-header-logo{
+  margin: 0px auto;
+  padding: 0px;
+}
+.hfn-logo-svg{
+  /*width: 10.666667%;*/
+    display: inline;
+    float: left;
+    padding: 0px 2px;
+}
+.hfn-logo-svg svg{
+    width: 60px;
+}
+.hfn-logo-brand {
+    float: left;
+    padding-left: 5px;
+    /*width: 81.333333%;
+    display: inline-block;
+    
+    vertical-align: top;*/
+}
+ul#primary-menu{
+    margin-bottom: 0px;
+}
+#main {
+    padding: 0px 0 70px 0!important;
+}
+html, body, body.page, .wf-container > * {
+    font: normal 15px / 27px "gotham-light", Helvetica, Arial, Verdana, sans-serif!important;
+}
+h1, h2, h3, h4, h5, h6, h1 a, h2 a, h3 a, h4 a, h5 a, h6 a, h1 a:hover, h2 a:hover, h3 a:hover, h4 a:hover, h5 a:hover, h6 a:hover, .h1-size, .entry-title.h1-size, .h2-size, .entry-title.h2-size, h1.entry-title, .h3-size, .entry-title.h3-size, h2.entry-title, .h4-size, .entry-title.h4-size, h3.entry-title, .h5-size, .entry-title.h5-size, .h6-size, .entry-title.h6-size, .header-color, .entry-meta .header-color, .color-title{
+font-weight:normal!important;
+font-family:gotham-light!important;
+}
+h1, .h1-size, .entry-title.h1-size, .dt-accordion-h1-size .wpb_accordion_header > a {
+    font: normal 44px / 54px "gotham-book", Helvetica, Arial, Verdana, sans-serif!important;
+}
+.main-nav > li > a .menu-text {
+    font: normal 17px / 21px "gotham-book"!important;
+}
+h5, .h5-size, h4.entry-title, .entry-title.h5-size, .dt-accordion-h5-size .wpb_accordion_header > a {
+    font: normal 16px / 26px "gotham-book", Helvetica, Arial, Verdana, sans-serif!important;
+}
+h4, .h4-size, .entry-title.h4-size, h3.entry-title, .dt-accordion-h4-size .wpb_accordion_header > a, .vc_separator h4 {
+    font: normal 20px / 30px "gotham-book", Helvetica, Arial, Verdana, sans-serif!important;
+}
+.theme-white{color:#fff;}
+.theme-color{color:#1ca0f2;}
+.link-color{color:#fd5a63;}
+a:hover, a:focus {
+    color: #1ca0f2!important;
+}
+
+//.branding{
+//    width:20%;
+//}
+.hfnbrand-name{
+  padding:0px!important;
+  margin:0px!important;
+  font-family: gotham-book!important;
+  font-size: 28px;
+  color: #231f20!important;
+  letter-spacing: -0.03em;
+  line-height: 38px;
+}
+.hfnbrand-theme{
+  color:#888!important;
+  font-family: gotham-book;
+  font-size: 17px;
+  line-height: 20px;
+}
+a.hfn-site-url{
+  text-decoration: none;
+}
+
+/*#city_search {
+    padding: 2px !important;
+    background: #fff;
+    border: none;
+    font-size: 19px;
+    color: #f2f2f2;
+    margin: 1px -1px;
+}*/
+button#city_search:hover, button#city_search:focus {
+    background: #fafafa!important;
+    border: none!important;
+}
+.go_city {
+    position: absolute;
+    top: 1px;
+    right: -4px; 
+    z-index: 90;
+}
+#city_search .fa-search{
+  color: #a6a6a6;
+}
+#city_search .fa-search:hover{
+  color: #fd5a63;
+}
+.city-search-error {
+    position: absolute;
+    display: block;
+    bottom: -15px;
+}
+.nav-search-box input[type=text] {
+    padding: 2px 5px;
+    font-size: 16px;
+    float: left;
+    background: #fafafa;
+
+}
+
+.nav-search-box button {
+    float: left;
+    padding: 4px;
+    background: #fafafa;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+    border-radius: inherit;
+}
+.nav-search-box button:focus{
+    padding: 3px;
+}
+
+.nav-search-box::after {
+    content: "";
+    clear: both;
+    display: table;
+}
+a.select-city-icon {
+    font-size: 12px;
+    border: 1px solid #c8c5c5;
+    padding: 5px;
+    color: #444!important;
+}
+a.select-city-icon:hover {
+    color: #fd5a63!important;
+}
+input.hfn-search-city:focus{
+  border-bottom: $input-border !important;
+  box-shadow: none!important;
+}
+.ubermenu-row.ubermenu-row-id-401_auto_1.ubermenu-autoclear {
+    width: 90%!important;
+    padding-left: 10%!important;
+}
+span.ubermenu-sub-indicator-close{
+display: none!important;
+visibility: hidden;
+}
+.owl-carousel.owl-drag .owl-item{
+    list-style: none;
+}
+.ubermenu.ubermenu-main.ubermenu-horizontal .ubermenu-item-level-0.ubermenu-active > .ubermenu-submenu-drop, .ubermenu.ubermenu-main.ubermenu-horizontal:not(.ubermenu-transition-shift) .ubermenu-item-level-0 > .ubermenu-submenu-drop {
+    margin-top: 31px!important;
+}
+.ubermenu.ubermenu-loc-header{
+    z-index: inherit;
+}
+.hfn-menu-wrap{
+    float: right;
+}
+.hfn-logo {
+    width: 348px;
+}
+.fl-page-nav-wrap {
+    border: none!important;
+}
+.fl-page-header, .fl-page-nav-right .fl-page-header-wrap {
+    -webkit-box-shadow: 0px 4px 12px 0px rgba(0, 0, 0, 0.21)!important;
+    box-shadow: 0px 4px 12px 0px rgba(0, 0, 0, 0.21)!important;
+}
+.fl-row-content-wrap{padding: 0px;}
+.ubermenu-retractor.ubermenu-retractor-desktop i.fa.fa-times{
+  height:auto!important;
+}
+.ubermenu .ubermenu-custom-content-padded{
+  padding: 2px 20px!important;
+}
+.ubermenu-sub-indicators .ubermenu-item-has-children>.ubermenu-target.ubermenu-noindicator {
+    padding-right: 0px!important;
+}
+.ubermenu-main .ubermenu-item-normal > .ubermenu-target, .ubermenu-main .ubermenu-submenu .ubermenu-target, .ubermenu-main .ubermenu-submenu .ubermenu-nonlink, .ubermenu-main .ubermenu-submenu .ubermenu-widget, .ubermenu-main .ubermenu-submenu .ubermenu-custom-content-padded, .ubermenu-main .ubermenu-submenu .ubermenu-retractor, .ubermenu-main .ubermenu-submenu .ubermenu-colgroup .ubermenu-column, .ubermenu-main .ubermenu-submenu.ubermenu-submenu-type-stack > .ubermenu-item-normal > .ubermenu-target, .ubermenu-main .ubermenu-submenu.ubermenu-submenu-padded{
+    padding: 5px;
+}
+span.ubermenu-target.ubermenu-highlight.ubermenu-target-with-icon.ubermenu-item-layout-default.ubermenu-item-layout-icon_left.ubermenu-noindicator.ubermenu-item-notext{
+    padding: 0px;
+    outline: none;
+}
+li.ubermenu-current_page_item a span {
+    color: #1ca0f2!important;
+  }
+
+.city-down-arrow, .city-globe-icon{
+    color:#a6a6a6!important;
+}
+a.apple-store-app, a.play-store-app{
+    font-size: 22px;
+    color:#a6a6a6!important;
+}
+a.apple-store-app i{
+    padding-right: 3px;
+    color:#a6a6a6!important;
+}
+a.apple-store-app i:hover{
+    color:#000!important;
+}
+a.play-store-app i{
+    padding-left: 3px;
+    color:#a6a6a6!important;
+}
+a.play-store-app i:hover{
+    color:#8bc34a!important;
+}
+
+@media (max-width: 991px){
+  .hfn-logo-svg{
+    width: 16.666667%;
+      display: inline-block;
+      padding: 0px 2px;
+  }
+  .hfn-logo-brand, .hfnbrand-name {
+    text-align: left;
+
+  }
+  .hfnbrand-name{
+    font-size: 26px;
+  }
+  .hfnbrand-theme{
+    font-size: 15px;
+  }
+    .fl-page-nav-right .fl-page-header-logo{
+        padding-left: 0px!important;
+        padding-right: 0px!important;
+    }
+    .hfn-menu-wrap {
+    float: none;
+    display: flex;
+    padding: 20px 10px;
+}
+    .fl-page-nav-toggle-icon.fl-page-nav-toggle-visible-mobile .fl-page-header-logo {
+    margin-right: 0px!important;
+}
+}
+@media (max-width: 432px){
+  .ubermenu.ubermenu-main.ubermenu-horizontal .ubermenu-item-level-0.ubermenu-active > .ubermenu-submenu-drop, .ubermenu.ubermenu-main.ubermenu-horizontal:not(.ubermenu-transition-shift) .ubermenu-item-level-0 > .ubermenu-submenu-drop {
+      margin-top: 15px!important;
+  }
+.fl-page-nav-toggle-icon.fl-page-nav-toggle-visible-mobile .fl-page-header-logo {
+    margin-right: 0px;
+}
+.fl-page-nav-toggle-icon.fl-page-nav-toggle-visible-mobile.fl-page-nav-right .fl-page-header-row .fl-page-header-logo {
+    padding-bottom: 0px;
+}
+.ubermenu .ubermenu-target, .ubermenu-responsive-toggle {
+    margin-top: 4px!important;
+}
+.ubermenu-target{
+outline:none!important;
+}
+}
+
+/*Footer*/
+.fl-page-footer-widgets a {
+    text-decoration: none;
+}
+.footer-hfn-info{
+    background-color: #1a1c20;
+}
+.footer-hfn-info p{
+    font-size: 12px;
+    color: #f6f6f6;
+}
+.fl-page-footer-widgets-row .textwidget {
+    font-size: 15px;
+}
+hr.footer-hr {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    border: 0;
+    border-top: 1px solid rgba(204, 204, 204, 0.12)!important;
+}
+.fl-page-footer-widgets-row h4 {
+    font-size: 18px;
+    font-family: gotham-medium;
+}
+#fl-to-top {
+    bottom: 90px;
+}
+@media (max-width: 767.98px){
+  .fl-page-nav-toggle-icon.fl-page-nav-toggle-visible-mobile.fl-page-nav-right .fl-page-header-row .fl-page-header-logo {
+    padding-bottom: 5px;
+}
+.fl-page-nav-right .fl-page-header-container {
+    padding-bottom: 15px;
+}
+  .hfn-logo-svg{
+    width: 12%;
+      display: block;
+    margin: 0px auto;
+  }
+//  .hfn-logo-brand, .hfnbrand-name {
+//    text-align: center;
+//    width: 100%;
+//
+//  }
+  .hfnbrand-name{
+    font-size: 26px;
+  }
+  .hfnbrand-theme{
+    font-size: 15px;
+  }
+}

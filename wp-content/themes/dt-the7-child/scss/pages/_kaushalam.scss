@@ -1,0 +1,392 @@
+.kaushalam-registration-btn {
+    background-color: #fd5a63!important;
+    background: #fd5a63!important;
+    width: 150px;
+color:#fff;
+text-decoration:none;
+}
+.more-info{
+font-family:gotham-light!important;
+}
+.kaushalam-registration-btn:hover {
+    background-color: #1ca0f2!important;
+    background: #1ca0f2!important;
+color:#fff;
+}
+a.kaushalam-registration-btn:visited{
+color:#fff!important;
+}
+.upcoming-kaushalam-list {
+    width: 100%;
+    background:#f7f7f7;
+    /* float: left; */
+    display: inline-block;
+    box-shadow: 0 0px 3px rgba(0, 0, 0, 0.3);
+    -moz-box-shadow: 0 0px 3px rgba(0, 0, 0, 0.3);
+    -webkit-box-shadow: 0 0px 3px rgba(0, 0, 0, 0.3);
+}
+ul.kaushalam-list {
+    width: 100%;
+    float: left;
+    display: inline-block;
+    margin: 0px;
+}
+ul.kaushalam-list li {
+    list-style: none;
+    margin: 0px;
+    padding: 0px 55px;
+    display: flex;
+    position: relative;
+    min-height: 12.5vh;
+    align-items: center;
+    animation: fadein 1s;
+    transition: all 0.3s linear;
+    -moz-transition: all 0.3s linear;
+    -webkit-transition: all 0.3s linear;
+    width: 100%;
+}
+
+ul.kaushalam-list li .speaker-block {
+    margin: 0;
+    float: left;
+}
+ul.kaushalam-list li .speaker-block img {
+    object-fit: cover;
+    border-radius: 100%;
+    -moz-border-radius: 100%;
+    -webkit-border-radius: 100%;
+    width: 100px;
+    height: 100px;
+    max-width: none;
+    margin:0px auto;
+}
+ul.kaushalam-list li .kaushalam-date {
+    text-align: center;
+    margin: 3vh 1% 3vh 1%;
+    display: block;
+    min-width: 10%;
+}
+ul.kaushalam-list li .kaushalam-title {
+    width: 100%;
+    display: block;
+    font-size: 18px;
+    font-family: gotham-book!important;
+    color: #444!important;
+    margin: 0px;
+    line-height: 29px;
+}
+ul.kaushalam-list li .kaushalam-date span {
+    display: block;
+    width: 100%;
+    font-family: gotham-book;
+    color: #444;
+}
+ul.kaushalam-list li .kaushalam-time .kaushalam-date {
+    margin: 0px;
+    text-align: left;
+    line-height: 15px;
+}
+ul.kaushalam-list li .kaushalam-date span:first-child {
+    font-size: 40px;
+    margin-bottom: 10px;
+    font-family: gotham-book;
+    color: #444;
+    text-align: center;
+}
+
+ul.kaushalam-list li .kaushalam-time p {
+    display: inline-block;
+    margin: 0px 20px 0px 0px;
+    font-family: gotham-book!important;
+    color: #444;
+}
+.kaushalam-information {
+    width: 70%;
+    float: left;
+    /*padding: 35px 20px 5px;*/
+    padding:29px 20px 29px;
+}
+.upcoming-kaushalam-list .register-block {
+    width: 15%;
+    float: right;
+}
+.upcoming-kaushalam-list .register-block a.dt-sc-button.with-icon {
+    float: right;
+    font-size: 16px;
+    font-weight: bold;
+    color: #181818;
+    position: relative;
+    z-index: 1;
+    border: none;
+    padding: 0px;
+    text-transform: none;
+}
+.upcoming-kaushalam-list .register-block a:after {
+    content: "";
+    width: 0%;
+    height: 6px;
+    display: inline-block;
+    position: absolute;
+    left: 0px;
+    bottom: 1px;
+    right: 0px;
+    margin: 0px auto;
+    z-index: -1;
+    transition: all 0.3s linear;
+    -moz-transition: all 0.3s linear;
+    -webkit-transition: all 0.3s linear;
+}
+ul.kaushalam-list li:after {
+    content: '';
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    border-top: 1px solid currentColor;
+    opacity: 0.075;
+}
+.kaushalam-date{
+    margin-top:0px !important;
+    margin-bottom:0px !important;
+}
+@media only screen and (max-width: 767px){
+ul.kaushalam-list li {
+    display: inline-block;
+    padding: 50px 0px 30px;
+    text-align: center;
+}
+ul.kaushalam-list li .kaushalam-time .kaushalam-date{
+    text-align:center;
+    margin-bottom: 10px;
+}
+ul.kaushalam-list li{
+    margin: 0px auto 40px;
+    float: none;
+    width: 100%;
+}
+.upcoming-kaushalam-list .register-block {
+    width: 100%;
+    float: none;
+    display: inline-block;
+}
+.kaushalam-information {
+    width: 100%;
+    text-align: center;
+    float:none;
+    padding: 10px 20px 10px;
+}
+}
+
+/*new-end*/
+
+.custom-reg-btn {
+    color: #fff!important;
+    margin-top: 10px;
+    padding: 15px 30px;
+    font-family: gotham-light;
+    font-size: 20px;
+}
+a.theme-btn-scheme,{
+    -webkit-box-shadow: 1px 18px 22px -13px rgba(167, 167, 167, 0.97);
+    -moz-box-shadow: 1px 18px 22px -13px rgba(167, 167, 167, 0.97);
+    box-shadow: 1px 18px 22px -13px rgba(167, 167, 167, 0.97);
+    border-radius: 5px;
+    font-family: gotham-light!important;
+    text-transform: none!important;
+}
+.theme-bg {
+    background: #1ca0f2;
+}
+
+@media screen and (max-width: 768px) {
+    .kutumba-box {
+        width: 100%!important;
+    }
+}
+@media screen and (max-width: 510px) {
+   span.bullets-block{
+    display:inline-block;
+    text-align:left;
+    float:inherit;
+}
+    h1.banner-info {
+        font-size: 47px!important;
+    }
+    span.sm-font {
+        font-size: 33px!important;
+    }
+    span.md-font {
+        font-size: 24px!important;
+    }
+    h2.kaushalam-intro-body {
+        font-size: 15px !important;
+        line-height: 38px!important;
+    }
+    h1.kaushalam-section-title {
+        font-size: 35px!important;
+    }
+}
+.Kutumba-box-text {
+    color: #da726a;
+    font-family: gotham-book;
+}
+h2.section-sub-heading {
+    font-size: 30px;
+    color: #333;
+}
+p.time-info {
+    color: #3e383a;
+    font-weight: bold;
+}
+.time-icon {
+    color: #b35575;
+    font-size: 15px;
+    padding-right: 10px;
+}
+p.tick-icon-font {
+    font-size: 16px!important;
+}
+.tick-icon {
+    font-size: 15px;
+    padding-right: 10px;
+    color: #444;
+}
+.kaushalam-program-directors .pf-info {
+    display: inline-block;
+    background: #fff;
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 5px 0 rgba(0, 0, 0, .16), 0 2px 10px 0 rgba(0, 0, 0, .12);
+}
+.kutumba-box {
+    width: 60%;
+    margin: 0px auto;
+    background: #ffffff;
+    padding: 10px 20px;
+    margin-top: 30px;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px 0 rgba(0, 0, 0, .16), 0 2px 10px 0 rgba(0, 0, 0, .12);
+    display: table;
+}
+.kaushalam-information .more-info{font-size: 14px;}
+.kaushalam-date .month, .kaushalam-date .year{font-size: 16px;}
+.kaushalam-program-details .section-sub-heading{line-height: 46px;}
+.kaushalam-testimonials .testimonial-author{font-size: 15px;}
+.bullet-icon {
+    font-size: 10px;
+    color: #444;
+    padding-right: 10px;
+}
+span.theme-black {
+    color: #000!important;
+    font-family: gotham-light!important;
+    letter-spacing: 10px;
+}
+span.theme-white {
+    color: #fff!important;
+    font-family: gotham-light!important;
+}
+span.theme-gray {
+    color: #444!important;
+    font-family: gotham-light!important;
+}
+span.sm-font {
+    font-size: 50px;
+}
+span.md-font {
+    font-size: 46px;
+}
+p.xs-font {
+    font-size: 10px!important;
+    color: #777;
+    margin: 0px;
+    line-height: 2;
+}
+.kaushalam-banner {
+    background: url(//cdn-prod.heartfulness.org/hfn/images/kaushalam-banner-img.jpg) no-repeat center;
+    background-size: cover;
+}
+.main-gallery {
+    background: #fff;
+    box-shadow: 0 2px 2px rgba(0, 0, 0, 0.25);
+}
+.gallery-cell {
+    width: 100%;
+}
+
+.kaushalam .testimonial {
+    background: #fff!important;
+    text-align: center;
+    max-width: 850px;
+    margin: 80px auto 100px auto;
+    padding: 0 20px;
+    line-height: 30px;
+}
+.kaushalam .testimonial-quote {
+    display: block;
+    font-size: 24px;
+    font-weight: 300;
+    padding: 10px 0;
+}
+.kaushalam .testimonial-author {
+    display: block;
+    font-weight: bold;
+    color: #494b4c;
+    font-family: gotham-book;
+}
+
+.flickity-page-dots {
+    bottom: 25px;
+}
+.flickity-page-dots .dot.is-selected {
+    background: #1ca0f2;
+}
+.kaushalam-banner-section,
+.kaushalam-benefits,
+.kaushalam-program-details,
+.kaushalam-testimonials,
+.kaushalam-program-directors, .kaushalam-contact-info {
+    background: #f6f7f8;
+}
+.kaushalam-intro,
+.kaushalam-banner,
+.kaushalam-benefits,
+.about-kaushalam,
+.kaushalam-program-details,
+.about-hfn-institute,
+.kaushalam-testimonials,
+.kaushalam-beneficiaries,
+.kaushalam-program-directors,
+.kaushalam-program-faculties,
+.kaushalam-cme-info, .kaushalam-contact-info {
+    padding: 70px 0px;
+}
+h1.banner-info {
+    font-family: gotham-light;
+    font-size: 75px;
+    line-height: 60px;
+}
+
+h2.kaushalam-intro-body {
+    font-family: gotham-light;
+    font-size: 35px;
+    line-height: 60px;
+    color: #333;
+}
+h2.kaushalam-intro-body span{font-size: 42px;}
+.Kutumba-box-text{line-height: 42px;}
+h1.kaushalam-section-title{
+    font-size: 50px;
+    font-family: gotham-light;
+    line-height: 50px;
+    color: #1ca0f2;
+    padding-bottom: 20px;
+}
+h2.kaushalam-section-title {
+font-family: gotham-light;
+    line-height: 50px;
+    color: #1ca0f2;
+    padding-bottom: 10px;
+}

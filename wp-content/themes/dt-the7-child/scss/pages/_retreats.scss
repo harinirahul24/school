@@ -1,0 +1,71 @@
+.wellness-information p, .Kaushalam-information p{
+    margin: 0px;
+    font-family: gotham-light;
+    font-size: 18px;
+    line-height: 30px;
+    padding-bottom: 8px;
+}
+.retreat-img{
+     margin-top: 0px;
+}
+ .img-responsive{
+     display: block;
+     max-width: 100%;
+     height: auto;
+}
+ .retreats-banner-section {
+     background: #f6f7f8;
+     padding: 50px 0px;
+}
+ h1.banner-info {
+     font-family: gotham-light;
+     font-size: 75px;
+     line-height: 60px;
+}
+ span.theme-black {
+     color: #000!important;
+     font-family: gotham-light!important;
+}
+ .retreats-info-block {
+     padding: 50px 0px!important;
+}
+ .retreat-intro {
+     font-family: gotham-light!important;
+     font-size: 24px;
+     line-height: 36px;
+}
+ h1.retreat-block-title {
+     font-size: 40px;
+     font-family: gotham-light;
+     line-height: 40px;
+     color: #1ca0f2;
+     padding-bottom: 10px;
+     padding-top: 62px!important;
+}
+ .info-row {
+     padding-bottom: 20px;
+}
+ .theme-btn-scheme{
+     box-shadow: 1px 18px 22px -13px rgba(167, 167, 167, 0.97);
+     border-radius: 5px;
+     font-family: gotham-light!important;
+     text-transform: none!important;
+}
+ .custom-reg-btn {
+     color: #fff!important;
+     margin-top: 10px;
+     padding: 10px 20px;
+     font-family: gotham-light;
+     font-size: 17px;
+     background-color: #1da1f2;
+     text-decoration:none!important;
+}
+ .Kaushalam-information, .wellness-information{
+     padding-bottom:50px;
+     text-align: justify;
+}
+ @media (max-width: 399px) {
+     .Kaushalam-information, .wellness-information{
+         text-align: inherit!important;
+    }
+}

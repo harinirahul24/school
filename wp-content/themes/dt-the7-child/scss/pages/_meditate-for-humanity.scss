@@ -1,0 +1,57 @@
+.home-banner{
+     background-image: url( );
+     background-size: cover;
+}
+ .home-iframe{
+     background-color: rgb(240, 247, 251);
+}
+ .home-iframe .container{
+     padding-bottom:60px;
+}
+ .heartfulness-meditation{
+     background-color: rgb(248, 246, 221);
+}
+ .gallery{
+     background-image: url( );
+     background-size: cover;
+}
+ .newsletter{
+     background-image: url( );
+     background-size: cover;
+}
+ .content-bottom{
+    text-align:justify;
+    margin-bottom:15px;
+}
+ .top-custom-reg-btn {
+     color: #fff!important;
+     margin-top: 10px;
+     padding: 15px 30px;
+     font-family: gotham-light;
+     font-size: 20px;
+     line-height:normal;
+}
+
+ .custom-reg-btn {
+     color: #fff!important;
+     margin-top: 10px;
+     padding: 15px 30px;
+     font-family: gotham-light;
+     font-size: 20px;
+}
+ 
+.gallery-med-humanity{background-color: #efefef;}
+.heartfulness-meditation-humanity {
+    background-color: #f8f6dd;
+}
+.gallery-med-humanity .gallery-container a{height: 200px;
+    overflow: hidden;
+    padding: 10px;}
+.newsletter-med-humanity{background-color: #d1e3f9;}
+.home-banner-humanity{background-image: url(//cdn-prod.heartfulness.org/hfn/images/2018/feb/humanity-main-banner.jpg);
+    background-size: cover;}
+.home-banner-humanity p, .home-banner-humanity{font-size: 16px !important;
+    font-weight: 600;}
+.home-banner-humanity h1, .home-iframe-humanity h1, .heartfulness-meditation-humanity h1, .gallery-med-humanity h1, .contact-med-humanity h1, .newsletter-med-humanity h1{font-size: 32px;
+    padding-bottom: 20px;}
+.contact-med-humanity p, .newsletter-med-humanity p{text-align: center;}

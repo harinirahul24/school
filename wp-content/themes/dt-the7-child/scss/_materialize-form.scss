@@ -1,0 +1,46 @@
+@import "forms/checkboxes";
+@import "forms/file-input";
+@import "forms/forms";
+@import "forms/input-fields";
+
+//
+// Textual form controls
+//
+.row .col.s12 {
+    width: 100%;
+    margin-left: auto;
+    left: auto;
+    right: auto;
+}
+.row .col {
+    float: left;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    padding: 0 0.75rem;
+    min-height: 1px;
+}
+
+@include media-breakpoint-up(md) { 
+    .row .col.m4 {
+        width: 33.33333%;
+        margin-left: auto;
+        left: auto;
+        right: auto;
+    }
+    .row .col.m6 {
+        width: 50%;
+        margin-left: auto;
+        left: auto;
+        right: auto;
+    }
+
+ }
+ul:not(.browser-default) {
+    padding-left: 0;
+    list-style-type: none;
+}
+
+.z-depth-1, .card-panel, .card, .toast, .btn, .btn-large, .btn-floating, .dropdown-content, .collapsible, .side-nav {
+    -webkit-box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14),0 1px 5px 0 rgba(0,0,0,0.12),0 3px 1px -2px rgba(0,0,0,0.2);
+    box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14),0 1px 5px 0 rgba(0,0,0,0.12),0 3px 1px -2px rgba(0,0,0,0.2);
+}

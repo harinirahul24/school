@@ -1,0 +1,123 @@
+strong{
+    font-weight:bold !important;
+}
+ .bullet-points {
+     list-style: disc !important;
+     margin: 0 0 20px 30px !important;
+}
+ .bullet-points li{
+    list-style:disc !important;
+    font-size: 18px;
+    line-height: 26px;
+    padding-bottom: 5px;
+}
+ .sic-banner {
+    /*background: url(//cdn-prod.heartfulness.org/hfn/images/saleem-international-conference-img.jpg) no-repeat center;
+    */
+     background-size: cover;
+     height: 320px;
+}
+ .register-btn-row{
+     margin:30px;
+}
+
+ .content-margin{
+     margin-top:70px;
+}
+ .sic-banner-block h1{
+     font-family:gotham-book;
+}
+.sic-banner h1.banner-info {
+     font-size: 50px;
+     line-height:36px;
+     margin-bottom: 20px;
+}
+ .sic-event-info h4{
+     font-family:gotham-light;
+     line-height:35px;
+}
+ .sic-intro, .sic-programs, .sic-guideline, .sic-contact {
+     padding: 70px 0px;
+}
+ .sic-programs, .sic-cme-info, .sic-contact{
+     background-color: rgba(237, 205, 181, 0.14);
+}
+ .bullet-icon {
+     font-size: 10px;
+     color: #444;
+     padding-right: 10px;
+}
+ span.theme-black {
+     color: #000!important;
+     font-family: gotham-light!important;
+     letter-spacing: 10px;
+}
+ span.theme-white {
+     color: #fff!important;
+     font-family: gotham-light!important;
+}
+ span.theme-gray {
+     color: #444!important;
+     font-family: gotham-light!important;
+}
+ .banner-info span.sm-font {
+     font-size: 32px;
+     line-height: 46px;
+}
+ span.md-font {
+     font-size: 46px;
+}
+ p.xs-font {
+     font-size: 10px!important;
+     color: #777;
+     margin: 0px;
+     line-height: 2;
+}
+ h1.sic-section-title{
+     font-size: 28px!important;
+     color: #999;
+     margin: 0px;
+     line-height: 2;
+     font-family: gotham-medium;
+}
+ .custom-reg-btn {
+     color: #fff!important;
+     margin-top: 10px;
+     padding: 15px 30px;
+     font-family: gotham-light;
+     font-size: 20px;
+}
+ .theme-bg {
+     background: #1ca0f2;
+}
+
+ @media screen and (max-width: 768px) {
+     h1.banner-info {
+         font-size: 40px;
+         line-height: 40px;
+    }
+}
+ @media screen and (max-width: 510px){
+     h1.banner-info.text-center {
+         font-size: 38px!important;
+    }
+}
+ @media (max-width: 540px) {
+     h1.banner-info.text-center {
+         font-size: 38px!important;
+    }
+     .sic-intro{
+         margin-top:100px!important;
+    }
+     .custom-reg-btn {
+         font-size: 18px!important;
+    }
+}
+ @media (max-width: 480px) {
+     .sic-intro {
+         margin-top: 50px!important;
+    }
+     .custom-reg-btn {
+         font-size: 15px!important;
+    }
+}

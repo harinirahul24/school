@@ -1,0 +1,18 @@
+input[name="your-agree[]"]:not(:checked){
+     position: inherit;
+     opacity: inherit;
+}
+ input[name="your-agree[]"]:checked{
+     position: inherit;
+     opacity: inherit;
+}
+ .wpcf7-list-item-label{
+     vertical-align: text-bottom;
+}
+ span.wpcf7-list-item{
+     margin:0px;
+}
+ input[name="your-agree[]"] + span{
+     display:none;
+}
+ 

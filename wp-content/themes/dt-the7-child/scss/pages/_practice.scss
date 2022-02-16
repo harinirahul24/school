@@ -1,0 +1,58 @@
+.hfn-practice-banner{
+    background:#f6f7f8;
+}
+ .practice-section p {
+    margin-bottom:15px;
+}
+ @media (max-width: 478px) {
+     h1.page-title-head {
+         font-size: 50px!important;
+    }
+}
+ @media (max-width:339px) {
+     h1.page-title-head {
+         font-size: 40px!important;
+    }
+}
+ .img-align-center{
+     margin:0px auto;
+     width:300px;
+}
+ /*span{
+     font-family:gotham-xlight;
+}
+ p{
+     font-family:gotham-light;
+     font-size: 24px;
+     line-height: 1.35;
+     text-align:justify;
+}
+*/ h1.page-title-head {
+     font-size: 50px;
+     line-height: 1.24;
+}
+ .theme-black{
+     color:#000!important;
+}
+ .theme-blue{
+     color:#1ca0f2!important;
+}
+ .section-img{
+     margin:0px auto;
+}
+ .section-content {
+     padding: 2em 0 0 0;
+}
+ @media (max-width: 510px) {
+     /*p{
+         font-size: 16px;
+         line-height: 1!important;
+         text-align:inherit!important;
+    }*/
+     span.theme-black {
+         letter-spacing: 5px!important;
+    }
+     h1.page-title-head {
+         font-size: 30px!important;
+    }
+}

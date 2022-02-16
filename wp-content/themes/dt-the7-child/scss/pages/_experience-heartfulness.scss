@@ -1,0 +1,33 @@
+.exp-hfn-icon{
+     font-size: 18px;
+}
+ @media screen and (max-width: 768px) and (min-width: 640px) {
+     .head-nav{
+         display:flex!important;
+    }
+}
+ .exp-hfn-icon a:hover{
+    text-decoration:none;
+}
+ #way-of-exp h3, #hfn-own h3, #hfn-assistance h3, #hfn-workshops h3{
+     font-size: 30px;
+     margin-top:90px;
+     margin-bottom:15px;
+     font-family: gotham-book;
+}
+.capchamargin{
+    margin-top:25px;
+ }
+ input.wpcf7-form-control.wpcf7-text.wpcf7-email.wpcf7-validates-as-required.wpcf7-validates-as-email, input.wpcf7-form-control.wpcf7-text.wpcf7-validates-as-required, textarea.wpcf7-form-control.wpcf7-textarea.wpcf7-validates-as-required.materialize-textarea, textarea.wpcf7-form-control.wpcf7-textarea.materialize-textarea{
+    margin-left: 3rem!important;
+    width: 92%;
+    width: calc(100% - 3rem);
+    margin-bottom: 5px!important;
+ }
+ span.wpcf7-not-valid-tip {
+    color: #fd5a63!important;
+    font-size: 11px!important;
+    margin-left: 3rem;
+    top: 25px;
+    font-family: gotham-book;
+}

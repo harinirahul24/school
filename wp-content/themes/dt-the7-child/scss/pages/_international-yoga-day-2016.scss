@@ -1,0 +1,225 @@
+ .home-main-banner {
+     background: url("//cdn-prod.heartfulness.org/hfn/images/iyd/iyd-bg.png") no-repeat center center;
+     background-size: cover;
+     height: 545px;
+     background-color: #f0e3ae;
+}
+ .banner{
+     width:275px;
+     height:300px;
+}
+ a.live-cast-btn{
+     color: #3bbbd2;
+}
+ a.inner-invite-btn{
+     color: #3bbbd2;
+}
+ .size-large{
+     width:190px;
+     height:600px;
+}
+ .inner-invite-btn, .live-cast-btn {
+     background: #fff;
+     padding: 11px;
+     border-radius: 40px;
+}
+
+ .iyd-main-info {
+     margin: 70px 150px 0px 150px;
+     padding-bottom:30px;
+}
+ .iyd-main-info p, .live-stream p {
+     font-size: 18px;
+     font-weight: 300;
+     padding-bottom: 20px!important;
+}
+ h3.introlink {
+     background: #5dad62;
+     padding: 2px!important;
+     border-radius: 15px;
+     font-size: 18px;
+     font-weight: 300;
+     line-height: 30px;
+}
+ a.link-main-color {
+     color: #fff!important;
+}
+ a.link-main-color:hover {
+     color: #fff!important;
+}
+ .iyd-invite-section {
+     background: #fbf7f7!important;
+}
+ .iyd-about-meditation-section, .iyd-invite-section, .iyd-media-section {
+     padding-bottom: 40px;
+     padding-top: 40px;
+}
+ h1.iyd-about-daaji-title, h1.iyd-video-title, h1.iyd-magazines-title, h1.iyd-about-meditation-title, h1.ipd-title {
+     padding-bottom: 30px;
+     color: #444;
+}
+ h3.get-app{
+     font-size:24px;
+}
+ h2.learn-yoga{
+     font-size:26px;
+}
+ p.yoga-tools{
+     font-family: Arial;
+     font-size: 14px;
+     line-height: 22px;
+}
+ .audio-section {
+     background: #f3f4f9;
+     padding-bottom: 40px;
+     padding-top: 40px;
+}
+ .site-main p {
+     margin: 0px 0 0px!important;
+}
+ p.iyd-content, p.iyd-inner-page, p.ipd-content, p.ipd-inner-page {
+     color: #555f6e;
+     font-size: 18px;
+     font-weight: 300;
+     line-height: 30px;
+     padding: 15px 0 0px!important;
+}
+ .iyd-about-section {
+     background: #f2f9fd;
+}
+ a.read-more-about {
+     padding: 3px;
+     border-radius: 0px;
+     border: 0px solid #67c4ea;
+
+}
+ .iyd-more-info {
+     padding-bottom: 40px;
+}
+ .iyd-about-section, .iyd-app-section, .iyd-video-section, .iyd-magazines-section, .ipd-section {
+     padding-top: 40px;
+     padding-bottom: 80px;
+}
+ .iyd-video-section {
+     background-color: #f9fcf7;
+}
+ .iyd-app-section {
+     background-color: #ffffff;
+}
+ h1.iyd-app-title {
+     color: #fff;
+}
+ .about-section-title, .get-app, .yoga-tools, .learn-yoga {
+     color: #fff;
+}
+ .and-app-icon, .ios-icon {
+     float: left;
+}
+ .aligncenter {
+     clear: both;
+     display: block;
+     margin: 0 auto;
+}
+ img {
+     height: auto;
+     max-width: 100%;
+}
+ .iyd-infographic-section {
+     padding-top: 40px;
+     padding-bottom: 40px;
+     background-color: #7dcefd;
+}
+ .infographic-section-title {
+     color: #fff;
+     padding: 18px;
+     font-size: 35px;
+}
+ .info-right-img-section {
+     margin-top: 150px;
+}
+ .infographics-btn {
+     margin-top: 410px;
+}
+ .view-more-infographics {
+     border: 2px solid;
+     border-radius: 5%;
+     font-size: 16px;
+     color: #fff !important;
+     padding: 5px;
+     text-align: center;
+}
+ .view-more-infographics:hover{
+     color: #fff !important;
+}
+ h1.iyd-contactus-title {
+     color:#59a276
+}
+
+ @media (max-width: 1199px) {
+     .iyd-main-info {
+         margin: 70px 80px 0px 80px;
+    }
+}
+ @media (max-width: 1024px) {
+     #content.site-content {
+         margin-top: 60px!important;
+    }
+}
+ @media (max-width: 991px) {
+     .inner-invite-btn, .live-cast-btn{
+         padding: 10px;
+         font-size: 0.827em;
+    }
+     .infographic-section-title{
+         text-align:center;
+    }
+     .infographics-btn {
+         margin-top: 65px!important;
+    }
+     .home-main-banner {
+         margin-top: 0px;
+    }
+     .iyd-main-info {
+         margin: 40px 40px 20px 40px;
+    }
+     .audios-list{
+         margin-top:80px;
+    }
+     .info-right-img-section {
+         margin-top: 30px!important;
+    }
+}
+ @media (max-width: 768px) {
+     .banner{
+         width:200px!important;
+    }
+     #content.site-content {
+         margin-top: 70px !important;
+    }
+}
+ @media (max-width: 767px) {
+     #content.site-content {
+         margin-top: 15px !important;
+    }
+}
+ @media (max-width: 648px) {
+     .imgwidth{
+         width:225px!important;
+    }
+     .iyd-main-info p {
+         font-size: 18px;
+    }
+     h3.introlink{
+         padding: 0px 1px!important;
+    }
+}
+ @media (max-width: 499px) {
+     .right-app-content {
+         margin-top: 200px;
+    }
+}
+ @media (max-width: 480px) {
+     .iyd-main-info {
+         margin: 20px 10px 20px 10px;
+    }
+}

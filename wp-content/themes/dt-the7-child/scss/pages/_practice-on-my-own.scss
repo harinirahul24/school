@@ -1,0 +1,119 @@
+.content-margin{
+     text-align:justify;
+     margin-bottom:15px;
+}
+ .achievelogo{
+    color: #000000;
+     font-size: 25px;
+     font-weight: 600;
+    font-family: Gotham-Light;
+    line-height:1.75;
+}
+ .act-heart {
+     color:#1ca0f2;
+     font-size: 40px;
+     padding: 26px 0 30px;
+     font-weight:600;
+     line-height: 1;
+     font-family: gotham-light;
+}
+ .stage-heart {
+     color: #000;
+     font-size: 45px;
+     font-weight: normal;
+     line-height: 1;
+     padding: 26px 0 10px;
+     font-family: Gotham-Light;
+}
+ .activity1{
+     font-family: Gotham-Light;
+     padding-top: 20px;
+     text-align: center;
+     background-color: #ffffff;
+}
+ .act-heart-stg {
+     font-weight: normal;
+     text-transform: uppercase;
+     font-size: 60px;
+     margin-bottom: 30px;
+     line-height: 1;
+}
+ .act-note {
+     background-color:#439CD6;
+     color: white;
+     padding:20px 10px;
+}
+ .act-note a {
+     color: white !important;
+     font-weight: bold;
+     text-decoration: none;
+     font-size: 22px;
+}
+ .act-header-text {
+     padding: 45px 0;
+}
+ .act-content {
+     display: inline-block;
+     padding: 20px 0;
+     width: 100%;
+}
+ .ffm{
+     font-family: Gotham-Light;
+}
+ .ffm.toph {
+     color: #000;
+     font-size: 32px;
+     font-family: Gotham-Book;
+     line-height: 1;
+}
+ .act-note .ffm {
+     font-size: 20px;
+}
+ .stage-prac {
+     padding: 50px 0 25px;
+}
+ .stage-cont {
+     font-family: Gotham-Light;
+     font-size: 2.4em;
+     line-height: 1.9;
+     padding: 20px;
+     text-align: left;
+     color: #333333;
+}
+ .stage-listac.ffm {
+     color: #000;
+     font-size: 4em;
+     padding: 20px 20px 0;
+     text-align: left;
+     text-transform: uppercase;
+     font-family: Gotham-Light;
+     line-height: 1.3;
+}
+ .activity{
+     color: #1da1f2;
+     font-family: Gotham-book;
+}
+ @media screen and (max-width: 879px){
+     .act-header-text .act-heart {
+         font-size: 32px !important;
+    }
+     .act-heart-stg {
+         font-size: 34px;
+         line-height: 1;
+    }
+     .stage-prac {
+         width: 100%!important;
+         padding: 0 10px;
+         margin: 0 !important;
+    }
+}
+ @media screen and (max-width: 699px){
+     .stage-cont {
+         font-size: 1.3em;
+         line-height: 1.5;
+    }
+     .stage-listac.ffm{
+         font-size: 2em;
+    }
+}
+ 

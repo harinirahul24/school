@@ -1,0 +1,271 @@
+.kaushalam-x-banner{
+ background: url('//cdn-prod.heartfulness.org/hfn/images/retreats/2017/kaushalam/kaushalam-x-bg.png') no-repeat;
+background-color: #fcfcfc;
+background-position: right;
+padding-top: 18px;
+}
+.kaushalam-x-banner-info{
+padding: 90px 0px;
+}
+.kaushalam-x-banner h1{
+    font-family: gotham-book;
+    font-size: 80px;
+    line-height: 45px;
+}
+span.x-style{
+color:#666;
+font-family: gotham-book;
+}
+.kaushalam-x-banner h2{
+font-family: gotham-book;
+    font-size: 33px;
+    color: #444;
+}
+.kaushalam-x-banner p{
+     font-family: gotham-light;
+    font-size: 22px;
+    line-height: 35px;
+}
+.kaushalam-x-intro p{
+    font-size: 24px;
+    line-height: 45px;
+margin: 0px
+}
+.kaushalam-x-intro{
+padding: 20px 0px;
+}
+.down-arrow{
+position:relative;
+}
+.down-arrow-icon{
+position:absolute;
+top: -19px;
+left:0;
+right:0;
+text-align:center;
+margin:0px auto;
+}
+.kaushalam-x-title{
+    font-family: gotham-light;
+    font-size: 35px;
+    line-height: 40px;
+}
+p.kaushalam-x-content {  
+    font-size: 20px;
+    line-height: 32px;
+}
+.kaushalam-x-title-icon{
+width:75px;
+    display: inline-block;
+}
+.kaushalam-x-Kutumba-icon{
+width:75px;
+}
+.kutumba-align{
+width: 567px;
+    margin: 0px auto;
+    padding: 20px;
+    background: #f6f6f6;
+position:relative;
+}
+.kaushalam-x-free-icon{
+     position: absolute;
+    top: 0;
+    right: -37px;
+width: 75px;
+}
+h2.query-about-kaushalam-x{
+font-family: gotham-book;
+color: #b75764!important;
+    font-size: 26px;
+    padding: 30px 0px 5px;
+}
+.kaushalam-x-about, .kaushalam-x-takeaway, .kaushalam-x-program-info, .kaushalam-x-about-hfn, .kaushalam-x-contact-info{
+ background: #f8fafa;
+}
+.kaushalam-x-about, .kaushalam-x-day, .kaushalam-x-takeaway, .kaushalam-x-privileges, .kaushalam-x-program-info, .kaushalam-x-faculty, .kaushalam-x-about-hfn, .kaushalam-x-beneficiaries, .kaushalam-x-contact-info{
+padding: 40px 0px;
+}
+.kaushalam-x-block-img{
+width:250px;
+}
+
+img.beneficiaries{
+width:700px;
+}
+.align-center{
+margin:0px auto;
+}
+.pf-info {
+    display: inline-block;
+    background: #fff;
+    border-radius: 10px;
+    padding: 10px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 5px 0 rgba(0, 0, 0, .16), 0 2px 10px 0 rgba(0, 0, 0, .12);
+}
+.pf-info p{
+font-family: gotham-light;
+    font-size: 18px;
+    line-height: 30px;
+}
+.kaushalam-x-faculty-img{
+width:150px;
+}
+.kaushalam-x-bullet-points{
+display: table;
+    font-size: 20px;
+    line-height: 35px;
+}
+.kaushalam-x-bullet-points ul{
+margin-left: 0px;
+list-style:none;
+}
+ul li, .kaushalam-x-program-info h3, .kaushalam-x-program-info h4{
+font-family:gotham-light;
+}
+.kaushalam-x-bullet-points ul li::before {
+  content: "\f111";
+font-family: FontAwesome;
+  color: #1da1f2; 
+font-size: 12px;
+    margin-right: 10px;
+    vertical-align: bottom;
+}
+.custom-reg-btn {
+    color: #fff!important;
+    padding: 10px 20px;
+    font-size: 18px;
+    text-decoration: none;
+    color: #fff;
+    background-color: #fd5a63;
+    text-align: center;
+    letter-spacing: .5px;
+    -webkit-transition: .2s ease-out;
+    -o-transition: .2s ease-out;
+    transition: .2s ease-out;
+    cursor: pointer;
+}
+.register-btn-row {
+    margin: 16px;
+    padding: 20px 0px;
+}
+.register-btn-row-top {
+    margin: 1px;
+    padding: 30px 0px;
+}
+a.theme-btn-scheme,
+input[type="submit"] {
+    -webkit-box-shadow: 1px 18px 22px -13px rgba(167, 167, 167, 0.97);
+    -moz-box-shadow: 1px 18px 22px -13px rgba(167, 167, 167, 0.97);
+    box-shadow: 1px 18px 22px -13px rgba(167, 167, 167, 0.97);
+    border-radius: 5px;
+    font-family: gotham-light!important;
+    text-transform: none!important;
+}
+@media screen and (max-width: 991px) {
+    .kaushalam-x-banner-info {
+    padding: 20px 0px;
+    text-align: center;
+    display: inline-block;
+}
+.kaushalam-x-block-img {
+    margin: 0px auto;
+}
+.kaushalam-x-banner{
+padding-top: 0px;
+}
+.entry-content {
+    margin: 0!important;
+    clear: both;
+}
+}
+@media screen and (max-width: 768px) {
+.kaushalam-x-banner h1 {
+    font-size: 55px;
+    line-height: 35px;
+}
+.kaushalam-x-banner h2 {
+    font-size: 24px;
+}
+.kaushalam-x-banner p {
+    font-size: 18px;
+    line-height: 30px;
+}
+.kaushalam-x-banner-img{
+     width: 337px;
+    margin: 0px auto;
+}
+.kaushalam-x-intro p {
+    font-size: 20px;
+    line-height: 38px;
+}
+.kaushalam-x-about-img{
+width: 337px;
+}
+.kaushalam-x-title {
+    font-size: 25px;
+    line-height: 30px;
+text-align: center;
+}
+.kaushalam-x-title-icon, .kaushalam-x-Kutumba-icon {
+    width: 50px;
+    display: block;
+    text-align: center;
+    margin: 0px auto;
+}
+.kaushalam-x-venue-img{
+width: 266px;
+    margin: 0px auto;
+    padding-top: 50px;
+}
+.kaushalam-x-program-info h3, .kaushalam-x-program-info h4{
+text-align:center;
+}
+}
+@media screen and (max-width: 667px) {
+    .kutumba-align {
+    width: 403px;
+}
+}
+@media screen and (max-width: 512px){
+.kaushalam-x-banner h1 {
+    font-size: 44px;
+    line-height: 28px;
+}
+.kaushalam-x-banner h2 {
+    font-size: 22px;
+}
+p.kaushalam-x-content {
+    font-size: 18px;
+}
+h2.query-about-kaushalam-x {
+    font-size: 20px;
+}
+.kaushalam-x-bullet-points {
+    font-size: 16px;
+}
+.kaushalam-x-bullet-points ul li::before {
+    font-size: 8px;
+}
+.kutumba-align {
+    width: 100%;
+    margin-top: 50px;
+display: inline-block;
+}
+.kaushalam-x-free-icon {
+    top: -50px;
+    right: 20px;
+    width: 75px;
+    left: 20px;
+}
+.custom-reg-btn {
+    padding: 9px 26px;
+    font-size: 17px;
+}
+}
+@media screen and (max-width: 370px){
+.kaushalam-x-banner h1 {
+    font-size: 37px;
+}
+}

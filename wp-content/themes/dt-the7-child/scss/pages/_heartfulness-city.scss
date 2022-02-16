@@ -1,0 +1,320 @@
+/*Atlanta*/
+span.atlanta-city-heading{
+    color: #000;
+    font-family: gotham-book;
+}
+span.atlanta-city-info{
+    color: #000;
+    font-family: gotham-book;
+}
+span.atlanta-city-subheading{
+    color: #eb6144!important;
+    font-size: 28px;
+    font-family: gotham-book;
+}
+/*Atlanta*/
+.hfn-city-page-heading{
+    padding:20px 0px; 
+    background-color:#fff;
+}
+.hfn-city-page-heading{
+    padding:20px 0px; 
+    background-color:#fff;
+}
+.hfn-city-page-heading h1{
+    font-size:64px;
+}
+.hfn-city-page-heading h1 span{
+    letter-spacing:0px;  
+    font-family:gotham-book!important;
+}
+h2.featured-event-title{
+    font-size: 2.3em;
+    color: #fff;
+    padding-bottom: 12px;
+    font-family: gotham-book;
+    text-align: center;
+}
+h3.featured-event-intro {
+    color: #fff!important;
+    font-size: 26px;
+    padding: 10px 20px 10px 20px;
+    font-family: gotham-light;
+    text-align: center;
+}
+.hfn-city-section-heading h1{
+    font-family:gotham-book;
+    text-align:center;
+    font-size: 40px;
+    margin-bottom: 40px;
+}
+.event-register-btn{
+    background: #555;
+    padding: 5px 25px;
+    font-size: 14px;
+    margin-top:12px;
+   border-radius:4px;
+    font-weight: 600;
+    color: #fff;
+    letter-spacing: 0.5px;
+    display: -webkit-inline-box;
+    cursor: pointer;
+}
+
+.hfn-latest-calendar-select {
+    font-size: 16px;
+    font-family: gotham-book; 
+    line-height:32px; 
+    height:50px; 
+}
+/*.find-your-center, .find-your-trainer{  border: 2px solid #e8e8e8;    padding: 22px;}*/
+.hfn-map{ border: 2px solid #e8e8e8; }
+.find-your-center h3{font-weight: 600;  font-size: 20px; padding-bottom: 6px; font-family: "gotham-book";}
+.find-your-center p{font-size: 16px;   font-weight: 600;   color: #777;}
+.find-your-center h4{margin:0px;color: #333; font-size: 18px; line-height: 26px; font-family: "gotham-book";}
+.find-your-center .info{    font-size: 15px;  color: #999;  font-weight: 600; padding-bottom:3px;}
+.find-your-trainer h3{font-weight: 600;   font-size: 20px; padding-bottom: 6px;  font-family: "gotham-book";  border-bottom: 1px solid #e8e8e8;}
+.find-your-trainer .trainer{border-bottom: 1px solid #e8e8e8;   padding: 8px 0px;}
+.find-your-trainer .trainer .trainerimg{padding-right:0px;}
+.find-your-trainer .trainer img{border-radius: 50%;  height: 50px; width: 50px;}
+.find-your-trainer .trainer .trainerdet{padding-left:4px;}
+.find-your-trainer .trainer h5 {
+    font-size: 14px;
+    font-family: gotham-book;
+    color: #333;
+    padding: 5px 0px 0px;
+}
+.list-content{
+    margin: 10px 6px;
+}
+.find-your-trainer .trainer p{line-height:22px;}
+.find-your-trainer .trainer a{font-size: 12px;    font-weight: 600;    color: #1da1f2;    text-decoration: none;}
+.find-your-trainer .trainer span{color:#ddd;  font-size:12px;  padding-left: 6px; margin-right: 6px;}
+
+
+.featured-event-calendar-sec{background:#faf8f6;}
+.featured-event-calendar img{border:1px solid #ccc;}
+.featured-event-calendar h4{font-size: 20px;   font-weight: 600; color: #333; font-family: "gotham-book"; padding-bottom:5px;}
+.featured-event-calendar p{ line-height: 24px;   font-weight: 600;    color: #999;    font-size: 17px; }
+.featured-event-link{font-weight: 600;  line-height: 30px;  font-size: 16px;}
+.event-calendar-line{margin: 15px 2px 15px 0px;  border-right: 2px solid #ececec;}
+.event-img{padding-right:80px;}
+
+.learn-daaji {
+    border-radius: 6px;
+    padding: 15px;
+    margin:20px 0px 20px;
+    background: #f9f8f6;
+    color: rgb(131, 141, 143);
+    box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.15);
+}
+h3.daaji-post-title {
+    font-size: 17px;
+    line-height: 26px;
+    padding-bottom: 8px;
+    margin-top: 10px;
+}
+.learn-daaji p {
+    font-size: 14px;
+    color: #999;
+    font-size: 16px!important;
+    text-align: left;
+    line-height: 26px;
+}
+.learn-daaji p span, .learn-daaji p a{color:#fd5a63; cursor:pointer;}
+/*for map*/
+.where-to-meditate-map{
+        min-height: 236px;
+        width: 100%;
+        height: 100%;
+    }
+    .heartspot-city-map {
+            min-height: 450px;
+            width: 100%;
+            height: 100%;
+        }
+
+    .bh-sl-loc-list {
+    font-size: 13px;
+    height: 530px;
+    width: 100%; 
+  }
+
+     .bh-sl-loc-list ul {
+      display: block;
+      clear: left;
+      float: left;
+      width: 100%;
+      list-style: none;
+      margin: 0;
+      padding: 0; }
+      .bh-sl-loc-list ul li {
+        /* Adding this to prevent moving li elements when adding the list-focus class*/
+        box-sizing: border-box;
+        clear: left;
+        cursor: pointer;
+        display: inline-flex;
+        float: left;
+        width: 100%;
+		border: 0;
+		border-top: 1px solid #cccccc;	
+		}
+    .bh-sl-loc-list .list-label {
+      border-radius: 15px;
+      color: #fff;
+      display: block;
+      float: left;
+      font-weight: bold;
+      text-align: center;
+      width: auto;
+      min-width: 13px; 
+	  padding: 10px;}
+    .bh-sl-loc-list .list-details {
+      float: left;
+      width: 100%; 
+	}
+     
+      
+  .loc-name {
+    /* Picked up by both list and infowindows */
+    font-size: 14px;
+    font-family: gotham-book;
+	}
+
+.map_padding {
+    padding: 0px;
+	
+}
+img.trainer_img {
+    border-radius: 10%;
+    height: 60px;
+    width: 60px;
+    object-fit: cover;
+}
+.find_center{
+	font-size: 3em;
+    font-family: gotham-xlight!important;
+}
+.heartspot-menu-header{
+	padding: 10px 0px;
+    color: #1da1f2;
+    font-family: gotham-medium;
+    font-size: 16px;
+}
+.welcome-text{
+	padding:10px;padding-bottom: 0px;
+}
+.panel-default{
+	/*padding: 10px;*/
+}
+.panel-body h4{
+	color: black !important;
+}
+.padd-set{
+	padding-top: 10px;
+}
+.mapping-section{
+	padding-left:5px;
+	padding-right:5px;
+}
+.first-side-section{
+	padding-right:0;
+}
+.last-side-section{
+	padding-left:0;
+}
+.panel-body{
+	padding-top: 0 !important;
+   /* height: 530px;*/
+	
+}
+.height-setting{   
+	     overflow-y: scroll;
+}
+.panel.panel-default {
+    max-height: 452px;
+}
+.padd-bottom{
+	padding-bottom:10px;
+}
+.event-title{
+	font-weight: bold !important;
+    color: black !important;
+}
+.event-data{
+	    color: #777;
+}
+#dialog-messagepop, #dialog-citypop{
+	display:none;
+}
+/*
+.city-input{
+display:inline-flex;
+}
+*/
+
+.ui-dialog .ui-dialog-titlebar-close{
+	width:27px !important;
+	height:27px !important;
+        background-color: #FD5A63;
+    border: none;
+    color: white;
+    border-radius: 30px;
+    font-size: 17px;
+}
+
+/* Carousel Css*/
+
+.outr_div{
+	text-align:center;
+	/*border:1px solid #d8d8d8;
+	height:200px;*/
+	margin-left:5px;
+	outline: none;
+	cursor:pointer;
+	/*padding:10px;*/
+}
+
+.slick-prev:before, .slick-next:before{
+	color:#1da1f2 !important;
+}
+
+@media only screen and (max-width : 420px) {
+.hfn-city-page-heading h1 {
+    font-size: 1.5em !important;
+}
+}
+/*.city-input label {
+    top: 0.8rem;
+}*/
+/*input#city_name{
+    margin-top: 10px;
+}*/
+#connect-modal button.close{ margin: 5px 7px 0px; font-size: 25px;
+    position: absolute; right: 0;}
+#connect-modal button:hover{ background: #ffffff !important;color: #000 !important;
+    border: 0px solid #ffffff !important;}
+#connect-modal .modal-backdrop.fade{opacity:0.5;}
+#connect-modal .modal-sm{max-width: 90%; margin: 40px auto;}
+#connect-modal .modal-body{padding: 0 15px 25px;}
+#connect-modal .modal-title{margin: 10px 15px 0px;}
+#connect-modal label{font-size: 14px; }
+#connect-modal .hfn-input-group{margin-bottom: 15px;}
+#connect-modal input{margin-bottom: 10px;}
+#connect-modal #connect_trainer_detail{width: 100%;}
+@media (min-width: 520px){
+    #connect-modal .modal-sm {
+    max-width: 430px;
+    }
+}
+@media (min-width: 992px){
+#connect-modal .modal-sm {
+    max-width: 720px;
+}
+}
+@media (max-width: 991px){
+    #connect-modal .hfn-input-group{margin-bottom: 25px;}
+    .hfn-input-group #location{margin-top: 35px;}
+}
+ 
+ 

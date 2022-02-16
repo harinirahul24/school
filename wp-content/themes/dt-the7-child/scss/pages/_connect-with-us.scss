@@ -1,0 +1,30 @@
+.hfn-contact-col{
+    background: #f8f8f8;
+        text-align: left;
+        border-radius: 10px;
+        transition: .25s;
+        border-radius: 4px;
+        border: 1px solid #e5e7f2;
+        padding: 20px;
+        word-wrap: break-word;
+    margin-bottom:10px;
+    }
+    .contact-exp-content p{
+    font-size:17px;
+    }
+
+    .hfn-mag-check{
+        margin-top: 40px!important;
+    }
+    @media (max-width: 423px) {
+        
+    .hfn-connect-captcha{
+        margin-top: 40px;
+    }
+    }
+    @media (max-width: 386px) {
+        
+        .hfn-mag-check{
+            margin-top: 75px!important;
+        }
+        }

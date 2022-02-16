@@ -1,0 +1,837 @@
+/*********/
+ .daaji-img {
+     -moz-transform: scaleX(-1);
+     -o-transform: scaleX(-1);
+     -webkit-transform: scaleX(-1);
+     transform: scaleX(-1);
+     filter: FlipH;
+     -ms-filter: "FlipH";
+}
+.masterclass-lang-select{
+    width: 38%;
+    margin: 0px auto;
+    display: block;
+}
+
+/*Master being*/
+ .masterclass-theme-info{
+    font-size: 20px;
+    color:#333;
+    font-family:gotham-book;
+    margin-top: 35px!important;
+    border-top: 1px solid #d6d4d4;
+     margin-bottom:20px;
+     border-bottom: 1px solid #d6d4d4;
+    display: inline-block!important;
+     text-align: center;
+     line-height: 35px;
+    padding: 20px 0px!important;
+}
+ .theme-img{
+    width:90%;
+    margin:0px auto;
+}
+p.masterclass-theme-info span{
+    font-family:gotham-book;
+}
+ .master-being{
+    background-color:#f9f8f7;
+     padding:45px 0px;
+}
+ span.theme-line2{
+    font-size:36px;
+}
+span.theme-line3{
+    font-size:34px;
+}
+.custom-width{
+    width: 500px;
+     margin: 0px auto;
+     text-align: center;
+}
+ span.theme-line{
+    font-size: 26px;
+}
+span.theme-line1{
+    font-size:29px;
+}
+.custom-width1{
+     width: 434px;
+    margin: 0px auto;
+}
+ .being-oneness, .about-daaji, .heartfulness-way-jan18, .contact-info{
+    padding:50px 0px;
+}
+ .masterclass-theme{
+    font-size: 108px;
+     line-height: 69px;
+     font-family: gotham-light;
+    color:#000;
+}
+ span.masterclass-theme-sub{
+     font-size: 189px;
+     line-height: 164px;
+     padding-bottom:30px;
+    font-family: gotham-light;
+     color:#000;
+}
+ .master-being-content{
+    font-size: 1.3em;
+     text-align: center;
+     line-height: 36px;
+     color:#aaa;
+     letter-spacing: 1px;
+}
+ .master-being-content span{
+    color:#1ca1f2;
+}
+ .master-being-content strong{
+    color:#000;
+}
+ .btn-black{
+    background-color:#333 !important;
+     color:#fff !important;
+}
+
+ .being-oneness, .about-daaji, .heartfulness-way-jan18, .contact-info{
+    padding:50px 0px;
+}
+ .masterclass-theme{
+    font-size: 108px;
+     line-height: 69px;
+     font-family: gotham-light;
+    color:#000;
+}
+ span.masterclass-theme-sub{
+     font-size: 189px;
+     line-height: 164px;
+     padding-bottom:30px;
+    font-family: gotham-light;
+     color:#000;
+}
+ .master-being-content{
+    font-size: 1.3em;
+     text-align: center;
+     line-height: 36px;
+     color:#aaa;
+     letter-spacing: 1px;
+}
+ .master-being-content span{
+    color:#1ca1f2;
+}
+ .master-being-content strong{
+    color:#000;
+}
+ .btn-black{
+    background-color:#333 !important;
+     color:#fff !important;
+}
+
+ p.being-oneness-content, p.thw-book-content{
+    font-family: gotham-book;
+     font-weight: normal;
+     color: #444444;
+     font-size: 18px;
+     line-height: 34px;
+    margin-bottom: 5px;
+     display: block!important;
+}
+ .masterclass-theme-date{
+    font-family: gotham-book;
+     font-weight: normal;
+     color: #444444;
+     font-size: 30px;
+     line-height: 28px;
+    margin-bottom: 5px;
+     display: block!important;
+}
+ p.being-oneness-img-content{
+    font-family: gotham-light;
+     font-size: 14px;
+}
+ .inner-block{
+    width: 80%;
+    margin: 0px auto;
+}
+ .section-block-title {
+     font-size: 58px;
+     line-height: 61px;
+     color: #000;
+     font-family: gotham-book;
+     margin-bottom: 50px;
+}
+ .mc-event-info-content, .heartfulness-way-jan18, .ask-questions-section-jan18{
+     background-color: #f9f8f7;
+     border-top: 1px solid #ccc;
+     border-bottom: 1px solid #ccc;
+}
+ .being-oneness hr{
+    border-top:1px dotted #cccccc;
+}
+ .hfnway-book-img {
+     padding: 0px 50px;
+     width: 406px;
+}
+ @media (max-width: 580px) {
+     .custom-width, .custom-width1{
+         width:100%!important;
+    }
+     .masterclass-theme-date, span.theme-line, span.theme-line1, span.theme-line2, span.theme-line3{
+         font-size:20px;
+    }
+     .section-block-title {
+         font-size: 35px!important;
+         line-height: 33px!important;
+    }
+     .theme-img{
+        width:100%
+    }
+     span.masterclass-theme-sub {
+         font-size: 132px;
+         line-height: 153px;
+    }
+     .masterclass-theme {
+         font-size: 77px;
+         line-height: 35px;
+    }
+     .masterclass-theme-info {
+         font-size: 20px;
+    }
+     .inner-block {
+         width: 100%;
+    }
+}
+ @media (max-width: 440px) {
+     span.masterclass-theme-sub {
+         font-size: 85px;
+         line-height: 87px;
+    }
+     .masterclass-theme {
+         font-size: 49px;
+         line-height: 35px;
+    }
+     .section-block-title {
+         font-size: 26px;
+         margin-bottom: 30px;
+    }
+}
+/*old*/
+ .timeline-ShareMenu-container {
+     position: absolute;
+     left: -18px;
+     z-index: 1000;
+     display: none;
+     padding-bottom: 4px;
+     min-width: 130px;
+     background-color: #fff;
+     border: 1px solid transparent;
+     border-radius: 4px;
+     box-shadow: 0 0 4px rgba(0, 0, 0, .25);
+}
+ h2.time-block-title {
+     margin: 0px;
+     font-family: gotham-medium!important;
+     color: #000;
+     font-size: 24px!important;
+}
+ h2.more-info {
+     margin: 0px;
+     font-family: gotham-medium!important;
+     color: #000;
+     font-size: 24px!important;
+}
+ h2.more-info-details {
+     margin: 0px;
+     font-family: gotham-light!important;
+     color: #333;
+     font-size: 24px!important;
+}
+ span.time-info {
+     color: #333;
+     margin: 0px;
+     padding: 0px;
+     font-family: gotham-light;
+     font-size: 24px!important;
+     letter-spacing:normal;
+     line-height:36px;
+}
+ .mc-top-register {
+     background-color: rgba(255, 255, 255, 0.97);
+     box-shadow: 0 3px 5px rgba(57, 63, 72, 0.2);
+     padding: 20px 0px;
+     text-align: center;
+}
+ .mc-top-register h1 {
+     font-size: 20px;
+     margin-bottom: 6px;
+     line-height:60px;
+     padding-top:20px;
+     letter-spacing: normal;
+}
+ span.font-medium {
+     font-family: gotham-medium!important;
+}
+ span.font-light {
+     font-family: gotham-light!important;
+}
+ span.theme-light-gray {
+     color: #555;
+}
+ span.theme-gray-shade {
+     color: #999;
+}
+ span.theme-black {
+     color: #000;
+}
+ .top-custom-reg-btn {
+     color: #fff!important;
+     margin-top: 10px;
+     padding: 15px 30px;
+     font-family: gotham-light;
+     font-size: 20px;
+     line-height:normal;
+}
+ h2.count-info {
+     font-family: gotham-medium;
+     color: #000;
+     margin: 0px;
+     padding: 0px;
+     font-size: 24px!important;
+}
+ h2.count-info-sub {
+     font-family: gotham-light!important;
+     margin: 0px;
+     padding: 0px;
+     color: #333;
+     font-size:26px;
+     letter-spacing:normal;
+     padding:8px 0px;
+}
+ h1.mc-main-theme {
+     line-height: 60px;
+     padding: 30px 0px;
+     font-size: 100px;
+     font-family: gotham-book!important;
+     font-size:68px !important;
+}
+ .daaji-img-circle, .mc-register-info {
+     display: inline-block!important;
+}
+ .mc-banner, .social-wall-section, .mc-details-row, .mc-event-info-content, .contact-section-jan18, .register-btn-row-jan18, .mc-registration-section, .mc-features, .ask-questions-section-jan18, .about-daaji-section-jan18, .press-release-row {
+     padding: 50px 0px;
+}
+ .mc-april-info h1 {
+     font-family: gotham-light;
+     line-height: 50px;
+     color: #000;
+     font-size:28px;
+     letter-spacing:normal;
+}
+ h1.mc-sub-theme {
+     color: #333;
+     line-height: 60px;
+     font-family: gotham-light!important;
+}
+ img.img-align-center {
+     margin: 0px auto;
+}
+ .mc-event-info-content {
+     background-color: #f9f8f6;
+     border-top: 1px solid #ccc;
+     border-bottom: 1px solid #ccc;
+}
+ h2.feature-head {
+     font-size: 44px;
+     line-height: 90px;
+}
+ h2.feature-head span{
+    letter-spacing:normal;
+}
+ h1.feature-head {
+     font-size: 156px;
+     line-height: 120px;
+}
+ .featured-points {
+     background-color: #f9f8f8;
+     margin: 10% 10% 1%;
+     padding: 30px 0px;
+}
+ .featured-points p {
+     font-size: 20px;
+     padding-bottom:10px;
+}
+ h1.featured-points-head {
+     padding-bottom: 30px;
+     font-size:30px;
+     letter-spacing:normal;
+}
+ h1.section-inner-title {
+     font-family: gotham-medium!important;
+     font-size: 40px;
+     color: #777777;
+     line-height: 60px;
+     margin-top: 15px;
+     margin-bottom: 10px;
+}
+ .about-daaji-section-jan18{
+     background-color: #f7f5f2;
+     border-top: 1px solid #ccc;
+     border-bottom: 1px solid #ccc;
+}
+ .mc-features {
+     border-bottom: 1px solid #ccc;
+}
+ .about-daaji-section-jan18, .promo-section, .social-wall-section {
+     background-color: #f2f2f2;
+}
+ .contact-section-jan18 {
+     background-color: #fff;
+}
+ .schedule1-jan18, .schedule2-jan18, .schedule3-jan18 {
+     padding-bottom: 50px;
+     border-bottom: 1px solid #dedede;
+     margin-top: 50px;
+}
+ .padd13{
+    padding:13px;
+}
+ h1.section-other-title {
+     font-size: 28px;
+     color: #000;
+     line-height: 45px;
+     letter-spacing:normal;
+     padding-bottom:20px;
+}
+ #press-release-info {
+     font-size: 45px;
+     line-height: 50px;
+}
+ #press-release-info span{
+     letter-spacing:normal;
+}
+ a.link-active {
+     color: #fd5a63!important;
+}
+
+ h2.day-text {
+     color: #000;
+     font-size: 40px!important;
+     line-height: 50px;
+     margin: 0px;
+     font-family: gotham-book;
+}
+ h2.month-text {
+     color: #868686;
+     margin: 0px;
+     font-family: gotham-book
+}
+ h4.time-title-intro {
+     line-height: 30px;
+     margin: 0px;
+     font-family: gotham-light;
+     font-size:17px;
+     color:#333;
+}
+ .mc-count-info{
+     display: inline-block;
+     padding-bottom: 10px;
+     width: 100%;
+}
+ @media (max-width: 1024px) {
+     .featured-points {
+         display: inline-block!important;
+    }
+}
+ @media (max-width: 1168px) {
+     h1.feature-head {
+         font-size: 161px;
+         line-height: 80px;
+    }
+     h2.feature-head {
+         font-size: 45px;
+         line-height: 100px;
+    }
+     .featured-points {
+         margin: 110px 210px 11px 210px;
+    }
+     .featured-points p {
+         font-size: 16px;
+    }
+     h1.featured-points-head {
+         font-size: 20px;
+    }
+}
+ @media (max-width: 992px) {
+     h2.feature-head {
+         font-size: 32px;
+         line-height: 70px;
+    }
+     h1.feature-head {
+         font-size: 115px;
+         line-height: 60px;
+    }
+     .featured-points {
+         margin: 90px 200px 11px 200px;
+    }
+     .mc-april-info h1 {
+         font-size: 24px;
+         line-height: 44px;
+    }
+}
+ @media (max-width: 768px) {
+    .masterclass-lang-select{
+        width: 100%;
+    }
+     h1.section-inner-title {
+         font-size: 26px;
+    }
+     .top-extra-space {
+         margin: 0em 0 0 !important;
+    }
+     .mc-count-info>h2, .times-block>h2{
+         font-size: 18px!important;
+         line-height: 34px!important;
+    }
+     h2.feature-head {
+         font-size: 24px;
+         line-height: 54px;
+    }
+     .featured-points {
+         margin: 60px 200px 11px 200px;
+    }
+     .featured-points {
+         margin: 60px 80px 11px 80px!important;
+    }
+     h1.feature-head {
+         font-size: 82px;
+    }
+     #press-release-info {
+         font-size: 25px;
+         line-height: 34px;
+    }
+     .social-extra-space {
+         padding-top: 20px!important;
+    }
+}
+ @media (max-width: 660px) {
+     .featured-points {
+         margin: 60px 20px 11px 20px!important;
+    }
+     .mc-april-info h1 {
+         font-size: 20px;
+         line-height: 37px;
+    }
+}
+ @media (max-width: 502px) {
+     .featured-points {
+         margin: 30px 80px 11px 80px;
+    }
+     h1.featured-points-head {
+         font-size: 16px;
+    }
+     .featured-points p {
+         font-size: 13px;
+    }
+     h1.feature-head {
+         font-size: 58px;
+    }
+}
+ @media (max-width: 361px) {
+     .featured-points {
+         margin: 30px 0px 11px 0px;
+    }
+     h2.feature-head {
+         font-size: 3.5vw !important;
+         line-height: 26px;
+    }
+     h1.feature-head {
+         font-size: 46px;
+    }
+     h1.featured-points-head {
+         font-size: 16px;
+         padding: 0px 20px;
+    }
+}
+ .vg1.transition-fade.videogallery.id_english.skin-default.is-touch.mode-videowall.nav-thumbsandarrows.menu-none.transition-slideup.dzsvg-loaded.inited {
+     background-color: rgb(242, 242, 242)!important;
+}
+ p.press-release-about {
+     font-size: 24px;
+}
+ span.ui-state-active {
+     border: 1px solid #c5c5c5!important
+}
+ .logo-section {
+     padding: 0 0 6em 0;
+}
+ p.day-banner-lines-data {
+     font-size: 32px;
+     line-height: 50px;
+     margin-top: 30px;
+}
+ h1.event-ext-title {
+     font-size: 50px;
+     color: #000;
+     line-height: 60px;
+     font-family: gotham-light!important;
+}
+ span.grey-newshade {
+     color: #444;
+     font-family: gotham-book!important;
+}
+ .download-section {
+     color: #000;
+     font-family: gotham-light;
+     font-size: 30px;
+     line-height: 40px;
+     margin-top: 20px;
+     margin-bottom: 10px;
+}
+ .download-links{
+    line-height:40px;
+}
+ p.banner-lines-data {
+     font-family: gotham-light!important;
+     font-size: 24px;
+     line-height: 28px;
+     margin-top: 0px;
+     padding: 0px;
+}
+ span.grey-shade {
+     color: #777;
+     font-family: gotham-light!important;
+}
+ .download-links a {
+     font-family: gotham-light!important;
+}
+ .custom-left-border {
+     border-left: 1px solid #d3d3d3;
+     height: 200px;
+     padding: 0px 0px 0px 34px;
+}
+ .logo-text {
+     font-family: gotham-xlight;
+     font-size: 70px;
+     color: #000;
+     line-height: 66px;
+}
+ span.logo-theme-color {
+     color: #1ca0f2;
+     font-family: gotham-xlight;
+}
+ .we-offer {
+     background-color: #f5f5f5;
+     padding: 25px;
+}
+ h1.size-big {
+     font-size: 150px;
+     line-height: 125px;
+}
+ h1.size-medium {
+     font-size: 92px;
+     line-height: 84px;
+}
+ .med-style {
+     font-size: 105px;
+     line-height: 84px;
+}
+ h1.size-xmedium {
+     font-size: 57px;
+     line-height: 60px;
+}
+
+ .sunrays-banner {
+     background-color: #f5f5f5;
+     padding-bottom: 30px;
+     padding-top: 30px;
+}
+ h2.masterclass-content {
+     color: #444;
+     font-size: 28px;
+     margin-top: 0px;
+}
+ h2.masterclass-days {
+     font-weight: 600;
+     margin-top: 0px;
+}
+ .extra-margin {
+     margin-top: 30px;
+}
+ h3.hr-section {
+     margin: 0px;
+}
+ .hr-section hr {
+     margin: 0.5em;
+}
+ h2.ltm-tag {
+     font-size: 60px;
+     line-height: 60px;
+}
+ h2.time-title {
+     line-height: 30px;
+}
+ h2.time-title, h2.register-title {
+     font-size: 34px;
+     margin-top: 15px;
+     margin-bottom: 10px;
+}
+ .img-custom-center {
+     margin: 0px auto;
+}
+ @media (max-width: 706px) {
+     h3.font-spec-grey {
+         font-size: 43px!important;
+         margin-top: 0px!important;
+         line-height: 45px;
+    }
+     h1.font-spec-tag {
+         font-size: 30px!important;
+    }
+     h3.font-spec-purple {
+         font-size: 16px!important;
+    }
+     .form-event-daaji, .form-gift-daaji {
+         padding-top: 30px;
+         width: 90%!important;
+    }
+}
+ @media (max-width: 399px) {
+     h3.font-spec-grey {
+         font-size: 38px!important;
+    }
+     h1.font-spec-tag {
+         font-size: 28px!important;
+    }
+     h3.font-spec-purple {
+         font-size: 15px!important;
+    }
+     h1.mc-main-theme {
+         font-size:60px!important;
+    }
+}
+ @media (max-width: 480px) {
+     .daaji-event-main {
+         height: auto!important;
+    }
+     h1.event-ext-title {
+         font-size: 40px;
+    }
+}
+ h1.section-by-attend {
+     font-size: 45px;
+     color: #1d78a7;
+     line-height: 50px;
+}
+ .form-event-daaji, .form-gift-daaji {
+     width: 72%;
+     margin: 0px auto;
+}
+ .time-img-style {
+     margin: 0px auto;
+}
+ .daaji-circle-img {
+     margin-top: 30px;
+}
+ h2.time-details {
+     font-size: 18px;
+     color: #444;
+     padding: 0px;
+     margin: 0px;
+}
+ .time-title {
+     margin: 0px;
+     padding: 0px;
+}
+ .img-style {
+     text-align: center;
+     margin: 0px auto;
+}
+ span.intro-bg {
+     background-color: #7ed0b5;
+     color: #fff;
+     padding-left: 5px;
+     padding-right: 5px;
+}
+ h1.padd-mar-off {
+     padding: 0px;
+     margin: 0px;
+}
+ .daaji-event-inner-section, .about-hfn-section, .article-section {
+     background-color: #f2f2f2;
+     background-size: cover;
+     padding-bottom: 3em;
+}
+ .intro-line-event-new {
+     line-height: 34px;
+     padding-bottom: 0px;
+}
+ .social-extra-space {
+     padding-top: 100px;
+}
+ h4.intro-line-event-new {
+     font-size: 18px;
+     color: #444;
+     margin-top: 15px;
+     margin-bottom: 10px;
+     line-height: 32px;
+}
+ h2.section-inner-sub {
+     color: #58676d;
+     font-size: 30px;
+     line-height: 50px;
+}
+ .top-extra-space {
+     margin: 3em 0 0!important;
+}
+ .form-event {
+     padding: 6em 0 0!important;
+}
+ .form-row {
+     padding: 2em 0 0!important;
+}
+ h1.font-spec-color {
+     color: #552d8e;
+     text-transform: uppercase;
+     font-size: 90px;
+     letter-spacing: 6px;
+}
+ h1.font-spec-tag {
+     color: #000;
+     font-size: 36px;
+     line-height: 40px;
+}
+ h3.font-spec-small {
+     color: #2e92a2;
+     text-transform: uppercase;
+     font-size: 40px;
+     padding: 0px 0px 14px;
+}
+ h3.font-spec-green {
+     color: #6395b8;
+     text-transform: uppercase;
+     padding: 14px 0;
+     font-size: 55px;
+     word-spacing: 12px;
+}
+ h3.font-spec-grey {
+     color: #343030;
+     font-weight: 300;
+     padding: 0px;
+     margin: 0px;
+     font-size: 55px;
+     word-spacing: 5px;
+     letter-spacing: 0px;
+     margin-top: 56px;
+     line-height: 45px;
+}
+ h3.font-spec-purple {
+     color: #87539d;
+     font-weight: 600;
+     font-size: 20px;
+     line-height: 45px;
+}
+@media (max-width: 510px) {
+    .time-img-style {
+         margin: 75px auto;
+    }
+}

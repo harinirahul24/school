@@ -1,0 +1,201 @@
+#, fuzzy
+msgid ""
+msgstr ""
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+"Project-Id-Version: Gravity Forms Instamojo Gateway\n"
+"POT-Creation-Date: 2019-01-17 20:03+0530\n"
+"PO-Revision-Date: 2019-01-17 20:03+0530\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.0.5\n"
+"X-Poedit-Basepath: ..\n"
+"X-Poedit-Flags-xgettext: --add-comments=translators:\n"
+"X-Poedit-WPHeader: instamojo.php\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-KeywordsList: __;_e;_n:1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;esc_attr__;"
+"esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c;_n_noop:1,2;"
+"_nx_noop:3c,1,2;__ngettext_noop:1,2\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPathExcluded-0: *.js\n"
+
+#: class-gf-instamojo.php:63
+#, php-format
+msgid ""
+"Instamojo supports only INR currency. %1$s Click here%2$s to navigate to the "
+"main settings page and change it."
+msgstr ""
+
+#: class-gf-instamojo.php:77 class-gf-instamojo.php:85
+msgid "Mode"
+msgstr ""
+
+#: class-gf-instamojo.php:80
+msgid "Production"
+msgstr ""
+
+#: class-gf-instamojo.php:81
+msgid "Sandbox"
+msgstr ""
+
+#: class-gf-instamojo.php:85
+msgid ""
+"Select Production to receive live payments. Select Sandbox for testing "
+"purposes when using the Instamojo development sandbox environment at <a href="
+"\"https://test.instamojo.com\" target=\"_blank\">https://test.instamojo.com</"
+"a>."
+msgstr ""
+
+#: class-gf-instamojo.php:89 class-gf-instamojo.php:93
+msgid "API Key"
+msgstr ""
+
+#: class-gf-instamojo.php:93 class-gf-instamojo.php:101
+msgid "Enter the API Key provided by Instamojo."
+msgstr ""
+
+#: class-gf-instamojo.php:97 class-gf-instamojo.php:101
+msgid "Auth Token"
+msgstr ""
+
+#: class-gf-instamojo.php:121 class-gf-instamojo.php:123
+msgid "Posts"
+msgstr ""
+
+#: class-gf-instamojo.php:123
+msgid ""
+"Enable this option if you would like to only create the post after payment "
+"has been received."
+msgstr ""
+
+#: class-gf-instamojo.php:125
+msgid "Create post only when payment is received."
+msgstr ""
+
+#: class-gf-instamojo.php:135 class-gf-instamojo.php:156
+msgid "Send Payment Link By"
+msgstr ""
+
+#: class-gf-instamojo.php:140
+msgid "Do not send"
+msgstr ""
+
+#: class-gf-instamojo.php:144 class-gf-instamojo.php:181
+msgid "Email"
+msgstr ""
+
+#: class-gf-instamojo.php:148
+msgid "SMS"
+msgstr ""
+
+#: class-gf-instamojo.php:152
+msgid "Email and SMS"
+msgstr ""
+
+#: class-gf-instamojo.php:156
+msgid ""
+"Send the Instamojo payment link via email and/or SMS to the customer. Please "
+"make sure the email address or the phone field is mandatory in your form to "
+"send email or SMS respectively otherwise Instamojo will return an error."
+msgstr ""
+
+#: class-gf-instamojo.php:165
+msgid "Customer Information"
+msgstr ""
+
+#: class-gf-instamojo.php:170
+msgid "Buyer Name"
+msgstr ""
+
+#: class-gf-instamojo.php:175
+msgid "Phone"
+msgstr ""
+
+#: class-gf-instamojo.php:187 class-gf-instamojo.php:188
+msgid "Purpose"
+msgstr ""
+
+#: class-gf-instamojo.php:188
+msgid "The purpose of payment. Defaults to form name by the plugin."
+msgstr ""
+
+#: class-gf-instamojo.php:205
+msgid "Instamojo Field"
+msgstr ""
+
+#: class-gf-instamojo.php:281
+msgid ""
+"There was an error processing your details. Please contact the site "
+"administrator."
+msgstr ""
+
+#: class-gf-instamojo.php:307
+msgid "Gateway Error:"
+msgstr ""
+
+#: class-gf-instamojo.php:430 class-gf-instamojo.php:437
+msgid "Unable to validate your payment, please try again."
+msgstr ""
+
+#: class-gf-instamojo.php:452
+#, php-format
+msgid "Amount: %s"
+msgstr ""
+
+#: class-gf-instamojo.php:455
+msgid "Cancel"
+msgstr ""
+
+#: class-gf-instamojo.php:493
+#, php-format
+msgid "This webhook has already been processed (Event Id: %s)"
+msgstr ""
+
+#: class-gf-instamojo.php:777
+msgid "Payment Completed"
+msgstr ""
+
+#: class-gf-instamojo.php:898
+#, php-format
+msgid ""
+"Payment information was manually updated. Status: %s. Amount: %s. "
+"Transaction ID: %s. Date: %s"
+msgstr ""
+
+#: class-gf-instamojo.php:980
+msgid ""
+"Please map a Phone field or remove SMS from the Payment Link option below."
+msgstr ""
+
+#: class-gf-instamojo.php:983
+msgid ""
+"Please map a field against the Email field or remove email from the Payment "
+"Link option below."
+msgstr ""
+
+#: instamojo.php:38
+msgid "Indian Rupee"
+msgstr ""
+
+#. Plugin Name of the plugin/theme
+msgid "Gravity Forms Instamojo Gateway"
+msgstr ""
+
+#. Plugin URI of the plugin/theme
+msgid "https://wpgateways.com/products/instamojo-gateway-gravity-forms/"
+msgstr ""
+
+#. Description of the plugin/theme
+msgid ""
+"Extends Gravity Forms to process payments with Instamojo payment gateway"
+msgstr ""
+
+#. Author of the plugin/theme
+msgid "WP Gateways"
+msgstr ""
+
+#. Author URI of the plugin/theme
+msgid "https://wpgateways.com"
+msgstr ""
