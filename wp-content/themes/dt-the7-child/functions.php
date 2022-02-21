@@ -1,8 +1,6 @@
 <?php
-/**
- * Your code here.
- *
- */
+require get_theme_file_path('/inc/google-sheets/vendor/autoload.php');
+
 function register_customfonts_style() {
 wp_enqueue_style( 'wpb-gotham-fonts', get_stylesheet_directory_uri() . '/css/gotham.css' );
     wp_enqueue_style( 'wpb-custom-css', get_stylesheet_directory_uri() . '/css/heartfulness.css' );
@@ -157,4 +155,97 @@ function access_entry_via_field( $entry, $action ) {
 					}
 			}
 }
+
+add_action( 'gform_after_submission', 'update_google_sheet', 10, 2 );
+
+function update_google_sheet($entry, $form)
+{
+	 
+	 if($form['title'] == 'Work with us'){
+	//Reading data from spreadsheet.
+	$client = new \Google_Client();
+	$client->setApplicationName('Google Sheets and PHP');
+	$client->setScopes([\Google_Service_Sheets::SPREADSHEETS]);
+	$client->setAccessType('offline');
+	$client->setAuthConfig(get_theme_file_path('/inc/google-sheets/credential.json'));
+	$service = new Google_Service_Sheets($client);
+	global $post;
+	$spreadsheetId = get_post_meta($post->ID, "spreadsheet-id", true); //It is present in your URL
+    $update_value = array();
+	foreach ( $form['fields'] as $field ) {
+	$body = new Google_Service_Sheets_ValueRange([
+		  'values' => $update_value
+		]);
+		
+		if($field->label!=''){
+
+		if($entry[$field->id]!=''){
+
+   		$update_value[0][] = $entry[$field->id];
+
+   	}else{
+
+   		$update_value[0][] = '';
+
+   	}
+   	}
+   	}
+    $update_range = "Sheet1!A2:DM2"; 
+	$body = new Google_Service_Sheets_ValueRange([
+		  'values' => $update_value
+		]);
+	$params = ['valueInputOption' => 'RAW'];
+	$insert = ["insertDataOption" => "INSERT_ROWS"];
+	$update_sheet = $service->spreadsheets_values->append($spreadsheetId, $update_range, $body, $params,$insert);
+}
+}
+function add_custom_meta_box()
+{
+    add_meta_box("demo-meta-box", "Google Spreadsheet", "custom_meta_box_markup", "page", "side", "high", null);
+}
+
+add_action("add_meta_boxes", "add_custom_meta_box");
+
+function custom_meta_box_markup($object)
+{
+
+    wp_nonce_field(basename(__FILE__), "meta-box-nonce");
+
+    ?>
+        <div>
+            <label for="spreadsheet-id">ID</label>
+            <input name="spreadsheet-id" type="text" value="<?php echo get_post_meta($object->ID, "spreadsheet-id", true); ?>">
+
+            <br>
+        </div>
+    <?php  
+}
+
+function save_custom_meta_box($post_id, $post, $update)
+{
+	
+    if (!isset($_POST["meta-box-nonce"]) || !wp_verify_nonce($_POST["meta-box-nonce"], basename(__FILE__)))
+        return $post_id;
+
+    if(!current_user_can("edit_post", $post_id))
+        return $post_id;
+
+    if(defined("DOING_AUTOSAVE") && DOING_AUTOSAVE)
+        return $post_id;
+
+    $slug = "page";
+    if($slug != $post->post_type)
+        return $post_id;
+
+    $meta_box_text_value = "";
+    
+
+    if(isset($_POST["spreadsheet-id"]))
+    {
+        $meta_box_text_value = $_POST["spreadsheet-id"];
+    }   
+    update_post_meta($post_id, "spreadsheet-id", $meta_box_text_value);
+}
+
+add_action("save_post", "save_custom_meta_box", 10, 3);
 
