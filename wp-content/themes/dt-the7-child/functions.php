@@ -190,6 +190,7 @@ function update_google_sheet($entry, $form)
    	}
    	}
    	}
+    $update_value[0][] = date('Y-m-d H:i');
     $update_range = "Sheet1!A2:DM2"; 
 	$body = new Google_Service_Sheets_ValueRange([
 		  'values' => $update_value
