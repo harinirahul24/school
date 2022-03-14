@@ -3,11 +3,18 @@ defined('ABSPATH') || exit;
 ?>
 
 <table class="form-table">
-    <tr><td colspan="2">General options for header, social links and footer sections could also be set in <a href="?page=newsletter_main_main">Blog Info panel</a>.</td></tr>
+    <tr><td colspan="2">General options for header, social links and footer sections could also be set in <a href="?page=newsletter_main_info">Blog Info panel</a>.</td></tr>
     <tr>
         <th><?php _e('Primary color', 'newsletter') ?></th>
         <td>
             <?php $controls->color('theme_color'); ?>
+            <p class="description" style="display: inline">Hex values, e.g. #FF0000</p>
+        </td>
+    </tr>
+    <tr>
+        <th><?php _e('External background color', 'newsletter') ?></th>
+        <td>
+            <?php $controls->color('theme_background'); ?>
             <p class="description" style="display: inline">Hex values, e.g. #FF0000</p>
         </td>
     </tr>
@@ -23,7 +30,7 @@ defined('ABSPATH') || exit;
     <tr>
         <th>Language</th>
         <td>
-            <?php $controls->language(); ?>
+            <?php $controls->language('theme_language'); ?>
         </td>
     </tr>
     <tr>
@@ -31,9 +38,12 @@ defined('ABSPATH') || exit;
         <td>
             <?php $controls->checkbox('theme_posts', 'Add latest posts'); ?>
             <br>
-            <?php $controls->checkbox('theme_thumbnails', 'Add post thumbnails'); ?>
-            <br>
             <?php $controls->checkbox('theme_excerpts', 'Add post excerpts'); ?>
+            <br>
+            <?php $controls->checkbox('theme_thumbnails', 'Add post thumbnails'); ?> 
+            <?php $controls->select('theme_image_size', array('thumbnail'=>'Thumbnail', 'medium'=>'Medium')); ?>
+            <br>
+            
         </td>
     </tr>
     <tr>

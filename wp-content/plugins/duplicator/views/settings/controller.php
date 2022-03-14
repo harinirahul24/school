@@ -2,7 +2,7 @@
 defined('ABSPATH') || defined('DUPXABSPATH') || exit;
 
 DUP_Handler::init_error_handler();
-DUP_Util::hasCapability('manage_options');
+DUP_Util::hasCapability('export');
 
 global $wpdb;
 
@@ -23,23 +23,26 @@ $current_tab = isset($_REQUEST['tab']) ? sanitize_text_field($_REQUEST['tab']) :
 		<a href="?page=duplicator-settings&tab=package" class="nav-tab <?php echo ($current_tab == 'package') ? 'nav-tab-active' : '' ?>"> <?php esc_html_e('Packages', 'duplicator'); ?></a>
 		<a href="?page=duplicator-settings&tab=schedule" class="nav-tab <?php echo ($current_tab == 'schedule') ? 'nav-tab-active' : '' ?>"> <?php esc_html_e('Schedules', 'duplicator'); ?></a>
         <a href="?page=duplicator-settings&tab=storage" class="nav-tab <?php echo ($current_tab == 'storage') ? 'nav-tab-active' : '' ?>"> <?php esc_html_e('Storage', 'duplicator'); ?></a>
+		<a href="?page=duplicator-settings&tab=import" class="nav-tab <?php echo ($current_tab == 'import') ? 'nav-tab-active' : '' ?>"> <?php esc_html_e('Import', 'duplicator'); ?></a>
 		<a href="?page=duplicator-settings&tab=license" class="nav-tab <?php echo ($current_tab == 'license') ? 'nav-tab-active' : '' ?>"> <?php esc_html_e('License', 'duplicator'); ?></a>
-		<a href="?page=duplicator-settings&tab=about" class="nav-tab <?php echo ($current_tab == 'about') ? 'nav-tab-active' : '' ?>"> <?php esc_html_e('About', 'duplicator'); ?></a>
+        <a href="?page=duplicator-settings&tab=about" class="nav-tab <?php echo ($current_tab == 'about') ? 'nav-tab-active' : '' ?>"> <?php esc_html_e('About', 'duplicator'); ?></a>
     </h2>
 
     <?php
     switch ($current_tab) {
-        case 'general': include('general.php');
+        case 'general': include(DUPLICATOR_PLUGIN_PATH."views/settings/general.php");
             break;
-		case 'package': include('packages.php');
+		case 'package': include(DUPLICATOR_PLUGIN_PATH."views/settings/packages.php");
             break;
-		case 'schedule': include('schedule.php');
+		case 'schedule': include(DUPLICATOR_PLUGIN_PATH."views/settings/schedule.php");
             break;
-        case 'storage': include('storage.php');
+        case 'storage': include(DUPLICATOR_PLUGIN_PATH."views/settings/storage.php");
             break;
-        case 'license': include('license.php');
+        case 'import': include(DUPLICATOR_PLUGIN_PATH."views/settings/import.php");
             break;
-        case 'about': include('about-info.php');
+        case 'license': include(DUPLICATOR_PLUGIN_PATH."views/settings/license.php");
+            break;
+        case 'about': include(DUPLICATOR_PLUGIN_PATH."views/settings/about-info.php");
             break;
     }
     ?>

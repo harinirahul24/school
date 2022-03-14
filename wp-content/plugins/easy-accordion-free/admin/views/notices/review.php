@@ -9,6 +9,10 @@
  * @subpackage Easy_Accordion_Free/admin/views/notices
  * @author     ShapedPlugin<support@shapedplugin.com>
  */
+
+/**
+ * Admin review notice class.
+ */
 class Easy_Accordion_Free_Review {
 
 	/**
@@ -47,7 +51,7 @@ class Easy_Accordion_Free_Review {
 		?>
 		<div id="sp-eafree-review-notice" class="sp-eafree-review-notice">
 			<div class="sp-eafree-plugin-icon">
-				<img src="<?php echo SP_EA_URL . 'admin/img/logo.png'; ?>" alt="Easy Accordion">
+				<img src="<?php echo esc_url( SP_EA_URL . 'admin/css/images/eap-256.svg' ); ?>" alt="Easy Accordion">
 			</div>
 			<div class="sp-eafree-notice-text">
 				<h3>Enjoying <strong>Easy Accordion</strong>?</h3>
@@ -81,7 +85,8 @@ class Easy_Accordion_Free_Review {
 
 					$.post( ajaxurl, {
 						action: 'sp-eafree-never-show-review-notice',
-						notice_dismissed_data : notice_dismissed_value
+						notice_dismissed_data : notice_dismissed_value,
+						nonce: '<?php echo esc_attr( wp_create_nonce( 'sp_eafree_review_notice' ) ); ?>'
 					});
 
 					$('#sp-eafree-review-notice.sp-eafree-review-notice').hide();
@@ -100,10 +105,17 @@ class Easy_Accordion_Free_Review {
 	 * @return void
 	 **/
 	public function dismiss_review_notice() {
+		$post_data = wp_unslash( $_POST );
+		$review    = get_option( 'sp_eafree_review_notice_dismiss' );
+
+		if ( ! isset( $post_data['nonce'] ) || ! wp_verify_nonce( sanitize_key( $post_data['nonce'] ), 'sp_eafree_review_notice' ) ) {
+			return;
+		}
+
 		if ( ! $review ) {
 			$review = array();
 		}
-		switch ( $_POST['notice_dismissed_data'] ) {
+		switch ( isset( $post_data['notice_dismissed_data'] ) ? $post_data['notice_dismissed_data'] : '' ) {
 			case '1':
 				$review['time']      = time();
 				$review['dismissed'] = false;

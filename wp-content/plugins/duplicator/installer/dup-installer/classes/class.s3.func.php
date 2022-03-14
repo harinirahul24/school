@@ -13,7 +13,7 @@ defined('ABSPATH') || defined('DUPXABSPATH') || exit;
 
 /**
  * Step 3 functions
- * Singlethon
+ * Singleton
  */
 final class DUPX_S3_Funcs
 {
@@ -223,7 +223,7 @@ final class DUPX_S3_Funcs
     }
 
     /**
-     * get vaule post if  thepost isn't inizialized inizialize it
+     * get value post if  the post isn't initialized initialize it
      * 
      * @param string $key
      * @return mixed
@@ -254,7 +254,7 @@ final class DUPX_S3_Funcs
             return;
         }
 
-        // make sure post data is inizialized
+        // make sure post data is initialized
         $this->getPost();
         if (!in_array($table, $this->post['tables'])) {
             $this->post['tables'][] = $table;
@@ -267,7 +267,7 @@ final class DUPX_S3_Funcs
     private function dbConnection()
     {
         if (is_null($this->dbh)) {
-            // make sure post data is inizialized
+            // make sure post data is initialized
             $this->getPost();
 
             //MYSQL CONNECTION
@@ -291,7 +291,7 @@ final class DUPX_S3_Funcs
 
     public function getDbConnection()
     {
-        // make sure dbConnection is inizialized
+        // make sure dbConnection is initialized
         $this->dbConnection();
         return $this->dbh;
     }
@@ -309,7 +309,7 @@ final class DUPX_S3_Funcs
 
     public function initLog()
     {
-        // make sure dbConnection is inizialized
+        // make sure dbConnection is initialized
         $this->dbConnection();
 
         $charsetServer = @mysqli_character_set_name($this->dbh);
@@ -328,7 +328,7 @@ final class DUPX_S3_Funcs
             "********************************************************************************\n".
             "OPTIONS:\n";
 
-        $skipOpts = array('tables', 'plugins', 'dbpass', 'json', 'search', 'replace', 'mu_search', 'mu_replace', 'wp_password');
+        $skipOpts = array('tables', 'plugins', 'dbpass', 'json', 'search', 'replace', 'mu_search', 'mu_replace', 'wp_password', 'dbhost', 'dbuser', 'dbname', 'wp_username');
         foreach ($this->post as $key => $val) {
             if (in_array($key, $skipOpts)) {
                 continue;
@@ -368,7 +368,7 @@ final class DUPX_S3_Funcs
      *
      * @staticvar type $configTransformer
      * 
-     * @return WPConfigTransformer
+     * @return DupLiteWPConfigTransformer
      */
     public function getWpConfigTransformer()
     {
@@ -386,7 +386,7 @@ final class DUPX_S3_Funcs
                     DUPX_Log::error($err_log);
                 }
             }
-            $configTransformer = new WPConfigTransformer(DUPX_Package::getWpconfigArkPath());
+            $configTransformer = new DupLiteWPConfigTransformer(DUPX_Package::getWpconfigArkPath());
         }
 
         return $configTransformer;
@@ -463,7 +463,7 @@ final class DUPX_S3_Funcs
     {
         $s_r_manager = DUPX_S_R_MANAGER::getInstance();
 
-        // make sure dbConnection is inizialized
+        // make sure dbConnection is initialized
         $this->dbConnection();
 
         // DIRS PATHS
@@ -521,7 +521,7 @@ final class DUPX_S3_Funcs
     {
         self::logSectionHeader('RUN SEARCH AND REPLACE', __FUNCTION__, __LINE__);
 
-        // make sure post data is inizialized
+        // make sure post data is initialized
         $this->getPost();
 
         DUPX_UpdateEngine::load($this->post['tables']);
@@ -529,24 +529,10 @@ final class DUPX_S3_Funcs
         DUPX_UpdateEngine::logErrors();
     }
 
-    public function removeMaincenanceMode()
-    {
-        self::logSectionHeader('REMOVE MAINTENANCE MODE', __FUNCTION__, __LINE__);
-        // make sure post data is inizialized
-        $this->getPost();
-
-
-        if (isset($this->post['remove_redundant']) && $this->post['remove_redundant']) {
-            if ($GLOBALS['DUPX_STATE']->mode == DUPX_InstallerMode::OverwriteInstall) {
-                DUPX_U::maintenanceMode(false, $GLOBALS['DUPX_ROOT']);
-            }
-        }
-    }
-
     public function removeLicenseKey()
     {
         self::logSectionHeader('REMOVE LICENSE KEY', __FUNCTION__, __LINE__);
-        // make sure dbConnection is inizialized
+        // make sure dbConnection is initialized
         $this->dbConnection();
 
         if (isset($GLOBALS['DUPX_AC']->brand) && isset($GLOBALS['DUPX_AC']->brand->enabled) && $GLOBALS['DUPX_AC']->brand->enabled) {
@@ -564,7 +550,7 @@ final class DUPX_S3_Funcs
     public function createNewAdminUser()
     {
         self::logSectionHeader('CREATE NEW ADMIN USER', __FUNCTION__, __LINE__);
-        // make sure dbConnection is inizialized
+        // make sure dbConnection is initialized
         $this->dbConnection();
 
         $nManager = DUPX_NOTICE_MANAGER::getInstance();
@@ -666,7 +652,7 @@ final class DUPX_S3_Funcs
     {
         self::logSectionHeader('CONFIGURATION FILE UPDATES', __FUNCTION__, __LINE__);
         DUPX_Log::incIndent();
-        // make sure post data is inizialized
+        // make sure post data is initialized
         $this->getPost();
         $strReplaced = 0;
 
@@ -750,10 +736,10 @@ final class DUPX_S3_Funcs
                 $dbhost = DUPX_U::getEscapedGenericString($this->post['dbhost']);
 
                 $confTransformer->update('constant', 'DB_NAME', $dbname, array('raw' => true));
-                DUPX_Log::info('UPDATE DB_NAME '.DUPX_Log::varToString($dbname));
+                DUPX_Log::info('UPDATE DB_NAME '. DUPX_Log::varToString('** OBSCURED **'));
 
                 $confTransformer->update('constant', 'DB_USER', $dbuser, array('raw' => true));
-                DUPX_Log::info('UPDATE DB_USER '.DUPX_Log::varToString($dbuser));
+                DUPX_Log::info('UPDATE DB_USER '. DUPX_Log::varToString('** OBSCURED **'));
 
                 $confTransformer->update('constant', 'DB_PASSWORD', $dbpass, array('raw' => true));
                 DUPX_Log::info('UPDATE DB_PASSWORD '.DUPX_Log::varToString('** OBSCURED **'));
@@ -984,7 +970,7 @@ LONGMSG;
     public function generalUpdateAndCleanup()
     {
         self::logSectionHeader('GENERAL UPDATES & CLEANUP', __FUNCTION__, __LINE__);
-        // make sure dbConnection is inizialized
+        // make sure dbConnection is initialized
         $this->dbConnection();
         $this->deactivateIncompatiblePlugins();
         $blog_name   = mysqli_real_escape_string($this->dbh, $this->post['blogname']);
@@ -1008,6 +994,8 @@ LONGMSG;
             $update_guid = @mysqli_affected_rows($this->dbh) or 0;
             DUPX_Log::info("Reverted '{$update_guid}' post guid columns back to '{$this->post['url_old']}'");
         }
+        
+        DUPX_U::maintenanceMode(false);
     }
 
     /**
@@ -1017,7 +1005,7 @@ LONGMSG;
      */
     private function deactivateIncompatiblePlugins() {
         self::logSectionHeader("DEACTIVATE PLUGINS CHECK", __FUNCTION__, __LINE__);
-        // make sure post data is inizialized
+        // make sure post data is initialized
         $this->getPost();
         $nManager = DUPX_NOTICE_MANAGER::getInstance();
         $plugin_list = array();
@@ -1054,16 +1042,15 @@ LONGMSG;
                 $reactivate_plugins_after_installation_str)."','duplicator_reactivate_plugins_after_installation')");
         }
         
-        // Start
-        // Force Duplicator active so we the security cleanup will be available
+        // Force Duplicator active so the security cleanup will be available
         if (!in_array('duplicator/duplicator.php', $plugin_list)) {
             $plugin_list[] = 'duplicator/duplicator.php';
         }
         $serial_plugin_list = @serialize($plugin_list);
-        // End
         
         mysqli_query($this->dbh,
-            "UPDATE `".mysqli_real_escape_string($this->dbh, $GLOBALS['DUPX_AC']->wp_tableprefix)."options` SET option_value = '".mysqli_real_escape_string($this->dbh, $serial_plugin_list)."'  WHERE option_name = 'active_plugins' ");
+            "UPDATE `".mysqli_real_escape_string($this->dbh, $GLOBALS['DUPX_AC']->wp_tableprefix)."options` "
+            . "SET option_value = '".mysqli_real_escape_string($this->dbh, $serial_plugin_list)."'  WHERE option_name = 'active_plugins' ");
     }
 
     /**
@@ -1106,14 +1093,14 @@ LONGMSG;
             'reactivate' => true
         );
 
-        DUPX_Log::info('Deactivated plugins list here: '.DUPX_Log::varToString(array_keys($excludePlugins)));
+        DUPX_Log::info('Auto Deactivated plugins list here: '.DUPX_Log::varToString(array_keys($excludePlugins)));
         return $excludePlugins;
     }
 
     public function noticeTest()
     {
         self::logSectionHeader('NOTICES TEST', __FUNCTION__, __LINE__);
-        // make sure dbConnection is inizialized
+        // make sure dbConnection is initialized
         $this->dbConnection();
 
         $nManager = DUPX_NOTICE_MANAGER::getInstance();
@@ -1201,7 +1188,7 @@ LONGMSG;
     public function cleanupTmpFiles()
     {
         self::logSectionHeader('CLEANUP TMP FILES', __FUNCTION__, __LINE__);
-        // make sure post data is inizialized
+        // make sure post data is initialized
         $this->getPost();
 
         //Cleanup any tmp files a developer may have forgotten about
@@ -1286,7 +1273,7 @@ LONGMSG;
 
     private function obscureWpConfig($src)
     {
-        $transformer = new WPConfigTransformerSrc($src);
+        $transformer = new DupLiteWPConfigTransformerSrc($src);
         $obsKeys     = array(
             'DB_NAME',
             'DB_USER',
@@ -1312,7 +1299,7 @@ LONGMSG;
 
     public function complete()
     {
-        // make sure post data is inizialized
+        // make sure post data is initialized
         $this->getPost();
         $this->closeDbConnection();
 
@@ -1329,7 +1316,7 @@ LONGMSG;
 
     public function error($message)
     {
-        // make sure post data is inizialized
+        // make sure post data is initialized
         $this->getPost();
 
         $this->closeDbConnection();

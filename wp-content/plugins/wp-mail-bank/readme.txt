@@ -1,21 +1,21 @@
-﻿=== WP Mail SMTP Plugin - Mail Bank ===
+﻿=== Mail Bank - #1 Mail SMTP Plugin for WordPress ===
 Contributors: contact-banker, Gallery-Bank, wordpress-empire
 Donate link: https://tech-banker.com/wp-mail-bank/
-Tags: smtp, mail, gmail smtp, wp mail, wordpress smtp plugin
+Tags: smtp, wordpress smtp, gmail smtp, sendgrid smtp, mailgun smtp, mail, mailer, phpmailer, wp_mail, email, mailgun, sengrid, gmail, wp smtp, mail smtp
 Requires at least: 3.8
-Tested up to: 5.3
+Tested up to: 5.8.1
 Stable Tag: trunk
 Requires PHP: 5.4
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
-Mail Bank is a wordpress smtp plugin that solves email deliverability issue. Configures Gmail Smtp Settings, OAuth, and any SMTP server. Reconfigures wp_mail().
+Mail Bank is a SMTP Plugin for WordPress that solves email deliverability issue. Configures Gmail Smtp Settings, OAuth, and any SMTP server. Reconfigures wp_mail().
 
 == Description ==
 
 ### WP Mail Bank: The #1 WordPress Mail SMTP Plugin
 
-[**WP Mail Bank — Tech Banker**](https://tech-banker.com/wp-mail-bank/)
+[**Mail Bank — Tech Banker**](https://tech-banker.com/wp-mail-bank/)
 * **[Detailed Features](https://tech-banker.com/wp-mail-bank/)**
 * **[Back End Demos](https://tech-banker.com/wp-mail-bank/demos/)**
 * **[Documentation](https://tech-banker.com/blog/)**
@@ -27,15 +27,9 @@ It's impossible to know what's happening to your emails unless you have a well-d
 
 Mail Bank is a **FREE** SMTP plugin that gives you every feature needed to **guarantee fast and 100% confident email deliverability**. This includes a list of features designed to test, log, and control your email deliverability, even over multiple WordPress installations and networks.
 
-This plugin is developed by the in-house team of expert coders at [Tech Banker](https://tech-banker.com). These are the people that will keep bringing you new and improved versions of Mail Bank every day of the week. The plugin updates automatically by default. The professionals behind Mail Bank make sure to support earlier versions of WordPress in every update.
+This plugin is developed by the in-house team of expert coders at [Tech Banker](https://tech-banker.com). These are the people that will keep bringing you new and improved versions of Mail Bank every day of the week. The plugin updates automatically by default.
 
-WP Mail Bank is the Best SMTP plugin for wordpress.
-
-Our customer support team is in direct ties with our coding team. All of your problems, suggestions, and feedback will be seen by our coding team, and they will take action on them. We listen to and care deeply about our customers.
-
-You can read all about the full features of Mail Bank down below. Also **try the plugin yourself by activating it right now, for FREE.**
-
-Mail Bank is not another copy of WP Mail SMTP like Post SMTP or Easy SMTP Mailer. It provides unique functionality by sending emails with customized Zend Framework.
+Mail Bank provides unique functionality by sending emails with customized Zend Framework.
 
 ### An SMTP plugin will solve your email deliverability issues. But how?
 
@@ -51,7 +45,7 @@ There are many reasons why you might need an SMTP plugin. The most common reason
 
 ### Where does WP Mail Bank come into this?
 
-Mail Bank is an SMTP plugin that reconfigures the wp_mail() function so you can set up your own outgoing email settings. You can use almost any SMTP service provider with our plugin.
+It reconfigures the wp_mail() function so you can set up your own outgoing email settings. You can use almost any SMTP service provider with our plugin.
 
 This prevents the core issues with **Sender Domain Policy** and **Spoofing**, which are the primary causes of undelivered mail.
 
@@ -59,11 +53,11 @@ As said before, Mail Bank also supports the Mailgun and SendGrid APIs. This mean
 
 Over 50,000+ website owners have chosen [**Mail Bank**](https://tech-banker.com/wp-mail-bank/) as their email deliverability solution. Mail Bank fixes email deliverability issues quickly and painlessly.
 
-### Benefits of Using WP Mail Bank
+### Benefits
 
 #### Confident SMTP Email Deliverability
 
-* Mail Bank gives you a large list of free email service providers to choose from. The most prominent and important being Gmail, Outlook, and Yahoo, which all support oAuth 2.0. But we know larger email senders require more serious solutions. So we've added support for the freemium **Mailgun** with 10,000 free emails per month and **SendGrid** APIs. Both of these APIs will drastically increase WP email deliverability.
+* It gives you a large list of free email service providers to choose from. The most prominent and important being Gmail, Outlook, and Yahoo, which all support oAuth 2.0. But we know larger email senders require more serious solutions. So we've added support for the freemium **Mailgun** with 10,000 free emails per month and **SendGrid** APIs. Both of these APIs will drastically increase WP email deliverability.
 
 * Our **email logger** will give you information on all of your emails. This includes undelivered mail and the information required to debug undelivered mail. You'll also be able to take action on each of the emails or use **bulk actions to delete or resend** them. You'll never have to leave a portion of your users in the dark again with this feature.
 
@@ -119,13 +113,13 @@ Mail Bank is translated by professionals and native speakers in these 16 languag
 
 * Your Postman settings will be automatically imported to Mail Bank once you migrate.
 
-### Full List of WP Mail Bank Features
+### Full List of Features
 
-* **Support & Updates for up to 5 Installations:** You'll be able to install Mail Bank on up to 5 seperate WordPress sites. Free users can install Mail Bank only to 1 site.
+* **Support & Updates for up to 5 Installations:** You'll be able to install on up to 5 seperate WordPress sites. Free users can install only to 1 site.
 * **Support for WordPress Multisite:** Premium users will be able to enjoy WordPress multisite network support. Install Mail Bank on your main site, and you'll be able to manage all of your networked sites from a single installation.
 * **Technical Support:** Free users will get support on WordPress.org. Premium users will have a seperate, priority support package available off-site.
 * **Free & Automatic Updates:** You'll be able to choose whether your plugin is updated automatically or not. All updates come for free.
-* **Compatibility With All Major Plugins**: Mail Bank is compatible with almost all of the WordPress plugins available. We're constantly bringing out compatibility updates.
+* **Compatibility With All Major Plugins**: It is compatible with almost all of the WordPress plugins available. We're constantly bringing out compatibility updates.
 * **Email Setup Wizard:** The Email Setup tab is a quick and painless way to get you going in seconds. It includes fields such as: "From Name", "From Email", "Reply To", "CC", "BCC", and "Additional Headers".
 * **SMTP Support:** You'll have support for almost every FREE SMTP provider, and that includes the Mailgun and SendGrid APIs.
 * **Authentication Options:** You'll be able to login using your username and password, or the more secure **oAuth 2.0**. There are also options for no authentication and plain login.
@@ -257,6 +251,18 @@ You can enable or disable the debug mode to get the debugging output of logged e
 15. System Information
 
 == Changelog ==
+
+= 4.0.13 =
+
+* FIX: Tested Upto 5.8.1
+
+= 4.0.13 =
+
+* FIX: Trademark Issues
+
+= 4.0.11 =
+
+* FIX: Minor Bugs
 
 = 4.0.10 =
 

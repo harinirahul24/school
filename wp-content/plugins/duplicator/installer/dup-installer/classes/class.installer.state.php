@@ -20,7 +20,7 @@ class DUPX_InstallerState
 	private static $instance = null;
 
     public static function init($clearState) {
-        self::$state_filepath = dirname(__FILE__).'/../installer-state.txt';
+        self::$state_filepath = dirname(__FILE__).'/../dup-installer-state_'.$GLOBALS['PACKAGE_HASH'].'.txt';
 
         if($clearState) {
             DupLiteSnapLibIOU::rm(self::$state_filepath);
@@ -57,8 +57,8 @@ class DUPX_InstallerState
 				if ((file_exists($wpConfigPath) || (@file_exists($outerWPConfigPath) && !@file_exists($outerWPSettingsPath))) && @file_exists("{$GLOBALS['DUPX_ROOT']}/wp-includes") && @file_exists("{$GLOBALS['DUPX_ROOT']}/wp-admin")) {
 					require_once($GLOBALS['DUPX_INIT'].'/lib/config/class.wp.config.tranformer.php');
 					$config_transformer = file_exists($wpConfigPath)
-											? new WPConfigTransformer($wpConfigPath)
-											: new WPConfigTransformer($outerWPConfigPath);
+											? new DupLiteWPConfigTransformer($wpConfigPath)
+											: new DupLiteWPConfigTransformer($outerWPConfigPath);
                     if ($config_transformer->exists('constant', 'WP_CONTENT_DIR')) {
 						$wp_content_dir_val = $config_transformer->get_value('constant', 'WP_CONTENT_DIR');						
                     } else {

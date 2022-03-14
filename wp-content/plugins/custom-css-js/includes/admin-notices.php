@@ -83,7 +83,7 @@ class CustomCSSandJS_Notices {
     public function choose_notice() {
         $now = time();
 
-        $days_passed = ceil( ( $now - $this->activation_time ) / 86400 );
+        $days_passed = floor( ( $now - $this->activation_time ) / 86400 );
 
         switch ( $days_passed ) {
             case 0 : return '1_day';
@@ -98,6 +98,7 @@ class CustomCSSandJS_Notices {
             case 9 : break;
             case 10 : break;
             case 11 : break; //return '12_day';
+			default: break;
         }
     }
 

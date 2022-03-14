@@ -31,9 +31,10 @@ class Easy_Accordion_Free_Updates {
 	 *
 	 * @var array
 	 */
-	private static $updates = [
+	private static $updates = array(
 		'2.0.6' => 'updates/update-2.0.6.php',
-	];
+		'2.0.7' => 'updates/update-2.0.7.php',
+	);
 
 	/**
 	 * Binding all events
@@ -55,10 +56,18 @@ class Easy_Accordion_Free_Updates {
 	 */
 	public function is_needs_update() {
 		$installed_version = get_option( 'easy_accordion_free_version' );
+		$first_version     = get_option( 'easy_accordion_free_first_version' );
+		$activation_date   = get_option( 'easy_accordion_free_activation_date' );
 
 		if ( false === $installed_version ) {
-			update_option( 'easy_accordion_free_version', '2.0.6' );
-			update_option( 'easy_accordion_free_db_version', '2.0.6' );
+			update_option( 'easy_accordion_free_version', SP_EA_VERSION );
+			update_option( 'easy_accordion_free_db_version', SP_EA_VERSION );
+		}
+		if ( false === $first_version ) {
+			update_option( 'easy_accordion_free_first_version', SP_EA_VERSION );
+		}
+		if ( false === $activation_date ) {
+			update_option( 'easy_accordion_free_activation_date', current_time( 'timestamp' ) );
 		}
 
 		if ( version_compare( $installed_version, SP_EA_VERSION, '<' ) ) {

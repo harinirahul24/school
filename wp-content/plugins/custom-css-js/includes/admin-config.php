@@ -163,6 +163,7 @@ class CustomCSSandJS_AdminConfig {
         return array_merge( $defaults, array( 
             'ccj_htmlentities'      => false, 
             'ccj_htmlentities2'     => false,
+			'ccj_autocomplete'		=> true,
             'add_role'              => false,
             'remove_comments'       => false,
         ) );
@@ -219,16 +220,22 @@ class CustomCSSandJS_AdminConfig {
         <h2><?php echo __('Editor Settings', 'custom-css-js'); ?></h2>
         <table class="form-table">
         <tr>
-        <th scope="row"><label for="ccj_htmlentities"><?php _e('Keep the HTML entities, don\'t convert to its character', 'custom-css-js') ?> <span class="dashicons dashicons-editor-help" rel="tipsy" title="<?php echo $ccj_htmlentities_help; ?>"></span>
+        <th scope="row"><label for="ccj_htmlentities"><?php _e('Keep the HTML entities, don\'t convert to its character', 'custom-css-js') ?> <span class="dashicons dashicons-editor-help tipsy-no-html" rel="tipsy" title="<?php echo $ccj_htmlentities_help; ?>"></span>
         </label></th>
-        <td><input type="checkbox" name="ccj_htmlentities" id = "ccj_htmlentities" value="1" <?php checked($settings['ccj_htmlentities'], true); ?> />
+        <td><input type="checkbox" name="ccj_htmlentities" id="ccj_htmlentities" value="1" <?php checked($settings['ccj_htmlentities'], true); ?> />
         </td>
         </tr>
         <tr>
-        <th scope="row"><label for="ccj_htmlentities2"><?php _e('Encode the HTML entities', 'custom-css-js') ?> <span class="dashicons dashicons-editor-help" rel="tipsy" title="<?php echo $ccj_htmlentities2_help; ?>"></span></label></th>
-        <td><input type="checkbox" name="ccj_htmlentities2" id = "ccj_htmlentities2" value="1" <?php checked($settings['ccj_htmlentities2'], true); ?> />
+        <th scope="row"><label for="ccj_htmlentities2"><?php _e('Encode the HTML entities', 'custom-css-js') ?> <span class="dashicons dashicons-editor-help tipsy-no-html" rel="tipsy" title="<?php echo $ccj_htmlentities2_help; ?>"></span></label></th>
+        <td><input type="checkbox" name="ccj_htmlentities2" id="ccj_htmlentities2" value="1" <?php checked($settings['ccj_htmlentities2'], true); ?> />
         </td>
         </tr>
+        <tr>
+        <th scope="row"><label for="ccj_autocomplete"><?php _e('Autocomplete in the editor', 'custom-css-js') ?></label></th>
+        <td><input type="checkbox" name="ccj_autocomplete" id="ccj_autocomplete" value="1" <?php checked($settings['ccj_autocomplete'], true); ?> />
+        </td>
+        </tr>
+
 
 
         </table>

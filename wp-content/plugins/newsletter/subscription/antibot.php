@@ -2,14 +2,37 @@
 /* @var $this NewsletterSubscription */
 defined('ABSPATH') || exit;
 
-@include_once NEWSLETTER_INCLUDES_DIR . '/controls.php';
+include_once NEWSLETTER_INCLUDES_DIR . '/controls.php';
 $controls = new NewsletterControls();
 
 if ($controls->is_action()) {
 
     if ($controls->is_action('save')) {
+ // Processing IPs
+        $list = $this->to_array($controls->data['ip_blacklist']);
+        $controls->data['ip_blacklist'] = [];
+        foreach ($list as $item) {
+            $item = trim($item);
+            if (substr($item, 0, 1) === '#') {
+                $controls->data['ip_blacklist'][] = $item;
+                continue;
+            }
+            $item = preg_replace( '|[^0-9a-fA-F:./]|', '', $item);
+            if (empty($item)) {
+                continue;
+            }
+            if (strpos($item, '/', 2)) {
+                list($ip, $bits) = explode('/', $item);
+                $bits = (int)$bits;
+                if (!$bits) continue;
+                $item = $ip . '/' . $bits;
+            } else {
+                
+            }
+            $controls->data['ip_blacklist'][] = $item;
+        }
 
-        $controls->data['ip_blacklist'] = $this->to_array($controls->data['ip_blacklist']);
+        //$controls->data['ip_blacklist'] = $this->to_array($controls->data['ip_blacklist']);
         $controls->data['address_blacklist'] = $this->to_array($controls->data['address_blacklist']);
 
         $this->save_options($controls->data, 'antibot');
@@ -27,7 +50,7 @@ if ($controls->is_action()) {
     <div id="tnp-heading">
 
         <h2><?php _e('Security', 'newsletter') ?></h2>
-        <?php $controls->page_help('https://www.thenewsletterplugin.com/documentation/antiflood') ?>
+        <?php $controls->page_help('https://www.thenewsletterplugin.com/documentation/subscription/antiflood') ?>
 
     </div>
 
@@ -37,9 +60,9 @@ if ($controls->is_action()) {
             <?php $controls->init(); ?>
 
 
-            <div class="tnp-buttons">
+            <p>
                 <?php $controls->button_save() ?>
-            </div>
+            </p>
 
             <div id="tabs">
                 <ul>
@@ -55,7 +78,7 @@ if ($controls->is_action()) {
                             <th><?php _e('Disable antibot', 'newsletter') ?></th>
                             <td>
                                 <?php $controls->yesno('disabled'); ?>
-                                <?php $controls->help('https://www.thenewsletterplugin.com/documentation/antiflood') ?>
+                                <?php $controls->help('https://www.thenewsletterplugin.com/documentation/subscription/antiflood') ?>
                                 <p class="description">
                                     <?php _e('Disable for ajax form submission', 'newsletter'); ?>
                                 </p>
@@ -63,7 +86,7 @@ if ($controls->is_action()) {
                         </tr>
 
                         <tr>
-                            <th>Akismet</th>
+                            <th><?php $controls->field_label('Akismet', '/documentation/subscription/antiflood#akismet')?></th>
                             <td>
                                 <?php
                                 $controls->select('akismet', array(
@@ -71,12 +94,11 @@ if ($controls->is_action()) {
                                     1 => __('Enabled', 'newsletter')
                                 ));
                                 ?>
-                                <?php $controls->help('https://www.thenewsletterplugin.com/documentation/antiflood') ?>
                             </td>
                         </tr>
 
                         <tr>
-                            <th><?php _e('Antiflood', 'newsletter') ?></th>
+                            <th><?php $controls->field_label(__('Antiflood', 'newsletter'), '/documentation/subscription/antiflood#antiflood') ?></th>
                             <td>
                                 <?php
                                 $controls->select('antiflood', array(
@@ -94,13 +116,14 @@ if ($controls->is_action()) {
                                     360 => '60 ' . __('minutes', 'newsletter')
                                 ));
                                 ?>
-                                <?php $controls->help('https://www.thenewsletterplugin.com/documentation/antiflood') ?>
                             </td>
                         </tr>
                         <tr>
-                            <th><?php _e('Captcha', 'newsletter') ?> </th>
+                            <th>
+                                <?php $controls->field_label(__('Captcha', 'newsletter'), '/documentation/subscription/antiflood/#captcha') ?> 
+                            </th>
                             <td>
-                                <?php $controls->enabled('captcha'); ?> <?php $controls->field_help('https://www.thenewsletterplugin.com/documentation/antiflood#captcha') ?>
+                                <?php $controls->enabled('captcha'); ?>
                             </td>
                         </tr>
                         <?php /*
@@ -123,18 +146,20 @@ if ($controls->is_action()) {
                     <table class="form-table">
                         <tr>
                             <th>
-                                <?php _e('IP black list', 'newsletter') ?>
-                                <?php $controls->field_help('https://www.thenewsletterplugin.com/documentation/antiflood#ip') ?>
+                                <?php $controls->field_label(__('IP black list', 'newsletter'), '/documentation/subscription/antiflood/#ip-blacklist') ?>
                             </th>
                             <td>
                                 <?php $controls->textarea('ip_blacklist'); ?>
-                                <p class="description"><?php _e('One per line', 'newsletter') ?></p>
+                                <p class="description">
+                                    <?php _e('One per line', 'newsletter') ?>
+                                    IPv4 (aaa.bbb.ccc.ddd) supported. IPv6 supported. CIDR supported only for IPv4. Lines starting with # are
+                                    considered comments.
+                                </p>
                             </td>
                         </tr>
                         <tr>
                             <th>
-                                <?php _e('Address black list', 'newsletter') ?>
-                                <?php $controls->field_help('https://www.thenewsletterplugin.com/documentation/antiflood#domains') ?>
+                                <?php $controls->field_label(__('Address black list', 'newsletter'), '/documentation/subscription/antiflood/#email-blacklist') ?>
                             </th>
                             <td>
                                 <?php $controls->textarea('address_blacklist'); ?>

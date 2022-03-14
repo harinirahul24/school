@@ -2,8 +2,8 @@
 Contributors: danieledesantis
 Tags: css, custom css, style, styles, stylesheet, custom stylesheet, single post css, site css, single page css, custom post type css, product css
 Requires at least: 4.0
-Tested up to: 5.2.2
-Stable tag: 1.1.5
+Tested up to: 5.4.2
+Stable tag: 1.1.6
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -11,17 +11,11 @@ Add custom css to the whole website and to specific posts and pages.
 
 == Description ==
 
-WP Add Custom CSS allows you to add **custom CSS** to the **whole website** and to **individual posts, pages and custom post types** (such as **Woocommerce products**).
+WP Add Custom CSS allows you to **add custom CSS** to the **whole website** and to **individual posts, pages and custom post types** (such as **Woocommerce products**).
 The CSS rules applied to the whole website will override the default stylesheets of your theme and plugins, while the CSS rules applied to specific pages, posts or custom post types will override the main stylesheet too.
 
 You can edit the main stylesheet from the the "Add custom CSS" settings page.
 The plugin also creates a new "Custom CSS" box in the editing area to **add custom CSS to specific posts, pages and custom post types**.
-
-Available languages:
-
-- English
-- German - thanks to <a href="http://bodograumann.de/" target="_blank">Bodo Graumann</a>
-- Spanish - thanks to <a href="http://www.imaginaweb.es/" target="_blank">Dave Krul</a>
 
 == Installation ==
 
@@ -62,6 +56,11 @@ Click on the "Screen option" link from your post/page editing area and be sure t
 4. Add custom CSS to specific custom post types (such as Woocommerce products).
 
 == Changelog ==
+
+= 1.1.6 =
+* Updated code editor
+* Added text wrapping to code editor
+* Fixed compatibilty issues with WPBakery Frontend Editor
 
 = 1.1.5 =
 * Changed default code editor
@@ -118,6 +117,11 @@ Click on the "Screen option" link from your post/page editing area and be sure t
 * First release
 
 == Upgrade Notice ==
+
+= 1.1.6 =
+* Updated code editor
+* Added text wrapping to code editor
+* Fixed compatibilty issues with WPBakery Frontend Editor
 
 = 1.1.5 =
 * Changed default code editor

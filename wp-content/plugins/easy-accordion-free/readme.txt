@@ -1,9 +1,10 @@
 ﻿=== Easy Accordion - Best Accordion FAQ Plugin for WordPress ===
-Contributors: shapedplugin
-Donate link: http://shapedplugin.com/donate
+Contributors: shapedplugin, khalilu, rubel_miah, shamimmiashuhagh
+Donate link: https://shapedplugin.com/donate
 Tags: accordion, accordions, accordion faq, vertical accordion, faq, faqs, faq widget, accordion widget, accordion menu, wordpress faq plugin, easy accordion, premium accordion, bootstrap accordion, horizontal accordion, responsive accordion, accordion jquery, css3 accordion, accordion shortcode, collapsible content, toggle, toggle accordion, wordpress accordion plugin, wordpress accordion, bootstrap collapse, post accordion, post faq, custom post accordion, accordion grid, accordion bar, product faq, woocommerce product accordion, woocommerce accordion, wordpress post accordion, content hide, hidden content, expand content
 Requires at least: 4.3
-Tested up to: 5.3
+Tested up to: 5.9
+Stable tag: 2.1.10
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -16,17 +17,17 @@ The best responsive and drag & drop Accordion FAQ builder plugin. User-friendly,
 
 We believe that you shouldn’t be a programmer or hire a developer to create a professional looking accordion for your WordPress site. That’s why we built the **Easy Accordion** plugin that’s both EASY and POWERFUL.
 
-[youtube https://www.youtube.com/watch?v=rZrx-4cisAY]
+[youtube https://www.youtube.com/watch?v=jQwLyM0Zb3M&list=PLoUb-7uG-5jPBSfjZalo6KKrc4jniAuix]
 
 
-[__Live Demo__](https://shapedplugin.com/demo/easy-accordion-pro/) | [__Docs__](https://shapedplugin.com/docs/docs/easy-accordion/) | [__Support__](https://shapedplugin.com/support-forum/ask-question/) | [__Premium features &raquo;__](https://shapedplugin.com/demo/easy-accordion-pro/#feature)
+[__Live Demo__](https://demo.shapedplugin.com/easy-accordion/) | [__Docs__](https://docs.shapedplugin.com/docs/easy-accordion-pro/introduction/) | [__Support__](https://shapedplugin.com/support/?user=lite) | [__Premium features &raquo;__](https://demo.shapedplugin.com/easy-accordion/#feature)
 
 
 = Easy Accordion 2.0 =
 
 **Easy Accordion 2.0** has completely been rebuilt and this provides you now many improvements and new amazing features. In this version, you get a totally usable accordion plugin with One Theme (Default Theme) which is the product of many hours development. 
 
-If you want [__16+ Extra Beautiful Premium Themes__](https://shapedplugin.com/demo/easy-accordion-pro/) with their own customizable settings and lot of stunning features with excellent support, please purchase the [__PRO version__](https://shapedplugin.com/plugin/easy-accordion-pro/). 
+If you want [__16+ Extra Beautiful Premium Themes__](https://demo.shapedplugin.com/easy-accordion/) with their own customizable settings and lot of stunning features with excellent support, please purchase the [__PRO version__](https://shapedplugin.com/plugin/easy-accordion-pro/?ref=1). 
 
 
 = Key Features = 
@@ -69,12 +70,12 @@ If you want [__16+ Extra Beautiful Premium Themes__](https://shapedplugin.com/de
 
 = For Faster Support, Features Request, and Bug Reporting =
   
->Ask us at [__Support Forum.__](https://shapedplugin.com/support-forum)
+>Ask us at [__Support__](https://shapedplugin.com/support/?user=lite)
 
 
 = Easy Accordion Pro =
 
-[__Easy Accordion Pro__](https://shapedplugin.com/plugin/easy-accordion-pro/) is a highly flexible and customizable accordion plugin designed for everyone including designers & developers. The premium plugin vastly improves your styling & user experience and lets you create beautiful and touch-friendly accordion quickly in the easiest way.
+[__Easy Accordion Pro__](https://shapedplugin.com/plugin/easy-accordion-pro/?ref=1) is a highly flexible and customizable accordion plugin designed for everyone including designers & developers. The premium plugin vastly improves your styling & user experience and lets you create beautiful and touch-friendly accordion quickly in the easiest way.
 
 It comes with intuitive admin panel, horizontal and vertical layout and color picker for unlimited color & styling option with **16+ Modern Pre-designed Accordion Themes.** You can put the content of any type inside accordion expandable section including Shortcodes, Images, YouTube, Audio or any custom HTML code.
 
@@ -113,15 +114,13 @@ The Easy Accordion Pro plugin brings the best of both worlds, offering a modern,
 
 = Premium Support = 
 
-The premium version of the plugin entitles you to get fast, friendly, and priority support with replies posted within 24 hours (without holidays). Please submit a support ticket here. This will create a [__support ticket__](https://shapedplugin.com/ask-question/) in our support portal.
+The premium version of the plugin entitles you to get fast, friendly, and priority support with replies posted within 24 hours (without holidays). Please submit a support ticket here. This will create a [__support ticket__](https://shapedplugin.com/support/?user=lite) in our support portal.
 
-For documentation and tutorials go to our [__Documentation.__](https://shapedplugin.com/docs/docs/easy-accordion-pro/)
+For documentation and tutorials go to our [__Documentation.__](https://docs.shapedplugin.com/docs/easy-accordion-pro/introduction/)
 
 
 = Author =
 Designed and Developed by [__ShapedPlugin__](https://shapedplugin.com/)
-
-
 
 
 == Installation ==
@@ -204,11 +203,11 @@ For including on the template, copy and paste the PHP code into your template fi
 
 
 = Q. I’d like access to more features. How can I get them? =
-**A.** You can get access to more features when you purchase a license of the plugin. Purchasing a license of [__Easy Accordion Pro__](https://shapedplugin.com/plugin/easy-accordion-pro/) gets you to access the full version of Easy Accordion, including 16+ Premium Themes, Automatic Lifetime Updates, and Dedicated Support.
+**A.** You can get access to more features when you purchase a license of the plugin. Purchasing a license of [__Easy Accordion Pro__](https://shapedplugin.com/plugin/easy-accordion-pro/?ref=1) gets you to access the full version of Easy Accordion, including 16+ Premium Themes, Automatic Lifetime Updates, and Dedicated Support.
 
 
 = Q. What if I update to Premium version? =
-**A.** Your existing accordion content will work with [__Premium Version__](https://shapedplugin.com/plugin/easy-accordion-pro/). So you won’t lose your developed contents.
+**A.** Your existing accordion content will work with [__Premium Version__](https://shapedplugin.com/plugin/easy-accordion-pro/?ref=1). So you won’t lose your developed contents.
 
 
 = Q. Is Easy Accordion is totally responsive? =
@@ -233,13 +232,13 @@ Test the plugin with a WordPress default theme, to be sure that the error is not
 
 Deactivate all plugins you are using and check if the problem is still occurring.
 
-If none of the previously listed actions helps you solve the problem, then, submit a ticket in the forum and describe your problem accurately, specify WordPress and plugin versions you are using and any other information that might help us solve your problem as quickly as possible. Please create a support thread here: [__support forum.__](https://shapedplugin.com/support-forum/)
+If none of the previously listed actions helps you solve the problem, then, submit a ticket in the forum and describe your problem accurately, specify WordPress and plugin versions you are using and any other information that might help us solve your problem as quickly as possible. Please create a support thread here: [__support.__](https://shapedplugin.com/support/?user=lite)
 
 Note: Support will be delayed If you post on Sunday (Sunday is our official holiday).
 
 
 = Q. Where can I report bugs? =
-**A.** If you find a bug, please report it in our active [__support forum.__](https://shapedplugin.com/support-forum/ask-question/) You will be replied once the issue is resolved.
+**A.** If you find a bug, please report it in our active [__support.__](https://shapedplugin.com/support/?user=lite) You will be replied once the issue is resolved.
 
 
 = Q. Do you want to encourage the developer team for future improvement? =
@@ -260,6 +259,119 @@ Thank you!
 
 
 == Changelog ==
+
+= 2.1.10 - Mar 10, 2022 =
+* Updated: Language pot file.
+* Improve: Cleaned unused codes and images. 
+
+= 2.1.9 - Feb 25, 2022 =
+* Fix: Extra padding issue in live preview.
+* Fix: Some typo.
+
+= 2.1.8 - Feb 14, 2022 =
+* Fix: PHP 5.6 compatibility issue.
+* Fix: WordPress 5.9 gutenberg block compatibility issue.
+
+= 2.1.7 - Feb 10, 2022 =
+* New: Elementor Addons added.
+
+= 2.1.6 - Jan 27, 2022 =
+* Tested: WordPress 5.9 compatibility.
+
+= 2.1.5 - Jan 11, 2022 =
+* New: Gutenberg Block to insert the accordion shortcode.
+
+= 2.1.4 - Dec 24, 2021 =
+* Removed: The filter 'the_content' removed from the accordion content.
+* Improved: Iframe CSS of the accordion content.
+* Fix: The Autoptimize plugin conflict issue.
+* Fix: Empty p tag / br tags issue.
+
+= 2.1.3 - Dec 13, 2021 =
+* Improved: Settings page “Save Changes” and “Reset Tab” button.
+* Removed: “Reset All” button.
+
+= 2.1.2 - Dec 07, 2021 =
+* Improved: Security filter improved.
+* Improved: Mouseover event improved.
+* Fix: A Warning issue solved.
+* Fix: Some minor issues fixed.
+
+= 2.1.1 - Nov 08, 2021 =
+* Fix: Undefined warning issue.
+
+= 2.1.0 - Oct 21, 2021 =
+* New: Shortcode live preview option.
+* Fix: Several minor CSS tweaking.
+
+= 2.0.23 - Sep 11, 2021 =
+* Fix: iFrame and style support issue.
+* New: Added 'sp_ea_description_allow_tags' filter to allow tags in description.
+
+= 2.0.22 - Sep 07, 2021 =
+* Improved: Plugin security.
+* Removed: Unused code.
+
+= 2.0.21 - Jul 28, 2021 =
+* Fix: Accordion CSS style is broken.
+
+= 2.0.20 - Jul 14, 2021 =
+* Improved: Backend options panel and typo.
+* Fix: Accessibility issue.
+* Tested: WordPress 5.8 compatibility.
+
+= 2.0.19 - Jun 11, 2021 =
+* New: Export and Import option for accordion groups.
+
+= 2.0.18 - May 29, 2021 =
+* New: wpautop/line break enabled/disabled option.
+
+= 2.0.17 - Apr 27, 2021 =
+* Fix: Twenty twenty theme iframe issue.
+* Fix: Premium page responsive issue.
+* Improved: Help Tooltip position.
+
+= 2.0.16 - Mar 25, 2021 =
+* Fix: Nested accordion styles issue.
+* Fix: When click on accordion it backs to top issue.
+
+= 2.0.15 - Mar 19, 2021 =
+* Fix: Line break issue.
+
+= 2.0.14 - Mar 17, 2021 =
+* New: Shortcode onClick copy option.
+* Improved: Dashboard Generator Settings panel.
+* Improved: Settings page.
+* Improved: Help page.
+* Tested: WordPress 5.7 compatibility.
+
+= 2.0.13 - Feb 01, 2021 =
+* Improved: Pro version compatibility.
+* Improved: Demo, Doc, Support links.
+
+= 2.0.12 - Dec 15, 2020 =
+* Fix: Preloader issue.
+* Fix: WordPress 5.6 compatible issue.
+
+= 2.0.11 - Oct 14, 2020 =
+* Improved: Dynamic CSS load on header.
+* Fix: Empty description issue.
+
+= 2.0.10 - Aug 15, 2020 =
+* Fix: WordPress 5.5 compatible issue.
+
+= 2.0.9 - Jul 27, 2020 =
+* Fix: Fusion builder modal conflict issue.
+
+= 2.0.8 - Jun 20, 2020 =
+* Fix: New version update failed issue.
+
+= 2.0.7 - Jun 18, 2020 =
+* New: Add Media button on accordion content field.
+* New: Shortcode support for accordion content field.
+* New: FAQ page schema option.
+* Fix: Google font loading issue.
+* Fix: Padding top issue for content.
 
 = 2.0.6 - Dec 04, 2019 =
 * Fix: HTTP and HTTPS mixed content issue.

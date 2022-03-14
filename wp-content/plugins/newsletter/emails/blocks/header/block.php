@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Name: Header
  * Section: header
@@ -6,84 +7,44 @@
  */
 
 $default_options = array(
-    'font_family' => $font_family,
-    'font_size' => 14,
-    'font_color' => '#444444',
-    'font_weight' => 'normal',
-    'block_background' => '#ffffff',
+    'font_family' => '',
+    'font_size' => '',
+    'font_color' => '',
+    'font_weight' => '',
+    'logo_height' => 100,
+    'logo_width' => '',
     'block_padding_top' => 15,
     'block_padding_bottom' => 15,
     'block_padding_left' => 15,
-    'block_padding_right' => 15
+    'block_padding_right' => 15,
+    'block_background' => '',
+    'layout' => ''
 );
 $options = array_merge($default_options, $options);
 
 if (empty($info['header_logo']['id'])) {
-    $image = false;
+    $media = false;
 } else {
-    $image = tnp_media_resize($info['header_logo']['id'], array(200, 80));
-    if (is_wp_error($image)) {
-        $image = false;
+    $media = tnp_get_media($info['header_logo']['id'], 'large');
+    if ($media) {
+        $media->alt = $info['header_title'];
+        $media->link = home_url();
     }
 }
 
-$empty = empty($info['header_logo']['id']) && empty($info['header_sub']) && empty($info['header_title']);
+$empty = !$media && empty($info['header_sub']) && empty($info['header_title']);
+
+if ($empty) {
+    echo '<p>Please, set your company info.</p>';
+} elseif ($options['layout'] === 'logo') {
+    include __DIR__ . '/layout-logo.php';
+    return;
+} elseif ($options['layout'] === 'titlemotto') {
+    include __DIR__ . '/layout-titlemotto.php';
+    return;
+} else {
+    include __DIR__ . '/layout-default.php';
+    return;
+}
 ?>
 
-<?php if ($empty) { ?>
-    <p>Please, set your company info.</p>
-<?php } else { ?>
-    <style>
-        .header-text {
-            padding: 10px; 
-            font-size: <?php echo $options['font_size'] ?>px; 
-            font-family: <?php echo $options['font_family'] ?>; 
-            font-weight: <?php echo $options['font_weight'] ?>; 
-            color: <?php echo $options['font_color'] ?>;
-            text-decoration: none;
-            line-height: normal;
-        }
-        .header-title {
-            font-size: <?php echo $options['font_size'] * 1.2 ?>px; 
-            font-family: <?php echo $options['font_family'] ?>; 
-            font-weight: <?php echo $options['font_weight'] ?>; 
-            color: <?php echo $options['font_color'] ?>;
-            text-decoration: none;
-            line-height: normal;
-        }
-        .header-logo {
-            font-family: <?php echo $options['font_family'] ?>; 
-            line-height: normal;
-            font-weight: <?php echo $options['font_weight'] ?>;
-            color: <?php echo $options['font_color'] ?>;
-        }
-        .header-logo-img {
-            display: block; 
-            max-width: 100%
-        }
-    </style>
-
-    <table border="0" cellpadding="0" cellspacing="0" width="100%">
-        <tr>
-            <?php if ($image) { ?>
-                <td align="left" width="50%" inline-class="header-logo">
-                    <a href="<?php echo home_url() ?>" target="_blank">
-                        <img alt="<?php echo esc_attr($info['header_title']) ?>" src="<?php echo $image ?>" class="header-logo-img" border="0">
-                    </a>
-                </td>             
-            <?php } else { ?>
-                <td align="left" width="50%" inline-class="header-logo">
-                    <a href="<?php echo home_url() ?>" target="_blank" class="header-title">
-                        <?php echo esc_attr($info['header_title']) ?>
-                    </a>
-                </td>
-            <?php } ?>
-
-
-            <td width="50%" align="right" class="mobile-hide" inline-class="header-text">
-                <?php echo $info['header_sub'] ?>
-            </td>
-        </tr>
-    </table>
-
-<?php } ?>

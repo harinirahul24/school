@@ -15,6 +15,7 @@ defined('ABSPATH') || defined('DUPXABSPATH') || exit;
  */
 final class DUPX_Package
 {
+
     /**
      *
      * @staticvar string $path
@@ -30,6 +31,32 @@ final class DUPX_Package
     }
 
     /**
+     * 
+     * @staticvar bool|string $packageHash
+     * @return bool|string false if fail
+     */
+    public static function getPackageHash()
+    {
+        return $GLOBALS['DUPX_AC']->package_hash;
+    }
+
+    /**
+     * 
+     * @staticvar string $fileHash
+     * @return string
+     */
+    public static function getArchiveFileHash()
+    {
+        static $fileHash = null;
+
+        if (is_null($fileHash)) {
+            $fileHash = preg_replace('/^.+_([a-z0-9]+)_[0-9]{14}_archive\.(?:daf|zip)$/', '$1', $GLOBALS['FW_PACKAGE_PATH']);
+        }
+
+        return $fileHash;
+    }
+
+    /**
      *
      * @staticvar string $path
      * @return string
@@ -38,7 +65,7 @@ final class DUPX_Package
     {
         static $path = null;
         if (is_null($path)) {
-            $path = $GLOBALS['DUPX_ROOT'].'/htaccess.orig';
+            $path = $GLOBALS['DUPX_ROOT'].'/.htaccess__'.$GLOBALS['DUPX_AC']->package_hash;
         }
         return $path;
     }

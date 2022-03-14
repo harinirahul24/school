@@ -18,7 +18,7 @@
  *
  * @package    Easy_Accordion_Free
  * @subpackage Easy_Accordion_Free/includes
- * @author     ShapedPlugin <shapedplugin@gmail.com>
+ * @author     ShapedPlugin <support@shapedplugin.com>
  */
 class Easy_Accordion_Free_Loader {
 

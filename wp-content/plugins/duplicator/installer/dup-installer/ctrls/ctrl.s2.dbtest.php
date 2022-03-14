@@ -70,16 +70,17 @@ class DUPX_DBTest
 		//REQUIRMENTS
 		//Pass States: skipped = -1		failed = 0		passed = 1   warned = 2
 		$this->reqs[5]	 = array('title' => "Create Database User", 'info' => "{$default_msg}", 'pass' => -1);
-		$this->reqs[10]	 = array('title' => "Verify Host Connection", 'info' => "{$default_msg}", 'pass' => -1);
-		$this->reqs[20]	 = array('title' => "Check Server Version", 'info' => "{$default_msg}", 'pass' => -1);
-		$this->reqs[30]	 = array('title' => "Create New Database Tests", 'info' => "{$default_msg}", 'pass' => -1);
-		$this->reqs[40]	 = array('title' => "Confirm Database Visibility", 'info' => "{$default_msg}", 'pass' => -1);
+		$this->reqs[10]	 = array('title' => "Host Connection", 'info' => "{$default_msg}", 'pass' => -1);
+		$this->reqs[20]	 = array('title' => "Database Version", 'info' => "{$default_msg}", 'pass' => -1);
+		$this->reqs[30]	 = array('title' => "Database Create New Tests", 'info' => "{$default_msg}", 'pass' => -1);
+		$this->reqs[40]	 = array('title' => "Privileges: User Visibility", 'info' => "{$default_msg}", 'pass' => -1);
 		$this->reqs[50]	 = array('title' => "Manual Table Check", 'info' => "{$default_msg}", 'pass' => -1);
-		$this->reqs[60]	 = array('title' => "Test User Table Privileges", 'info' => "{$default_msg}", 'pass' => -1);
+		$this->reqs[60]	 = array('title' => "Privileges: User Resources", 'info' => "{$default_msg}", 'pass' => -1);
 		$this->reqs[70]	 = array('title' => "Check Collation Capability", 'info' => "{$default_msg}", 'pass' => -1);
-		$this->reqs[80]	 = array('title' => "Check GTID mode", 'info' => "{$default_msg}", 'pass' => -1);
+		$this->reqs[80]	 = array('title' => "Database GTID mode", 'info' => "{$default_msg}", 'pass' => -1);
 		//NOTICES
 		$this->notices[10]	 = array('title' => "Table Case Sensitivity", 'info' => "{$default_msg}", 'pass' => -1);
+		$this->notices[20]	 = array('title' => "Source Database Triggers", 'info' => "{$default_msg}", 'pass' => -1);
        }
 
 	public function run()
@@ -143,41 +144,52 @@ class DUPX_DBTest
 
 		//NOTICES
 		$this->n10All($this->notices[10]);
+		$this->n20All($this->notices[20]);
 		$this->r70All($this->reqs[70]);
 		$this->r80All($this->reqs[80]);
 		$this->basicCleanup();
 	}
 
-	/**
-	 * Verify Host Connection
-	 *
-	 * @return null
-	 */
-	private function r10All(&$test)
-	{
-		try {
+    /**
+     * Verify Host Connection
+     *
+     * @return null
+     */
+    private function r10All(&$test)
+    {
+        try {
 
-			if ($this->isFailedState($test)) {
-				return;
-			}
+            if ($this->isFailedState($test)) {
+                return;
+            }
 
-			$this->dbh = DUPX_DB::connect($this->in->dbhost, $this->in->dbuser, $this->in->dbpass, null, $this->in->dbport);
-			if ($this->dbh) {
-				$test['pass']	 = 1;
-				$test['info']	 = "The user <b>[".htmlentities($this->in->dbuser)."]</b> successfully connected to the database server on host <b>[".htmlentities($this->in->dbhost)."]</b>.";
-			} else {
-				$msg = "Unable to connect the user <b>[".htmlentities($this->in->dbuser)."]</b> to the host <b>[".htmlentities($this->in->dbhost)."]</b>";
-				$test['pass']	 = 0;
-				$test['info']	 = (mysqli_connect_error())
-								? "{$msg}. The server error response was: <i>" . htmlentities(mysqli_connect_error()) . '</i>'
-								: "{$msg}. Please contact your hosting provider or server administrator.";
-			}
+            //Host check
+            $parsed_host_info = DUPX_DB::parseDBHost($this->in->dbhost);
+            $parsed_host      = $parsed_host_info[0];
+            $isInvalidHost    = $parsed_host == 'http' || $parsed_host == "https";
 
-		} catch (Exception $ex) {
-			$test['pass']	 = 0;
-			$test['info']	 = "Unable to connect the user <b>[".htmlentities($this->in->dbuser)."]</b> to the host <b>[".htmlentities($this->in->dbhost)."]</b>.<br/>" . $this->formatError($ex);
-		}
-	}
+            if ($isInvalidHost) {
+                $fixed_host = DupLiteSnapLibIOU::untrailingslashit(str_replace($parsed_host."://","",$this->in->dbhost));
+                $test['pass'] = 0;
+                $test['info'] = "<b>[".htmlentities($this->in->dbhost)."]</b> is not a valid input. Try using <b>[$fixed_host]</b> instead.";
+                return;
+            }
+
+            $this->dbh = DUPX_DB::connect($this->in->dbhost, $this->in->dbuser, $this->in->dbpass, null);
+            if ($this->dbh) {
+                $test['pass'] = 1;
+                $test['info'] = "The user <b>[".htmlentities($this->in->dbuser)."]</b> successfully connected to the database server on host <b>[".htmlentities($this->in->dbhost)."]</b>.";
+            } else {
+                $msg          = "Unable to connect the user <b>[".htmlentities($this->in->dbuser)."]</b> to the host <b>[".htmlentities($this->in->dbhost)."]</b>";
+                $test['pass'] = 0;
+                $test['info'] = (mysqli_connect_error()) ? "{$msg}. The server error response was: <i>".htmlentities(mysqli_connect_error()).'</i>' : "{$msg}. Please contact your hosting provider or server administrator.";
+            }
+        }
+        catch (Exception $ex) {
+            $test['pass'] = 0;
+            $test['info'] = "Unable to connect the user <b>[".htmlentities($this->in->dbuser)."]</b> to the host <b>[".htmlentities($this->in->dbhost)."]</b>.<br/>".$this->formatError($ex);
+        }
+    }
 
 	/**
 	 * Check Server Version
@@ -212,7 +224,7 @@ class DUPX_DBTest
 
 	/**
 	 * Create New Database Basic Test
-	 * Use selects: 'Create New Database' for basic
+	 * Use selects: 'Create New Database for basic
 	 *
 	 * @return null
 	 */
@@ -342,7 +354,7 @@ class DUPX_DBTest
 
 			if ($this->tblPerms['all']) {
 				$test['pass']	 = 1;
-				$test['info']	 = "The user <b>[".htmlentities($this->in->dbuser)."]</b> the correct privileges on the database <b>[".htmlentities($this->in->dbname)."]</b>";
+				$test['info']	 = "The user <b>[".htmlentities($this->in->dbuser)."]</b> has the correct privileges on the database <b>[".htmlentities($this->in->dbname)."]</b>";
 			} else {
 				$list		 = array();
 				$test['pass']	 = 0;
@@ -390,32 +402,23 @@ class DUPX_DBTest
 			$invalid_match = 0;
 
 			foreach($this->collationStatus as $key => $val) {
-
 				if ($this->collationStatus[$key]['found'] == 0) {
 				    if($this->in->dbcollatefb){
 				        $not_supported_col = $this->collationStatus[$key]['name'];
-                        //returns false or key
-                        $i = array_search($not_supported_col,$collation_arr);
-
-                        if($i !== false){
-                            ++$i;
-                            for($i; $i < $collation_arr_max; $i++) {
-
-                                $col_status = DUPX_DB::getCollationStatus($this->dbh, array($collation_arr[$i]));
-                                $cur_col_is_supported = $col_status[0]['found'];
-                                if($cur_col_is_supported){
-                                    $this->collationReplaceList[] = array(
-                                        'search'    => $not_supported_col,
-                                        'replace'   => $collation_arr[$i]
-                                    );
-									++$invalid_match;
-									break;
-                                }
-                            }
-                        } else {
-                            $invalid = 1;
-                            break;
-                        }
+                        for($i = 0; $i < $collation_arr_max; $i++) {
+							$col_status = DUPX_DB::getCollationStatus($this->dbh, array($collation_arr[$i]));
+							$cur_col_is_supported = $col_status[0]['found'];
+							if($cur_col_is_supported){
+								$this->collationReplaceList[] = array(
+									'search'    => $not_supported_col,
+									'replace'   => $collation_arr[$i]
+								);
+								++$invalid_match;
+								break;
+							}
+						}
+						$invalid = 1;
+                    	break;
                     } else {
                         $invalid = 1;
                         break;
@@ -484,7 +487,7 @@ class DUPX_DBTest
 								 . "</small>";
 			} else {
 				$test['pass'] = 1;
-				$test['info'] = "The installer have not detected GTID mode.";
+				$test['info'] = "The installer has not detected GTID mode.";
 			}
 		} catch (Exception $ex) {			
 			//Return '1' to allow user to continue
@@ -533,6 +536,32 @@ class DUPX_DBTest
 			$test['info']	 = "Failure in attempt to read the upper case table status.<br/>" . $this->formatError($ex);
 		}
 	}
+
+    /**
+     * Show source site trigger creates
+     *
+     * @return null
+     */
+    private function n20All(&$test)
+    {
+        if ($this->isFailedState($test)) {
+            return;
+        }
+
+        $triggers = (array)$this->ac->dbInfo->triggerList;
+        if (count($triggers) > 0) {
+            $test['pass'] = 0;
+            $test['info'] = "";
+
+            foreach ($triggers as $trigger) {
+                $test['info'] .= $trigger->create."\n\n";;
+            }
+
+        } else {
+            $test['pass'] = 1;
+            $test['info'] = "Source site did not contain triggers.";
+        }
+    }
 
 	/**
 	 * Input has UTF8 data

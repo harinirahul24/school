@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: javascript,js, re-marketing code, header, footer
 Requires at least: 3.5
 Tested up to: 5.3.1
-Stable tag: 3.8
+Stable tag: 3.9
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -104,6 +104,9 @@ output the individual script after the generic script to support google conversi
 
 = 3.8 =
 Test support for last WordPress version
+
+= 3.9 =
+add nonce check for terms update
 
 == Upgrade Notice ==
 

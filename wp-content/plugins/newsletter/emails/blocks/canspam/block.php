@@ -6,39 +6,44 @@
  */
 
 $default_options = array(
-    'block_background' => '#ffffff',
-    'font_family' => $font_family,
-    'font_size' => 13,
-    'font_color' => '#999999',
-    'font_weight' => 'normal',
-    'block_padding_top' => 15,
-    'block_padding_bottom' => 15,
-    'block_padding_left' => 15,
-    'block_padding_right' => 15    
+	'font_family'          => '',
+	'font_size'            => 14,
+	'font_color'           => '',
+	'font_weight'          => '',
+	'block_padding_top'    => 15,
+	'block_padding_bottom' => 15,
+	'block_padding_left'   => 15,
+	'block_padding_right'  => 15,
+	'block_background'     => '',
+	'title'                => $info['footer_title'],
+	'address'              => $info['footer_contact'],
+	'copyright'            => $info['footer_legal'],
 );
+
 $options = array_merge($default_options, $options);
+
+$text_font_family = empty( $options['font_family'] ) ? $global_text_font_family : $options['font_family'];
+$text_font_size   = empty( $options['font_size'] ) ? $global_text_font_size : $options['font_size'];
+$text_font_color  = empty( $options['font_color'] ) ? $global_text_font_color : $options['font_color'];
+$text_font_weight = empty( $options['font_weight'] ) ? $global_text_font_weight : $options['font_weight'];
+
 ?>
 
 <style>
     .canspam-text {
-        padding: 10px; 
-        text-align: center; 
-        font-size: <?php echo $options['font_size'] ?>px; 
-        font-family: <?php echo $options['font_family'] ?>; 
-        font-weight: <?php echo $options['font_weight'] ?>; 
-        color: <?php echo $options['font_color'] ?>;
+        padding: 10px;
+        text-align: center;
+        font-size: <?php echo $text_font_size ?>px;
+        font-family: <?php echo $text_font_family ?>;
+        font-weight: <?php echo $text_font_weight ?>;
+        color: <?php echo $text_font_color?>;
     }
 </style>
-<table width="100%" style="width: 100%!important" border="0" cellspacing="0" cellpadding="0" align="center" class="responsive-table">
-    <tr>
-        <td align="center" class="canspam-text">
-                <?php echo!empty($block_options['footer_title']) ? $block_options['footer_title'] : 'Your Company' ?>
-                <br>
-                <?php echo!empty($block_options['footer_contact']) ? $block_options['footer_contact'] : 'Company Address, Phone Number' ?>
-                <br>
-                <em><?php echo!empty($block_options['footer_legal']) ? $block_options['footer_legal'] : 'Copyright or Legal text' ?></em>
-            </div>
-        </td>
-    </tr>
-</table>
 
+<div inline-class="canspam-text">
+    <strong><?php echo esc_html($options['title']) ?></strong>
+    <br>
+    <?php echo esc_html($options['address']) ?>
+    <br>
+    <em><?php echo esc_html($options['copyright']) ?></em>
+</div>

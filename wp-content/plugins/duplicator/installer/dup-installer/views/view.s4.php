@@ -10,7 +10,7 @@ $admin_base		= basename($GLOBALS['DUPX_AC']->wplogin_url);
 $admin_redirect ="{$url_new_rtrim}/wp-admin/admin.php?page=duplicator-tools&tab=diagnostics";
 
 $safe_mode		= DUPX_U::sanitize_text_field($_POST['exe_safe_mode']);
-$admin_redirect = "{$admin_redirect}&in={$GLOBALS['BOOTLOADER_NAME']}&sm={$safe_mode}" ;
+$admin_redirect = "{$admin_redirect}&sm={$safe_mode}" ;
 $admin_redirect = urlencode($admin_redirect);
 $admin_url_qry  = (strpos($admin_base, '?') === false) ? '?' : '&';
 $admin_login	= "{$url_new_rtrim}/{$admin_base}{$admin_url_qry}redirect_to={$admin_redirect}";
@@ -58,16 +58,16 @@ if ($json_decode == NULL || $json_decode == FALSE) {
     {
 		if ($('input#auto-delete').is(':checked')) {
 			var action = encodeURIComponent('&action=installer');
-			window.open('<?php echo $admin_login; ?>' + action, '_blank');
+			window.open(<?php echo str_replace('\\/', '/', json_encode($admin_login)); ?> + action, '_blank');
 		} else {
-			window.open('<?php echo $admin_login; ?>', '_blank');
+			window.open(<?php echo str_replace('\\/', '/', json_encode($admin_login)); ?>, '_blank');
 		}
 	};
 </script>
 
 <!-- =========================================
 VIEW: STEP 4- INPUT -->
-<form id='s4-input-form' method="post" class="content-form" style="line-height:20px">
+<form id='s4-input-form' method="post" class="content-form" style="line-height:20px" autocomplete="off">
 	<input type="hidden" name="url_new" id="url_new" value="<?php echo DUPX_U::esc_attr($url_new_rtrim); ?>" />
 	<div class="logfile-link"><?php DUPX_View_Funcs::installerLogLink(); ?></div>
 
@@ -86,29 +86,31 @@ VIEW: STEP 4- INPUT -->
 	<table class="s4-final-step">
 		<tr style="vertical-align: top">
 			<td style="padding-top:10px">
-				<button type="button" class="s4-final-btns" onclick="DUPX.getAdminLogin()"><i class="fab fa-wordpress"></i> Admin Login</button>
+				<button type="button" class="s4-final-btns" onclick="DUPX.getAdminLogin()">
+                    <i class="fab fa-wordpress fa-lg"></i> &nbsp; Admin Login
+                </button>
 			</td>
 			<td>
 				Login to the WordPress Admin to finalize this install.<br/>
 				<input type="checkbox" name="auto-delete" id="auto-delete" checked="true"/>
 				<label for="auto-delete">Auto delete installer files after login <small>(recommended)</small></label>
-				<br/><br/>
-								
-				<!-- WARN: SAFE MODE MESSAGES -->
-				<div class="s4-warn" style="display:<?php echo ($safe_mode > 0 ? 'block' : 'none')?>">
-					<b>Safe Mode</b><br/>
-					Safe mode has <u>deactivated</u> all plugins. Please be sure to enable your plugins after logging in. <i>If you notice that problems arise when activating
-					the plugins then active them one-by-one to isolate the plugin that	could be causing the issue.</i>
-				</div>
 			</td>
 		</tr>
 	</table>
-	<i style="color:maroon; font-size:12px">
-		<b><i class="fa fa-exclamation-triangle fa-sm"></i> IMPORTANT FINAL STEPS:</b> Login into the WordPress Admin to remove all <?php 
-        DUPX_View_Funcs::helpLink('step4', 'installation files'); ?> and finalize the install process.
-        This install is NOT complete until all installer files are removed.  Leaving the installer files on this server can lead to security issues.
-	</i>
-	<br/><br/><br/>
+
+    <!-- WARN: SAFE MODE MESSAGES -->
+    <div class="s4-final-steps" style="display:<?php echo ($safe_mode > 0 ? 'block' : 'none')?>">
+        <b><i class="fa fa-exclamation-triangle"></i> SAFE MODE:</b>
+        Safe mode has <u>deactivated</u> all plugins except for Duplicator. Please be sure to enable your plugins after logging in.  If you notice that problems
+        arise when activating more than one plugin at a time, then it is recommended to active them one-by-one to isolate the plugin that could be causing the issue.
+    </div>
+
+    <!-- WARN: FINAL STEPS -->
+	<div class="s4-final-steps">
+		<b><i class="fa fa-exclamation-triangle"></i> IMPORTANT FINAL STEPS:</b> Login into the WordPress Admin to remove all <?php 
+        DUPX_View_Funcs::helpLink('step4', 'installation files'); ?> and finalize the install process.  This install is <u>NOT</u> complete until all installer
+        files have been completely removed.  Leaving any of the installer files on this server can lead to security issues.
+	</div><br/>
 
     <?php
     $nManager = DUPX_NOTICE_MANAGER::getInstance();
@@ -413,7 +415,7 @@ LONGMSG;
 $(document).ready(function () {
 
     //INIT Routines
-	$("*[data-type='toggle']").click(DUPX.toggleClick);
+    DUPX.initToggle();
 	$("#tabs").tabs();
 
 });

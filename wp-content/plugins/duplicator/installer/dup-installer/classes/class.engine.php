@@ -13,6 +13,14 @@ defined('ABSPATH') || defined('DUPXABSPATH') || exit;
 
 class DUPX_UpdateEngine
 {
+
+    const SERIALIZE_OPEN_STR_REGEX   = '/^(s:\d+:")/';
+    const SERIALIZE_OPEN_SUBSTR_LEN  = 25;
+    const SERIALIZE_CLOSE_STR_REGEX  = '/^";}*(?:"|a:|s:|S:|b:|d:|i:|o:|O:|C:|r:|R:|N;|$)/';
+    const SERIALIZE_CLOSE_SUBSTR_LEN = 50;
+    const SERIALIZE_CLOSE_STR        = '";';
+    const SERIALIZE_CLOSE_STR_LEN    = 2;
+
     private static $report = null;
 
     /**
@@ -177,17 +185,17 @@ class DUPX_UpdateEngine
     public static function getTableRowParamsDefault($table = '')
     {
         return array(
-            'table' => $table,
-            'updated' => false,
-            'row_count' => 0,
-            'columns' => array(),
-            'colList' => '*',
-            'colMsg' => 'every column',
+            'table'         => $table,
+            'updated'       => false,
+            'row_count'     => 0,
+            'columns'       => array(),
+            'colList'       => '*',
+            'colMsg'        => 'every column',
             'columnsSRList' => array(),
-            'pages' => 0,
-            'page_size' => 0,
-            'page' => 0,
-            'current_row' => 0
+            'pages'         => 0,
+            'page_size'     => 0,
+            'page'          => 0,
+            'current_row'   => 0
         );
     }
 
@@ -269,19 +277,19 @@ class DUPX_UpdateEngine
     {
         $s3Funcs = DUPX_S3_Funcs::getInstance();
 
-        // init table params if isn't inizialized
+        // init table params if isn't initialized
         if (!self::initTableParams($table)) {
             return false;
         }
 
         //Paged Records
         $pages = $s3Funcs->cTableParams['pages'];
-        for ($page = 0; $page < $pages; $page ++) {
+        for ($page = 0; $page < $pages; $page++) {
             self::evaluateTableRows($table, $page);
         }
 
         if ($s3Funcs->cTableParams['updated']) {
-            $s3Funcs->report['updt_tables'] ++;
+            $s3Funcs->report['updt_tables']++;
         }
     }
 
@@ -289,7 +297,7 @@ class DUPX_UpdateEngine
     {
         $s3Funcs = DUPX_S3_Funcs::getInstance();
 
-        // init table params if isn't inizialized
+        // init table params if isn't initialized
         if (!self::initTableParams($table)) {
             return false;
         }
@@ -308,7 +316,7 @@ class DUPX_UpdateEngine
         $s3Funcs = DUPX_S3_Funcs::getInstance();
         if (is_null($s3Funcs->cTableParams) || $s3Funcs->cTableParams['table'] !== $table) {
             DUPX_Log::info('ENGINE INIT TABLE PARAMS '.DUPX_Log::varToString($table), DUPX_Log::LV_DETAILED);
-            $s3Funcs->report['scan_tables'] ++;
+            $s3Funcs->report['scan_tables']++;
 
             if (($s3Funcs->cTableParams = self::getTableRowsParams($table)) === null) {
                 DUPX_Log::info('ENGINE TABLE PARAMS EMPTY', DUPX_Log::LV_DEBUG);
@@ -350,8 +358,8 @@ class DUPX_UpdateEngine
             $s3Funcs->report['errsql'][] = $errMsg;
             $nManager->addFinalReportNotice(array(
                 'shortMsg' => 'DATA-REPLACE ERRORS: MySQL',
-                'level' => DUPX_NOTICE_ITEM::SOFT_WARNING,
-                'longMsg' => $errMsg,
+                'level'    => DUPX_NOTICE_ITEM::SOFT_WARNING,
+                'longMsg'  => $errMsg,
                 'sections' => 'search_replace'
             ));
         }
@@ -382,14 +390,14 @@ class DUPX_UpdateEngine
         $dbh                  = $s3Funcs->getDbConnection();
         $maxSerializeLenCheck = $s3Funcs->getPost('maxSerializeStrlen');
 
-        $s3Funcs->report['scan_rows'] ++;
-        $rowsParams['current_row'] ++;
+        $s3Funcs->report['scan_rows']++;
+        $rowsParams['current_row']++;
 
         $upd_col    = array();
         $upd_sql    = array();
         $where_sql  = array();
         $upd        = false;
-        $serial_err = 0;
+        $serial_err = false;
         $is_unkeyed = !in_array(true, $rowsParams['columns']);
 
         $rowErrors = array();
@@ -397,21 +405,21 @@ class DUPX_UpdateEngine
 
         //Loops every cell
         foreach ($rowsParams['columns'] as $column => $primary_key) {
-            $s3Funcs->report['scan_cells'] ++;
+            $s3Funcs->report['scan_cells']++;
             if (!isset($row[$column])) {
                 continue;
             }
 
             $safe_column     = '`'.mysqli_real_escape_string($dbh, $column).'`';
-            $edited_data     = $data_to_fix     = $row[$column];
+            $edited_data     = $originalData    = $row[$column];
             $base64converted = false;
             $txt_found       = false;
 
             //Unkeyed table code
             //Added this here to add all columns to $where_sql
             //The if statement with $txt_found would skip additional columns -TG
-            if ($is_unkeyed && !empty($data_to_fix)) {
-                $where_sql[] = $safe_column.' = "'.mysqli_real_escape_string($dbh, $data_to_fix).'"';
+            if ($is_unkeyed && !empty($originalData)) {
+                $where_sql[] = $safe_column.' = "'.mysqli_real_escape_string($dbh, $originalData).'"';
             }
 
             //Only replacing string values
@@ -458,7 +466,7 @@ class DUPX_UpdateEngine
 
                 // 0 no limit
                 if ($maxSerializeLenCheck > 0 && self::is_serialized_string($edited_data) && strlen($edited_data) > $maxSerializeLenCheck) {
-                    $serial_err ++;
+                    $serial_err         = true;
                     $trimLen            = DUPX_Log::isLevel(DUPX_Log::LV_HARD_DEBUG) ? 10000 : 200;
                     $rowErrors[$column] = 'ENGINE: serialize data too big to convert; data len:'.strlen($edited_data).' Max size:'.$maxSerializeLenCheck;
                     $rowErrors[$column] .= "\n\tDATA: ".mb_strimwidth($edited_data, 0, $trimLen, ' [...]');
@@ -480,32 +488,48 @@ class DUPX_UpdateEngine
                             $serial_check = self::fixSerialString($edited_data);
                             if ($serial_check['fixed']) {
                                 $edited_data = $serial_check['data'];
-                            } elseif ($serial_check['tried'] && !$serial_check['fixed']) {
-                                $serial_err ++;
+                            } else {
                                 $trimLen            = DUPX_Log::isLevel(DUPX_Log::LV_HARD_DEBUG) ? 10000 : 200;
-                                $rowErrors[$column] = 'ENGINE: serialize data serial check error';
-                                $rowErrors[$column] .= "\n\tDATA: ".mb_strimwidth($edited_data, 0, $trimLen, ' [...]');
+                                $message            = 'ENGINE: serialize data serial check error'.
+                                    "\n\tDATA: ".mb_strimwidth($edited_data, 0, $trimLen, ' [...]');
+                                DUPX_Log::info($message);
+                                $serial_err         = true;
+                                $rowErrors[$column] = $message;
                             }
                         }
                     }
                 }
             }
 
+            //Base 64 encode
+            if ($base64converted) {
+                $edited_data = base64_encode($edited_data);
+            }
+
             //Change was made
-            if ($serial_err > 0 || $edited_data != $data_to_fix) {
-                $s3Funcs->report['updt_cells'] ++;
-                //Base 64 encode
-                if ($base64converted) {
-                    $edited_data = base64_encode($edited_data);
-                }
+            if ($serial_err == false && $edited_data != $originalData) {
+                $s3Funcs->report['updt_cells']++;
                 $upd_col[] = $safe_column;
                 $upd_sql[] = $safe_column.' = "'.mysqli_real_escape_string($dbh, $edited_data).'"';
                 $upd       = true;
             }
 
             if ($primary_key) {
-                $where_sql[] = $safe_column.' = "'.mysqli_real_escape_string($dbh, $data_to_fix).'"';
+                $where_sql[] = $safe_column.' = "'.mysqli_real_escape_string($dbh, $originalData).'"';
             }
+        }
+
+        foreach ($rowErrors as $errCol => $msgCol) {
+            $longMsg                     = $msgCol."\n\tTABLE:".$rowsParams['table'].' COLUMN: '.$errCol.' WHERE: '.implode(' AND ', array_filter($where_sql));
+            $s3Funcs->report['errser'][] = $longMsg;
+
+            $nManager->addFinalReportNotice(array(
+                'shortMsg'    => 'DATA-REPLACE ERROR: Serialization',
+                'level'       => DUPX_NOTICE_ITEM::SOFT_WARNING,
+                'longMsg'     => $longMsg,
+                'longMsgMode' => DUPX_NOTICE_ITEM::MSG_MODE_PRE,
+                'sections'    => 'search_replace'
+            ));
         }
 
         //PERFORM ROW UPDATE
@@ -514,29 +538,17 @@ class DUPX_UpdateEngine
             $result = DUPX_DB::mysqli_query($dbh, $sql, __FILE__, __LINE__);
 
             if ($result) {
-                foreach ($rowErrors as $errCol => $msgCol) {
-                    $longMsg                     = $msgCol."\n\tTABLE:".$rowsParams['table'].' COLUMN: '.$errCol.' WHERE: '.implode(' AND ', array_filter($where_sql));
-                    $s3Funcs->report['errser'][] = $longMsg;
-
-                    $nManager->addFinalReportNotice(array(
-                        'shortMsg' => 'DATA-REPLACE ERROR: Serialization',
-                        'level' => DUPX_NOTICE_ITEM::SOFT_WARNING,
-                        'longMsg' => $longMsg,
-                        'longMsgMode' => DUPX_NOTICE_ITEM::MSG_MODE_PRE,
-                        'sections' => 'search_replace'
-                    ));
-                }
-                $s3Funcs->report['updt_rows'] ++;
+                $s3Funcs->report['updt_rows']++;
                 $rowsParams['updated'] = true;
             } else {
                 $errMsg                      = mysqli_error($dbh)."\n\tTABLE:".$rowsParams['table'].' COLUMN: '.$errCol.' WHERE: '.implode(' AND ', array_filter($where_sql));
                 $s3Funcs->report['errsql'][] = ($GLOBALS['LOGGING'] == 1) ? 'DB ERROR: '.$errMsg : 'DB ERROR: '.$errMsg."\nSQL: [{$sql}]\n";
                 $nManager->addFinalReportNotice(array(
-                    'shortMsg' => 'DATA-REPLACE ERRORS: MySQL',
-                    'level' => DUPX_NOTICE_ITEM::SOFT_WARNING,
-                    'longMsg' => $errMsg,
+                    'shortMsg'    => 'DATA-REPLACE ERRORS: MySQL',
+                    'level'       => DUPX_NOTICE_ITEM::SOFT_WARNING,
+                    'longMsg'     => $errMsg,
                     'longMsgMode' => DUPX_NOTICE_ITEM::MSG_MODE_PRE,
-                    'sections' => 'search_replace'
+                    'sections'    => 'search_replace'
                 ));
             }
         } elseif ($upd) {
@@ -545,8 +557,8 @@ class DUPX_UpdateEngine
 
             $nManager->addFinalReportNotice(array(
                 'shortMsg' => 'DATA-REPLACE ERROR: Key',
-                'level' => DUPX_NOTICE_ITEM::SOFT_WARNING,
-                'longMsg' => $errMsg,
+                'level'    => DUPX_NOTICE_ITEM::SOFT_WARNING,
+                'longMsg'  => $errMsg,
                 'sections' => 'search_replace'
             ));
         }
@@ -571,17 +583,17 @@ class DUPX_UpdateEngine
             if (($cScope = self::getSearchReplaceCustomScope($table, $column)) === false) {
                 // if don't have custom scope get normal search and reaplce table list
                 $columnsSRList[$column] = array(
-                    'list' => &$list,
-                    'sList' => &$searchList,
-                    'rList' => &$replaceList,
+                    'list'       => &$list,
+                    'sList'      => &$searchList,
+                    'rList'      => &$replaceList,
                     'exactMatch' => false
                 );
             } else {
                 // if column have custom scope overvrite default table search/replace list
                 $columnsSRList[$column] = array(
-                    'list' => $srManager->getSearchReplaceList($cScope, true, false),
-                    'sList' => array(),
-                    'rList' => array(),
+                    'list'       => $srManager->getSearchReplaceList($cScope, true, false),
+                    'sList'      => array(),
+                    'rList'      => array(),
                     'exactMatch' => self::isExactMatch($table, $column)
                 );
                 foreach ($columnsSRList[$column]['list'] as $item) {
@@ -730,7 +742,8 @@ class DUPX_UpdateEngine
                 $unserialize_ret = @unserialize($data);
                 DUPX_Handler::setMode();
                 return ($unserialize_ret !== false);
-            } catch (Exception $e) {
+            }
+            catch (Exception $e) {
                 DUPX_Log::info("Unserialize exception: ".$e->getMessage());
                 //DEBUG ONLY:
                 DUPX_Log::info("Serialized data\n".$data, DUPX_Log::LV_DEBUG);
@@ -750,17 +763,17 @@ class DUPX_UpdateEngine
                 'scope' => 'domain_host',
                 'exact' => true
             ),
-            'path' => array(
+            'path'   => array(
                 'scope' => 'domain_path',
                 'exact' => true
             )
         ),
-        'site' => array(
+        'site'    => array(
             'domain' => array(
                 'scope' => 'domain_host',
                 'exact' => true
             ),
-            'path' => array(
+            'path'   => array(
                 'scope' => 'domain_path',
                 'exact' => true
             )
@@ -826,21 +839,25 @@ class DUPX_UpdateEngine
      */
     public static function fixSerialString($data)
     {
-        $result = array('data' => $data, 'fixed' => false, 'tried' => false);
+        $result = array(
+            'data'  => null,
+            'fixed' => false,
+            'tried' => false
+        );
 
         // check if serialized string must be fixed
-        if (!self::unserializeTest($data)) {
-
+        if (self::unserializeTest($data)) {
+            $result['data']  = $data;
+            $result['fixed'] = true;
+        } else {
+            $result['tried']  = true;
             $serialized_fixed = self::recursiveFixSerialString($data);
-
             if (self::unserializeTest($serialized_fixed)) {
-
-                $result['data'] = $serialized_fixed;
-
+                $result['data']  = $serialized_fixed;
                 $result['fixed'] = true;
+            } else {
+                $result['fixed'] = false;
             }
-
-            $result['tried'] = true;
         }
 
         return $result;
@@ -861,8 +878,7 @@ class DUPX_UpdateEngine
             return $data;
         }
 
-        $result = '';
-
+        $result  = '';
         $matches = null;
 
         $openLevel     = 0;
@@ -877,21 +893,23 @@ class DUPX_UpdateEngine
             $addChar = true;
 
             if ($cChar == 's') {
-
                 // test if is a open string
-                if (preg_match('/^(s:\d+:")/', substr($data, $i), $matches)) {
+                if (preg_match(self::SERIALIZE_OPEN_STR_REGEX, substr($data, $i, self::SERIALIZE_OPEN_SUBSTR_LEN), $matches)) {
+
+                    if ($openLevel > 1) {
+                        $openContentL2 .= $matches[0];
+                    }
 
                     $addChar = false;
 
-                    $openLevel ++;
+                    $openLevel++;
 
                     $i += strlen($matches[0]) - 1;
                 }
             } else if ($openLevel > 0 && $cChar == '"') {
 
                 // test if is a close string
-                if (preg_match('/^";(?:}|a:|s:|S:|b:|d:|i:|o:|O:|C:|r:|R:|N;)/', substr($data, $i))) {
-
+                if (preg_match(self::SERIALIZE_CLOSE_STR_REGEX, substr($data, $i, self::SERIALIZE_CLOSE_SUBSTR_LEN))) {
                     $addChar = false;
 
                     switch ($openLevel) {
@@ -917,20 +935,16 @@ class DUPX_UpdateEngine
                         default:
                             // level > 2
                             // keep writing at level 2; it will be corrected with recursion
+                            $openContentL2 .= self::SERIALIZE_CLOSE_STR;
                             break;
                     }
 
-                    $openLevel --;
-
-                    $closeString = '";';
-
-                    $i += strlen($closeString) - 1;
+                    $openLevel--;
+                    $i += self::SERIALIZE_CLOSE_STR_LEN - 1;
                 }
             }
 
-
             if ($addChar) {
-
                 switch ($openLevel) {
                     case 0:
                         // level 0

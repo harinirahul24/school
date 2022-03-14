@@ -13,7 +13,9 @@ defined('ABSPATH') || defined('DUPXABSPATH') || exit;
 	div.dup-notes-add {float:right; margin:-4px 2px 4px 0;}
     div#dup-notes-area {display:none}
 	input#package-name {padding:4px; height: 2em;  font-size: 1.2em;  line-height: 100%; width: 100%;   margin: 0 0 3px;}
-	label.lbl-larger {font-size:1.2em}
+	tr.dup-store-path td {padding:14px}
+    label.lbl-larger {font-size:1.2em}
+
     /*ARCHIVE SECTION*/
     form#dup-form-opts div.tabs-panel{max-height:800px; padding:10px; min-height:280px}
     form#dup-form-opts ul li.tabs{font-weight:bold}
@@ -28,6 +30,7 @@ defined('ABSPATH') || defined('DUPXABSPATH') || exit;
 	form#dup-form-opts textarea#filter-files {height:85px}
     div.dup-quick-links {font-size:11px; float:right; display:inline-block; margin-top:2px; font-style:italic}
     div.dup-tabs-opts-help {font-style:italic; font-size:11px; margin:10px 0 0 10px; color:#777}
+    
     /* Tab: Database */
     table#dup-dbtables td {padding:1px 7px 1px 4px}
 	label.core-table {color:#9A1E26;font-style:italic;font-weight:bold}
@@ -62,8 +65,9 @@ defined('ABSPATH') || defined('DUPXABSPATH') || exit;
 	div.dup-install-prefill-tab-pnl {min-height:180px !important; }
 </style>
 <?php
-$action_url = admin_url("admin.php?page=duplicator&tab=new2&retry={$retry_state}");
-$action_nonce_url = wp_nonce_url($action_url, 'new2-package');
+$action_url         = admin_url("admin.php?page=duplicator&tab=new2&retry={$retry_state}");
+$action_nonce_url   = wp_nonce_url($action_url, 'new2-package');
+$storage_position   = DUP_Settings::Get('storage_position');
 ?>
 <form id="dup-form-opts" method="post" action="<?php echo $action_nonce_url; ?>" data-parsley-validate="" autocomplete="oldpassword">
 <input type="hidden" id="dup-form-opts-action" name="action" value="">
@@ -93,42 +97,67 @@ STORAGE -->
 		<div class="dup-box-arrow"></div>
 	</div>			
 	<div class="dup-box-panel" id="dup-pack-storage-panel" style="<?php echo esc_html($ui_css_storage); ?>">
-	<table class="widefat package-tbl">
-		<thead>
-			<tr>
-				<th style='width:275px'><?php esc_html_e("Name", 'duplicator'); ?></th>
-				<th style='width:100px'><?php esc_html_e("Type", 'duplicator'); ?></th>
-				<th style="white-space:nowrap"><?php esc_html_e("Location", 'duplicator'); ?></th>
-			</tr>
-		</thead>
-		<tbody>
-			<tr class="package-row">
-				<td><i class="fa fa-server"></i>&nbsp;<?php  esc_html_e('Default', 'duplicator');?></td>
-				<td><?php esc_html_e("Local", 'duplicator'); ?></td>
-				<td><?php echo DUPLICATOR_SSDIR_PATH; ?></td>				
-			</tr>
-			<tr>
-				<td colspan="4" style="padding:0 0 7px 7px">
-					<div class="dup-store-pro"> 
-						<span class="dup-pro-text">
-							<img src="<?php echo esc_url(DUPLICATOR_PLUGIN_URL."assets/img/amazon-64.png"); ?>" /> 
-							<img src="<?php echo esc_url(DUPLICATOR_PLUGIN_URL."assets/img/dropbox-64.png"); ?>" /> 
-							<img src="<?php echo esc_url(DUPLICATOR_PLUGIN_URL."assets/img/google_drive_64px.png"); ?>" />
-							<img src="<?php echo esc_url(DUPLICATOR_PLUGIN_URL."assets/img/onedrive-48px.png"); ?>" /> 
-							<img src="<?php echo esc_url(DUPLICATOR_PLUGIN_URL."assets/img/ftp-64.png"); ?>" /> 
-							<?php echo sprintf(__('%1$s, %2$s, %3$s, %4$s, %5$s and other storage options available in', 'duplicator'), 'Amazon', 'Dropbox', 'Google Drive', 'OneDrive', 'FTP/SFTP'); ?>
-							<a href="https://snapcreek.com/duplicator/?utm_source=duplicator_free&utm_medium=wordpress_plugin&utm_content=free_storage&utm_campaign=duplicator_pro" target="_blank"><?php esc_html_e('Duplicator Pro', 'duplicator');?></a> 
-							<i class="far fa-lightbulb" 
-								data-tooltip-title="<?php esc_attr_e("Additional Storage:", 'duplicator'); ?>" 
-								data-tooltip="<?php esc_attr_e('Duplicator Pro allows you to create a package and then store it at a custom location on this server or to a cloud '
-										. 'based location such as Google Drive, Amazon, Dropbox or FTP.', 'duplicator'); ?>">
-							 </i>
-						</span>
-					</div>                            
-				</td>
-			</tr>
-		</tbody>
-	</table>
+        <div style="padding:0 5px 3px 0">
+            <span class="dup-guide-txt-color">
+                <?php esc_html_e("This is the storage location on this server where the archive and installer files will be saved.", 'duplicator'); ?>
+            </span>
+            <div style="float:right">
+                <a href="admin.php?page=duplicator-settings&tab=storage"><?php  esc_html_e("[Storage Options]", 'duplicator'); ?> </a>
+            </div>
+        </div>
+
+        <table class="widefat package-tbl" style="margin-bottom:15px" >
+            <thead>
+                <tr>
+                    <th style='width:30px'></th>
+                    <th style='width:200px'><?php esc_html_e("Name", 'duplicator'); ?></th>
+                    <th style='width:100px'><?php esc_html_e("Type", 'duplicator'); ?></th>
+                    <th style="white-space:nowrap"><?php esc_html_e("Location", 'duplicator'); ?></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="dup-store-path">
+                    <td>
+                        <input type="checkbox" checked="checked" disabled="disabled" style="margin-top:-2px"/>
+                    </td>
+                    <td>
+                        <?php  esc_html_e('Default', 'duplicator');?> 
+                        <i>
+                            <?php
+                                if ($storage_position === DUP_Settings::STORAGE_POSITION_LECAGY) {
+                                    esc_html_e("(Legacy Path)", 'duplicator');
+                                } else {
+                                    esc_html_e("(Contents Path)", 'duplicator');
+                                }
+                            ?>
+                        </i>
+                    </td>
+                    <td><i class="fas fa-server fa-fw"></i> <?php esc_html_e("Local", 'duplicator'); ?></td>
+                    <td><?php echo DUP_Settings::getSsdirPath(); ?></td>
+                </tr>
+                <tr>
+                    <td colspan="4" class="dup-store-promo-area">
+                        <div class="dup-store-pro">
+                            <span class="dup-pro-text">
+                                <?php echo sprintf(__('Back up this site to %1$s, %2$s, %3$s, %4$s, %5$s and other locations with ', 'duplicator'),
+                                    '<i class="fab fa-aws  fa-fw"></i>&nbsp;' .'Amazon', 
+                                    '<i class="fab fa-dropbox fa-fw"></i>&nbsp;' . 'Dropbox', 
+                                    '<i class="fab fa-google-drive  fa-fw"></i>&nbsp;' . 'Google Drive',
+                                    '<i class="fas fa-cloud  fa-fw"></i>&nbsp;' . 'OneDrive',
+                                    '<i class="fas fa-network-wired fa-fw"></i>&nbsp;' . 'FTP/SFTP');
+                                ?>
+                                <a href="https://snapcreek.com/duplicator/?utm_source=duplicator_free&utm_medium=wordpress_plugin&utm_content=free_storage_bw&utm_campaign=duplicator_pro" target="_blank"><?php esc_html_e('Duplicator Pro', 'duplicator');?></a>
+                                <i class="fas fa-question-circle"
+                                    data-tooltip-title="<?php esc_attr_e("Additional Storage:", 'duplicator'); ?>"
+                                    data-tooltip="<?php esc_attr_e('Duplicator Pro allows you to create a package and store it at a custom location on this server or to a remote '
+                                            . 'cloud location such as Google Drive, Amazon, Dropbox and many more.', 'duplicator'); ?>">
+                                 </i>
+                            </span>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
 	</div>
 </div><br/>
 
@@ -189,9 +218,9 @@ ARCHIVE -->
 							?>
 						</label>
 						<div class='dup-quick-links'>
-							<a href="javascript:void(0)" onclick="Duplicator.Pack.AddExcludePath('<?php echo rtrim(DUPLICATOR_WPROOTPATH, '/'); ?>')">[<?php esc_html_e("root path", 'duplicator') ?>]</a>
-							<a href="javascript:void(0)" onclick="Duplicator.Pack.AddExcludePath('<?php echo rtrim($upload_dir, '/'); ?>')">[<?php esc_html_e("wp-uploads", 'duplicator') ?>]</a>
-							<a href="javascript:void(0)" onclick="Duplicator.Pack.AddExcludePath('<?php echo DUP_Util::safePath(WP_CONTENT_DIR); ?>/cache')">[<?php esc_html_e("cache", 'duplicator') ?>]</a>
+							<a href="javascript:void(0)" onclick="Duplicator.Pack.AddExcludePath('<?php echo esc_js(duplicator_get_abs_path()); ?>')">[<?php esc_html_e("root path", 'duplicator') ?>]</a>
+							<a href="javascript:void(0)" onclick="Duplicator.Pack.AddExcludePath('<?php echo esc_js(rtrim($upload_dir, '/')); ?>')">[<?php esc_html_e("wp-uploads", 'duplicator') ?>]</a>
+							<a href="javascript:void(0)" onclick="Duplicator.Pack.AddExcludePath('<?php echo esc_js(DUP_Util::safePath(WP_CONTENT_DIR)); ?>/cache')">[<?php esc_html_e("cache", 'duplicator') ?>]</a>
 							<a href="javascript:void(0)" onclick="jQuery('#filter-dirs').val('')"><?php esc_html_e("(clear)", 'duplicator') ?></a>
 						</div>
 						<textarea name="filter-dirs" id="filter-dirs" placeholder="/full_path/exclude_path1;/full_path/exclude_path2;"><?php echo str_replace(";", ";\n", esc_textarea($Package->Archive->FilterDirs)) ?></textarea><br/>
@@ -211,7 +240,7 @@ ARCHIVE -->
 							?>
 						</label>
 						<div class='dup-quick-links'>
-							<a href="javascript:void(0)" onclick="Duplicator.Pack.AddExcludeFilePath('<?php echo rtrim(DUPLICATOR_WPROOTPATH, '/'); ?>')"><?php esc_html_e("(file path)", 'duplicator') ?></a>
+							<a href="javascript:void(0)" onclick="Duplicator.Pack.AddExcludeFilePath('<?php echo esc_js(duplicator_get_abs_path()); ?>')"><?php esc_html_e("(file path)", 'duplicator') ?></a>
 							<a href="javascript:void(0)" onclick="jQuery('#filter-files').val('')"><?php esc_html_e("(clear)", 'duplicator') ?></a>
 						</div>
 						<textarea name="filter-files" id="filter-files" placeholder="/full_path/exclude_file_1.ext;/full_path/exclude_file2.ext"><?php echo str_replace(";", ";\n", esc_textarea($Package->Archive->FilterFiles)) ?></textarea>
@@ -229,7 +258,7 @@ ARCHIVE -->
 						if ($retry_state == '2') {
 							echo '<i style="color:maroon">';
 							_e("This option has automatically been checked because you have opted for a <i class='fa fa-random'></i> Two-Part Install Process.  Please complete the package build and continue with the ", 'duplicator');
-								printf('%s <a href="https://snapcreek.com/duplicator/docs/quick-start/?utm_source=duplicator_free&utm_medium=wordpress_plugin&utm_content=host_interupt_2partlink&utm_campaign=build_issues#quick-060-q" target="faq">%s</a>.',
+								printf('%s <a href="https://snapcreek.com/duplicator/docs/quick-start/?utm_source=duplicator_free&utm_medium=wordpress_plugin&utm_content=host_interupt_2partlink1&utm_campaign=build_issues#quick-060-q" target="faq">%s</a>.',
 								'',
 								esc_html__('Quick Start Two-Part Install Instructions', 'duplicator'));
 							echo '</i><br/><br/>';
@@ -387,6 +416,9 @@ INSTALLER -->
 <div class="dup-box-panel" id="dup-pack-installer-panel" style="<?php echo esc_html($ui_css_installer); ?>">
 
 	<div class="dup-installer-panel-optional">
+        <span class="dup-guide-txt-color">
+              <?php esc_html_e("The installer file is used to redeploy/install the archive contents.", 'duplicator'); ?>
+        </span><br/>
 		<b><?php esc_html_e('All values in this section are', 'duplicator'); ?> <u><?php esc_html_e('optional', 'duplicator'); ?></u></b>
 		<i class="fas fa-question-circle fa-sm"
 				data-tooltip-title="<?php esc_attr_e("Setup/Prefills", 'duplicator'); ?>"
@@ -471,6 +503,14 @@ INSTALLER -->
 				<tr>
 					<td><?php esc_html_e("User", 'duplicator') ?></td>
 					<td><input type="text" name="dbuser" id="dbuser" value="<?php echo esc_attr($Package->Installer->OptsDBUser); ?>"  maxlength="100" placeholder="<?php esc_attr_e('example: DatabaseUserName (value is optional)', 'duplicator'); ?>" /></td>
+				</tr>
+				<tr>
+					<td><?php esc_html_e("Charset", 'duplicator') ?></td>
+					<td><input type="text" name="dbcharset" id="dbcharset" value="<?php echo esc_attr($Package->Installer->OptsDBCharset); ?>"  maxlength="100" placeholder="<?php esc_attr_e('example: utf8 (value is optional)', 'duplicator'); ?>" /></td>
+				</tr>
+				<tr>
+					<td><?php esc_html_e("Collation", 'duplicator') ?></td>
+					<td><input type="text" name="dbcollation" id="dbcollation" value="<?php echo esc_attr($Package->Installer->OptsDBCollation); ?>"  maxlength="100" placeholder="<?php esc_attr_e('example: utf8_general_ci (value is optional)', 'duplicator'); ?>" /></td>
 				</tr>
 			</table><br />
 		</div>

@@ -1,4 +1,14 @@
 <?php
+/**
+ * Register easy accordion free custom post type.
+ *
+ * @link       https://shapedplugin.com/
+ * @since      2.0.0
+ *
+ * @package    easy-accordion-free
+ * @subpackage easy-accordion-free/includes
+ */
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -88,6 +98,20 @@ class Easy_Accordion_Free_Post_Type {
 			)
 		);
 
+		// Base 64 encoded SVG image.
+		$menu_icon = 'data:image/svg+xml;base64,' . base64_encode(
+			'<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Layer_1" x="0px" y="0px" viewBox="0 0 512 512" style="enable-background:new 0 0 512 512;" xml:space="preserve">
+			<style type="text/css">
+				.st0{fill:#A0A5AA;}
+			</style>
+			<g>
+				<path class="st0" d="M0,128v256h512V128H0z M480,352H32V224h448V352z"/>
+				<path class="st0" d="M0,0h512v96H0V0z"/>
+				<path class="st0" d="M0,416h512v96H0V416z"/>
+			</g>
+			</svg>'
+		);
+
 		// Set the easy accordion post type arguments.
 		$args = apply_filters(
 			'sp_easy_accordion_post_type_args',
@@ -99,7 +123,7 @@ class Easy_Accordion_Free_Post_Type {
 				'show_ui'             => true,
 				'show_in_admin_bar'   => false,
 				'menu_position'       => apply_filters( 'sp_easy_accordion_menu_position', 116 ),
-				'menu_icon'           => SP_EA_URL . '/admin/img/ea-icon.svg',
+				'menu_icon'           => $menu_icon,
 				'rewrite'             => false,
 				'query_var'           => false,
 				'supports'            => array(

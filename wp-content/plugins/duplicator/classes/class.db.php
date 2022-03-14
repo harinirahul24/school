@@ -113,82 +113,69 @@ class DUP_DB extends wpdb
     }
 
     /**
-	 * Returns the mysqldump path if the server is enabled to execute it otherwise false
-	 *
-	 * @return boolean|string
-	 */
-	public static function getMySqlDumpPath()
-	{
-		//Is shell_exec possible
-		if (!DUP_Util::hasShellExec()) {
-			return false;
-		}
+     * Returns the mysqldump path if the server is enabled to execute it otherwise false
+     *
+     * @return boolean|string
+     */
+    public static function getMySqlDumpPath()
+    {
+        //Is shell_exec possible
+        if (!DUP_Util::hasShellExec()) {
+            return false;
+        }
 
-		$custom_mysqldump_path	 = DUP_Settings::Get('package_mysqldump_path');
-		$custom_mysqldump_path	 = (strlen($custom_mysqldump_path)) ? $custom_mysqldump_path : '';
+        $custom_mysqldump_path = DUP_Settings::Get('package_mysqldump_path');
+        $custom_mysqldump_path = (strlen($custom_mysqldump_path)) ? $custom_mysqldump_path : '';
 
-		//Common Windows Paths
-		if (DUP_Util::isWindows()) {
-			$paths = array(
-				$custom_mysqldump_path,
-				self::getWindowsMySqlDumpRealPath(),
-				'C:/xampp/mysql/bin/mysqldump.exe',
-				'C:/Program Files/xampp/mysql/bin/mysqldump',
-				'C:/Program Files/MySQL/MySQL Server 6.0/bin/mysqldump',
-				'C:/Program Files/MySQL/MySQL Server 5.5/bin/mysqldump',
-				'C:/Program Files/MySQL/MySQL Server 5.4/bin/mysqldump'
-			);
+        //Common Windows Paths
+        if (DUP_Util::isWindows()) {
+            $paths = array(
+                $custom_mysqldump_path,
+                'mysqldump.exe',
+                self::getWindowsMySqlDumpRealPath(),
+                'C:/xampp/mysql/bin/mysqldump.exe',
+                'C:/Program Files/xampp/mysql/bin/mysqldump',
+                'C:/Program Files/MySQL/MySQL Server 6.0/bin/mysqldump',
+                'C:/Program Files/MySQL/MySQL Server 5.5/bin/mysqldump',
+                'C:/Program Files/MySQL/MySQL Server 5.4/bin/mysqldump'
+            );
 
-		//Common Linux Paths
-		} else {
-			$path1		 = '';
-			$path2		 = '';
-			$mysqldump	 = `which mysqldump`;
-			if (DUP_Util::isExecutable($mysqldump)) {
-				$path1 = (!empty($mysqldump)) ? $mysqldump : '';
-			}
-
-			$mysqldump = dirname(`which mysql`)."/mysqldump";
-			if (DUP_Util::isExecutable($mysqldump)) {
-				$path2 = (!empty($mysqldump)) ? $mysqldump : '';
-			}
-
-			$paths = array(
-				$custom_mysqldump_path,
-				$path1,
-				$path2,
-				'/usr/local/bin/mysqldump',
-				'/usr/local/mysql/bin/mysqldump',
-				'/usr/mysql/bin/mysqldump',
+            //Common Linux Paths
+        } else {
+            $paths = array(
+                $custom_mysqldump_path,
+                'mysqldump',
+                '/usr/local/bin/mysqldump',
+                '/usr/local/mysql/bin/mysqldump',
+                '/usr/mysql/bin/mysqldump',
+                '/usr/bin/mysqldump',
+                '/opt/local/lib/mysql6/bin/mysqldump',
+				'/opt/local/lib/mysql5/bin/mysqldump',
 				'/usr/bin/mysqldump',
-				'/opt/local/lib/mysql6/bin/mysqldump',
-				'/opt/local/lib/mysql5/bin/mysqldump'
-			);
-		}
+            );
+        }
 
-		//Try to find a path that works.  With open_basedir enabled, the file_exists may not work on some systems
-		//So we fallback and try to use exec as a last resort
 		$exec_available = function_exists('exec');
-		foreach ($paths as $path) {
+        foreach ($paths as $path) {
 			if (@file_exists($path)) {
 				if (DUP_Util::isExecutable($path)) {
 					return $path;
 				}
 			} elseif ($exec_available) {
 				$out = array();
-				$rc	 = -1;
-				$cmd = $path.' --help';
+				$rc  = -1;
+				$cmd = $path . ' --help';
 				@exec($cmd, $out, $rc);
 				if ($rc === 0) {
 					return $path;
 				}
 			}
-		}
+        }
 
-		return false;
-	}
+        return false;
+    }
 
-	/**
+    /**
      * Returns all collation types that are assigned to the tables in
 	 * the current database.  Each element in the array is unique
 	 *
@@ -241,4 +228,27 @@ class DUP_DB extends wpdb
 			return @esc_sql($sql);
 		}
 	}
+    
+     /**
+     * this function escape sql string without add and remove remove_placeholder_escape
+     * don't work on array
+     *
+     * @global type $wpdb
+     * @param mixed $sql
+     * @return string
+     */
+    public static function escValueToQueryString($value)
+    {
+        global $wpdb;
+
+        if (is_null($value)) {
+            return 'NULL';
+        }
+
+        if ($wpdb->use_mysqli) {
+            return '"'.mysqli_real_escape_string($wpdb->dbh, $value).'"';
+        } else {
+            return '"'.mysql_real_escape_string($value, $wpdb->dbh).'"';
+        }
+    }
 }

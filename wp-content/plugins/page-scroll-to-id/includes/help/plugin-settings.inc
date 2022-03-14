@@ -19,13 +19,15 @@ $help_plugin_settings_text=<<<EOD
 <p>
 	<a href="http://manos.malihu.gr/page-scroll-to-id-for-wordpress/#plugin-settings-scroll-type-easing" target="_blank"><strong>Scroll type/easing</strong></a> - 
 	Scroll animation easing type (i.e. the way the animation progresses at different points within its duration). <a href="http://manos.malihu.gr/page-scroll-to-id-for-wordpress/#ps2id-duration-easings-demo" target="_blank">Click here to see a visual representation &amp; demo of all easing types</a>. <br />
+	Enable <a href="http://manos.malihu.gr/page-scroll-to-id-for-wordpress/#plugin-settings-force-scroll-easing" target="_blank">Force scroll type/easing</a> if the selected animation easing does not seem to take effect (this can happen when there's conflict with outdated easing libraries added by themes or other plugins. 
 </p>
 
 <p>
 	<a href="http://manos.malihu.gr/page-scroll-to-id-for-wordpress/#plugin-settings-scroll-behavior" target="_blank"><strong>Scroll behavior</strong></a> - 
 	<a href="http://manos.malihu.gr/page-scroll-to-id-for-wordpress/#plugin-settings-always-scroll-smoothly" target="_blank">Always scroll smoothly when reaching the end of the page/document</a> option adjusts scroll-to position so it does not exceed document length. <br />
 	Enable <a href="http://manos.malihu.gr/page-scroll-to-id-for-wordpress/#plugin-settings-stop-scroll-on-event" target="_blank">Stop page scrolling on mouse-wheel or touch-swipe</a> if you want to stop page scrolling when the user tries to scroll the page manually (e.g. via mouse-wheel or touch-swipe). <br />
-	Enabling <a href="http://manos.malihu.gr/page-scroll-to-id-for-wordpress/#plugin-settings-autocorrect-scroll" target="_blank">Verify target position and readjust scrolling (if necessary), after scrolling animation is complete</a> option, will auto-correct scrolling if the target’s position was changed while the page was scrolling.
+	Enabling <a href="http://manos.malihu.gr/page-scroll-to-id-for-wordpress/#plugin-settings-autocorrect-scroll" target="_blank">Verify target position and readjust scrolling (if necessary), after scrolling animation is complete</a> option, will auto-correct scrolling if the target’s position was changed while the page was scrolling. <br />
+	If you need to extend the above option for issues with lazy-load images, iframes, changes in document's length etc., enable <a href="http://manos.malihu.gr/page-scroll-to-id-for-wordpress/#plugin-settings-autocorrect-scroll-extend" target="_blank">Extend target position verification and scrolling adjustment for lazy-load scripts (images, iframes etc.) and changes in document's length</a>. 
 </p>
 
 <p>
@@ -74,7 +76,9 @@ $help_plugin_settings_text=<<<EOD
 <p>
 	<a href="http://manos.malihu.gr/page-scroll-to-id-for-wordpress/#plugin-settings-advanced" target="_blank"><strong>Advanced options</strong></a> - 
 	If another plugin or a theme script handles page scrolling and conflicts with "Page scroll to id", try enabling <a href="http://manos.malihu.gr/page-scroll-to-id-for-wordpress/#plugin-settings-remove-other-click-events" target="_blank">Prevent other scripts from handling plugin’s links</a> option. <br />
-	Enable <a href="http://manos.malihu.gr/page-scroll-to-id-for-wordpress/#plugin-settings-advanced-normalize-targets" target="_blank">Normalize anchor-point targets</a> to normalize/reset the CSS properties (height, line-height, border etc.) of anchor-point targets.
+	You may add a specific selector for the option above using the <a href="http://manos.malihu.gr/page-scroll-to-id-for-wordpress/#plugin-settings-remove-other-click-events-selector" target="_blank">Prevent other scripts from handling plugin’s links selector(s)</a> field below. <br />
+	Enable <a href="http://manos.malihu.gr/page-scroll-to-id-for-wordpress/#plugin-settings-advanced-normalize-targets" target="_blank">Normalize anchor-point targets</a> to normalize/reset the CSS properties (height, line-height, border etc.) of anchor-point targets. <br />
+	Enable <a href="http://manos.malihu.gr/page-scroll-to-id-for-wordpress/#plugin-settings-advanced-encode-links" target="_blank">Encode unicode characters on links URL</a> when having links with encoded unicode characters (e.g. on internationalized domain names) in their href/URL.
 </p>
 
 EOD;

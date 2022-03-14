@@ -59,19 +59,17 @@ TOOL BAR: STEPS -->
         <td style="white-space: nowrap">
             <div id="dup-wiz">
                 <div id="dup-wiz-steps">
-                    <div class="active-step"><a>1-<?php esc_html_e('Setup', 'duplicator'); ?></a></div>
-                    <div><a>2-<?php esc_html_e('Scan', 'duplicator'); ?> </a></div>
-                    <div><a>3-<?php esc_html_e('Build', 'duplicator'); ?> </a></div>
+                    <div class="active-step"><a>1 <?php esc_html_e('Setup', 'duplicator'); ?></a></div>
+                    <div><a>2 <?php esc_html_e('Scan', 'duplicator'); ?> </a></div>
+                    <div><a>3 <?php esc_html_e('Build', 'duplicator'); ?> </a></div>
                 </div>
-                <div id="dup-wiz-title">
-                    <?php esc_html_e('Step 1: Package Setup', 'duplicator'); ?>
-                </div> 
-            </div>	
+            </div>
+            <div id="dup-wiz-title" class="dup-guide-txt-color">
+                <i class="fab fa-wordpress"></i>
+                <?php esc_html_e('Step 1: Choose the WordPress contents to backup.', 'duplicator'); ?>
+            </div>
         </td>
-        <td>
-            <a href="?page=duplicator" class="button"><i class="fa fa-archive fa-sm"></i> <?php esc_html_e("Packages", 'duplicator'); ?></a>
-            <a href="javascript:void(0)" class="button disabled"> <?php esc_html_e("Create New", 'duplicator'); ?></a>
-        </td>
+        <td>&nbsp;</td>
     </tr>
 </table>	
 <hr class="dup-toolbar-line">
@@ -156,10 +154,10 @@ SYSTEM REQUIREMENTS -->
             <div class='dup-sys-req'>
                 <div class='dup-sys-title'>
                     <a><?php esc_html_e('Required Paths', 'duplicator'); ?></a>
-                    <div>
+                       <div>
                         <?php
-                        if ($dup_tests['IO']['ALL']) {
-                            echo ($dup_tests['IO']['WPROOT'] == 'Warn') ? 'Warn' : 'Pass';
+                        if (!in_array('Fail', $dup_tests['IO'])) {
+                            echo in_array('Warn', $dup_tests['IO']) ? 'Warn' : 'Pass';
                         } else {
                             echo 'Fail';
                         }
@@ -168,14 +166,16 @@ SYSTEM REQUIREMENTS -->
                 </div>
                 <div class="dup-sys-info dup-info-box">
                     <?php
-                    printf("<b>%s</b> &nbsp; [%s] <br/>", $dup_tests['IO']['SSDIR'], DUPLICATOR_SSDIR_PATH);
-                    printf("<b>%s</b> &nbsp; [%s] <br/>", $dup_tests['IO']['SSTMP'], DUPLICATOR_SSDIR_PATH_TMP);
-                    printf("<b>%s</b> &nbsp; [%s] <br/>", $dup_tests['IO']['WPROOT'], DUPLICATOR_WPROOTPATH);
+                    $abs_path = duplicator_get_abs_path();
+
+                    printf("<b>%s</b> &nbsp; [%s] <br/>", $dup_tests['IO']['SSDIR'], DUP_Settings::getSsdirPath());
+                    printf("<b>%s</b> &nbsp; [%s] <br/>", $dup_tests['IO']['SSTMP'], DUP_Settings::getSsdirTmpPath());
+                    printf("<b>%s</b> &nbsp; [%s] <br/>", $dup_tests['IO']['WPROOT'], $abs_path);
                     ?>
                     <div style="font-size:11px; padding-top: 3px">
                         <?php
                         if ($dup_tests['IO']['WPROOT'] == 'Warn') {
-                            echo sprintf(__('If the root WordPress path is not writable by PHP on some systems this can cause issues.', 'duplicator'), DUPLICATOR_WPROOTPATH);
+                            echo sprintf(__('If the root WordPress path is not writable by PHP on some systems this can cause issues.', 'duplicator'), $abs_path);
                             echo '<br/>';
                         }
                         esc_html_e("If Duplicator does not have enough permissions then you will need to manually create the paths above. &nbsp; ", 'duplicator');
@@ -207,6 +207,16 @@ SYSTEM REQUIREMENTS -->
                         echo "&nbsp;<i><a href='http://php.net/manual/en/mysqli.installation.php' target='_blank'>[" . esc_html__('more info', 'duplicator') . "]</a></i>";
                         ?>										
                     </small>
+                    <hr>
+                    <table class="dup-sys-info-results">
+                        <tr>
+                            <td><a href="https://www.php.net/manual/en/mysqli.real-escape-string.php" target="_blank">mysqli_real_escape_string</a></td>
+                            <td><?php echo esc_html($dup_tests['SRV']['MYSQL_ESC']); ?></td>
+                        </tr>
+                    </table>
+                    <small>
+                        <?php esc_html_e("The function mysqli_real_escape_string is not working properly. Please consult host support and ask them to switch to a different PHP version or configuration."); ?>
+                    </small>
                 </div>
             </div>
 
@@ -226,7 +236,7 @@ SYSTEM REQUIREMENTS -->
                         $duplicator_nonce = wp_create_nonce('duplicator_cleanup_page');
                         ?> 
                         <form method="post" action="admin.php?page=duplicator-tools&tab=diagnostics&section=info&action=installer&_wpnonce=<?php echo esc_js($duplicator_nonce); ?>">
-                            <b><?php esc_html_e('WordPress Root Path:', 'duplicator'); ?></b>  <?php echo esc_html(DUPLICATOR_WPROOTPATH); ?><br/>
+                            <b><?php esc_html_e('WordPress Root Path:', 'duplicator'); ?></b>  <?php echo esc_html(duplicator_get_abs_path()); ?><br/>
                             <?php esc_html_e("A reserved file(s) was found in the WordPress root directory. Reserved file names include [{$dup_intaller_files}].  To archive your data correctly please remove any of these files from your WordPress root directory.  Then try creating your package again.", 'duplicator'); ?>
                             <br/><input type='submit' class='button button-small' value='<?php esc_attr_e('Remove Files Now', 'duplicator') ?>' style='font-size:10px; margin-top:5px;' />
                         </form>

@@ -45,8 +45,6 @@ jQuery.fn.perform_block_edit = function () {
         jQuery("#tnpc-edit-block .bgcolor").val(target.css("background-color"));
         jQuery("#tnpc-edit-block .font").val(target.css("font-family"));
 
-        jQuery('.bgcolor').wpColorPicker().iris('color', target.css("background-color"));
-
         // The row container which is a global variable and used later after the options save
         container = jQuery(this).closest("table");
 
@@ -58,7 +56,7 @@ jQuery.fn.perform_block_edit = function () {
             if (!options) {
                 options = target.attr("data-options");
             }
-            //debugger;
+
             jQuery("#tnpc-block-options-form").load(ajaxurl, {
                 action: "tnpc_options",
                 id: container.data("id"),
@@ -123,14 +121,9 @@ jQuery(function () {
     if (!preloadedContent) {
         preloadedContent = jQuery('input[name="options[body]"]').val();
     }
-    // console.log(preloadedContent);
     if (!preloadedContent) {
         tnpc_show_presets();
     } else {
-        // Extract the body part
-        //var x = preloadedContent.indexOf("<body");
-        //var y = preloadedContent.indexOf("</body>");
-        //preloadedContent = preloadedContent.substring(x, y);
         jQuery('#newsletter-builder-area-center-frame-content').html(preloadedContent);
         start_composer();
     }
@@ -154,9 +147,7 @@ function start_composer() {
             return helper;
         },
         update: function (event, ui) {
-            //console.log(event);
-            //console.log(ui.item.data("id"));
-            // debugger;
+
             if (ui.item.attr("id") == "draggable-helper") {
                 loading_row = jQuery('<div style="text-align: center; padding: 20px; background-color: #d4d5d6; color: #52BE7F;"><i class="fa fa-cog fa-2x fa-spin" /></div>');
                 ui.item.before(loading_row);
@@ -247,19 +238,25 @@ function start_composer() {
     });
 
     // live preview from block options *** EXPERIMENTAL ***
-    jQuery('#tnpc-block-options-form').change(function () {
+    jQuery('#tnpc-block-options-form').change(function (event) {
         var data = jQuery("#tnpc-block-options-form").serialize();
         jQuery.post(ajaxurl, data, function (response) {
             target.html(response);
+            if (event.target.dataset.afterRendering === 'reload') {
+                container.find(".tnpc-row-edit-block").click();
+            }
         }).fail(function () {
             alert("Block rendering failed");
         });
+
+
 
     });
 
     jQuery(".tnpc-row").add_delete();
     jQuery(".tnpc-row").add_block_edit();
     jQuery(".tnpc-row").add_block_clone();
+
 
     tnpc_mobile_preview();
 
@@ -329,7 +326,7 @@ function openTab(evt, tabName) {
     }
 
     // Show the current tab, and add an "active" class to the button that opened the tab
-    document.getElementById(tabName).style.display = "block";
+    document.getElementById(tabName).style.display = "flex";
     evt.currentTarget.className += " active";
 }
 
@@ -370,8 +367,7 @@ function tnpc_reload_options(e) {
             options[i].value = 'tnpc_options';
         }
     }
-    //console.log(options);
-    //debugger;
+
     options["action"] = "tnpc_options";
     options["id"] = container.data("id");
     jQuery("#tnpc-block-options-form").load(ajaxurl, options);

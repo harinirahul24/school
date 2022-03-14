@@ -16,8 +16,24 @@ jQuery(document).ready( function($) {
             lineNumbers: true,
             mode: content_mode,
             matchBrackets: true,
+            autoCloseBrackets: true,
+            styleActiveLine: true,
             extraKeys: {
+                "F11": function(cm) {
+                    cm.setOption("fullScreen", !cm.getOption("fullScreen"));
+                    fullscreen_buttons( true );
+                },
+                "Esc": function(cm) {
+                    if (cm.getOption("fullScreen")) cm.setOption("fullScreen", false);
+                    fullscreen_buttons( false );
+                },
+                "Ctrl-Space": "autocomplete",
+                "Cmd-Space": "autocomplete",
                 "Ctrl-F": "findPersistent",
+                "Cmd-F": "findPersistent",
+                "Ctrl-/": "toggleComment",
+                "Cmd-/": "toggleComment",
+                "Ctrl-J": "toMatchingTag",
             },
         };
 
@@ -44,6 +60,23 @@ jQuery(document).ready( function($) {
             editor.setSize(cm_width, cm_height);
         });
 
+        // Code Beautifier
+        $("#ccj-beautifier").click(function(e){
+            CodeMirror.commands["selectAll"](editor);
+            editor.autoFormatRange(editor.getCursor(true), editor.getCursor(false));
+            editor.setCursor(0);
+            e.preventDefault();
+        });
+
+		// Autocomplete
+		if ( CCJ.autocomplete === '1' ) {
+			editor.on( "keyup", function ( cm, event ) {
+				if ( ! cm.state.completionActive && event.keyCode > 64 && event.keyCode < 91 ) {
+					CodeMirror.commands.autocomplete( cm, null, { completeSingle: false } );
+				}
+			});
+		}
+
         var postID = document.getElementById('post_ID') != null ? document.getElementById('post_ID').value : 0;
 
         var getCookie = function (name) {
@@ -56,7 +89,7 @@ jQuery(document).ready( function($) {
         // Saving cursor state
         editor.on('cursorActivity', function () {
             var curPos = editor.getCursor();
-            document.cookie = 'hesh_plugin_pos=' + postID + ',' + curPos.line + ',' + curPos.ch;
+            document.cookie = 'hesh_plugin_pos=' + postID + ',' + curPos.line + ',' + curPos.ch + '; SameSite=Lax';
         });
 
         // Restoring cursor state
@@ -65,6 +98,51 @@ jQuery(document).ready( function($) {
             editor.setCursor(parseFloat(curPos[1]), parseFloat(curPos[2]));
         }
 
+    }
+
+    // Action for the `fullscreen` button
+    $("#ccj-fullscreen-button").click( function() {
+        var toggle = editor.getOption("fullScreen");
+        editor.setOption("fullScreen", !toggle);
+        fullscreen_buttons( !toggle );
+    });
+
+    $("#publish").click(function(e){
+        if ( editor.getOption("fullScreen") === true ) {
+            Cookies.set('fullScreen', 'true');
+        }
+    });
+
+    // Show fullscreen
+    if ( Cookies.get('fullScreen') == 'true' ) {
+        var toggle = editor.getOption("fullScreen");
+        editor.setOption("fullScreen", !toggle);
+        fullscreen_buttons( !toggle );
+        Cookies.remove('fullScreen');
+    }
+
+    // Enable the tipsy 
+    $('span[rel=tipsy].tipsy-no-html').tipsy({fade: true, gravity: 's'});
+    $('span[rel=tipsy]').tipsy({fade: true, gravity: 's', html: true});
+
+    // Toggle the buttons when in fullscreen mode
+    function fullscreen_buttons( mode ) {
+        editor.focus();
+        if ( mode === true ) {
+            $("#publish").css({
+                'position'  : 'fixed',
+                'right'     : '40px',
+                'bottom'    : '40px',
+                'z-index'   : 100005,
+            });
+        } else {
+            $("#publish").css({
+                'position'  : 'static',
+                'right'     : 'initial',
+                'bottom'    : 'initial',
+                'z-index'   : 10,
+            });
+        }
     }
 
 
@@ -106,6 +184,34 @@ jQuery(document).ready( function($) {
             }
         });
     });
+
+
+	// The "After <body> tag" option cannot go together with the "In Admin" option
+	custom_code_type_change();
+	$( 'input[name=custom_code_type]' ).on( 'change', custom_code_type_change );
+	function custom_code_type_change() {
+		if ( $( 'input[name=custom_code_type]:checked' ).val() === 'body_open' ) {
+			$( '#custom_code_side-admin' ).prop( 'disabled', true );
+			if ( $( 'input[name=custom_code_side]:checked' ).val() === 'admin' ) {
+				$( '#custom_code_side-admin' ).prop( 'checked', 'checked' );
+			}
+		} else {
+			$( '#custom_code_side-admin' ).prop( 'disabled', false );
+		}
+	}
+	custom_code_side_change();
+	$( 'input[name=custom_code_side]' ).on( 'change', custom_code_side_change );
+	function custom_code_side_change() {
+		if ( $( 'input[name=custom_code_side]:checked' ).val() === 'admin' ) {
+			$( '#custom_code_type-body_open' ).prop( 'disabled', true );
+		} else {
+			$( '#custom_code_type-body_open' ).prop( 'disabled', false );
+			if ( $( 'input[name=custom_code_type]:checked' ).val() === 'body_open' ) {
+				$( '#custom_code_type-body_open' ).prop( 'checked', true );
+			}
+		}
+	}
+
 
     // Toggle the signs for activating/deactivating codes
     function ccj_activate_deactivate(code_id, action) {
@@ -164,7 +270,14 @@ jQuery(document).ready( function($) {
 		$el = $( '#editable-post-name' );
 		revert_e = $el.html();
 
-        buttons.html( '<button type="button" class="save button button-small">' + postL10n.ok + '</button> <button type="button" class="cancel button- link">' + postL10n.cancel + '</button>' );
+		if ( typeof postL10n === 'undefined' || postL10n.cancel === '' || postL10n.ok === '' ) {
+			postL10n = {
+				ok     : wp.i18n.__( 'OK' ),
+				cancel : wp.i18n.__( 'Cancel' ),
+			}
+		}
+
+        buttons.html( '<button type="button" class="save button button-small">' + postL10n.ok + '</button> <button type="button" class="cancel button-link">' + postL10n.cancel + '</button>' );
 
 
         // Save permalink changes.
@@ -183,6 +296,7 @@ jQuery(document).ready( function($) {
 					code_id: $('#post_ID').val(),
 					new_slug: new_slug,
                     permalink: permalinkHref, 
+					filetype: $('#editable-post-name-full').data('filetype'), 
 					ccj_permalink_nonce: $('#ccj-permalink-nonce').val()
 				},
 				function(data) {

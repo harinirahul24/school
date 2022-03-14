@@ -145,6 +145,7 @@ abstract class DUP_PackageFileType
     const Archive = 1;
     const SQL = 2;
     const Log = 3;
+    const Scan = 4;
 }
 
 /**
@@ -173,8 +174,6 @@ class DUP_Package
 	//Set to DUP_PackageType
     public $Type;
     public $Notes;
-    public $StorePath;
-    public $StoreURL;
     public $ScanFile;
     public $TimerStart = -1;
     public $Runtime;
@@ -199,8 +198,6 @@ class DUP_Package
         $this->Type      = DUP_PackageType::MANUAL;
         $this->Name      = self::getDefaultName();
         $this->Notes     = null;
-        $this->StoreURL  = DUP_Util::snapshotURL();
-        $this->StorePath = DUPLICATOR_SSDIR_PATH_TMP;
         $this->Database  = new DUP_Database($this);
         $this->Archive   = new DUP_Archive($this);
         $this->Installer = new DUP_Installer($this);
@@ -252,7 +249,7 @@ class DUP_Package
         $report['ARC']['Status']['Names'] = (count($this->Archive->FilterInfo->Files->Warning) + count($this->Archive->FilterInfo->Dirs->Warning)) ? 'Warn' : 'Good';
         $report['ARC']['Status']['UnreadableItems'] = !empty($this->Archive->RecursiveLinks) || !empty($report['ARC']['UnreadableItems'])? 'Warn' : 'Good';
         /*
-        $overwriteInstallerParams = apply_filters('duplicator_pro_overwrite_params_data', array());
+        $overwriteInstallerParams = apply_filters('duplicator_overwrite_params_data', array());
         $package_can_be_migrate = !(isset($overwriteInstallerParams['mode_chunking']['value'])
                                     && $overwriteInstallerParams['mode_chunking']['value'] == 3
                                     && isset($overwriteInstallerParams['mode_chunking']['formStatus'])
@@ -262,17 +259,22 @@ class DUP_Package
         $report['ARC']['Status']['MigratePackage'] = $package_can_be_migrate ? 'Good' : 'Warn';
         $report['ARC']['Status']['CanbeMigratePackage'] = $package_can_be_migrate;
 
+        $privileges_to_show_create_proc_func = true;
         $procedures = $GLOBALS['wpdb']->get_col("SHOW PROCEDURE STATUS WHERE `Db` = '".$GLOBALS['wpdb']->dbname."'", 1);
         if (count($procedures)) {
             $create = $GLOBALS['wpdb']->get_row("SHOW CREATE PROCEDURE `".$procedures[0]."`", ARRAY_N);
-            $privileges_to_show_create_proc = empty($create[2]) ? false : true;
-        } else {
-            $privileges_to_show_create_proc = true; 
+            $privileges_to_show_create_proc_func = isset($create[2]);
         }
-        
-        $privileges_to_show_create_proc = apply_filters('duplicator_privileges_to_show_create_proc', $privileges_to_show_create_proc);
-        $report['ARC']['Status']['showCreateProcStatus'] = $privileges_to_show_create_proc ? 'Good' : 'Warn';
-        $report['ARC']['Status']['showCreateProc'] = $privileges_to_show_create_proc;
+
+        $functions = $GLOBALS['wpdb']->get_col("SHOW FUNCTION STATUS WHERE `Db` = '".$GLOBALS['wpdb']->dbname."'", 1);
+        if (count($functions)) {
+            $create = $GLOBALS['wpdb']->get_row("SHOW CREATE FUNCTION `".$functions[0]."`", ARRAY_N);
+            $privileges_to_show_create_proc_func = $privileges_to_show_create_proc_func && isset($create[2]);
+        }
+
+        $privileges_to_show_create_proc_func = apply_filters('duplicator_privileges_to_show_create_proc_func', $privileges_to_show_create_proc_func);
+        $report['ARC']['Status']['showCreateProcFuncStatus'] = $privileges_to_show_create_proc_func ? 'Good' : 'Warn';
+        $report['ARC']['Status']['showCreateProcFunc'] = $privileges_to_show_create_proc_func;
 
         //$report['ARC']['Status']['Big']   = count($this->Archive->FilterInfo->Files->Size) ? 'Warn' : 'Good';
         $report['ARC']['Dirs']  = $this->Archive->Dirs;
@@ -289,7 +291,7 @@ class DUP_Package
         $report['LL']['Status']['TotalSize'] = ($rawTotalSize > DUPLICATOR_MAX_DUPARCHIVE_SIZE) ? 'Fail' : 'Good';
 
         $warnings = array(
-            $report['SRV']['PHP']['ALL'],
+            $report['SRV']['SYS']['ALL'],
             $report['SRV']['WP']['ALL'],
             $report['ARC']['Status']['Size'],
             $report['ARC']['Status']['Names'],
@@ -309,7 +311,7 @@ class DUP_Package
         $report['RPT']['Warnings'] = is_null($warn_counts['Warn']) ? 0 : $warn_counts['Warn'];
         $report['RPT']['Success']  = is_null($warn_counts['Good']) ? 0 : $warn_counts['Good'];
         $report['RPT']['ScanTime'] = DUP_Util::elapsedTime(DUP_Util::getMicrotime(), $timerStart);
-        $fp                        = fopen(DUPLICATOR_SSDIR_PATH_TMP."/{$this->ScanFile}", 'w');
+        $fp                        = fopen(DUP_Settings::getSsdirTmpPath()."/{$this->ScanFile}", 'w');
 
         fwrite($fp, DupLiteSnapJsonU::wp_json_encode_pprint($report));
         fclose($fp);
@@ -377,6 +379,22 @@ class DUP_Package
 
         return $validator;
     }
+    
+    /**
+     * 
+     * @return string
+     */
+    public function getInstDownloadName()
+    {
+        switch (DUP_Settings::Get('installer_name_mode')) {
+            case DUP_Settings::INSTALLER_NAME_MODE_SIMPLE:
+                return DUP_Installer::DEFAULT_INSTALLER_FILE_NAME_WITHOUT_HASH;
+
+            case DUP_Settings::INSTALLER_NAME_MODE_WITH_HASH:
+            default:
+                return basename($this->getLocalPackageFile(DUP_PackageFileType::Installer));
+        }
+    }
 
     /**
      *
@@ -417,7 +435,7 @@ class DUP_Package
         $this->cleanObjectBeforeSave();
 		$packageObj = serialize($this);
 		if (!$packageObj) {
-			DUP_Log::Error("Unable to serialize package object while building record.");
+			DUP_Log::error("Unable to serialize package object while building record.");
 		}
 
 		$this->ID = $this->getHashKey($this->Hash);
@@ -440,7 +458,7 @@ class DUP_Package
 				$wpdb->print_error();
 				DUP_LOG::Trace("Problem inserting package: {$wpdb->last_error}");
 
-				DUP_Log::Error("Duplicator is unable to insert a package record into the database table.", "'{$wpdb->last_error}'");
+				DUP_Log::error("Duplicator is unable to insert a package record into the database table.", "'{$wpdb->last_error}'");
 			}
 			$this->ID = $wpdb->insert_id;
 		}
@@ -467,30 +485,42 @@ class DUP_Package
             $delResult = $wpdb->query($wpdb->prepare("DELETE FROM `{$tblName}` WHERE id = %d", $this->ID));
 
             if ($delResult != 0) {
+                $tmpPath = DUP_Settings::getSsdirTmpPath();
+                $ssdPath =  DUP_Settings::getSsdirPath();
+
+                $archiveFile = $this->getArchiveFilename();
+                $wpConfigFile = "{$this->NameHash}_wp-config.txt";
+
                 //Perms
-                @chmod(DUP_Util::safePath(DUPLICATOR_SSDIR_PATH_TMP."/{$nameHash}_archive.zip"), 0644);
-                @chmod(DUP_Util::safePath(DUPLICATOR_SSDIR_PATH_TMP."/{$nameHash}_database.sql"), 0644);
-                @chmod(DUP_Util::safePath(DUPLICATOR_SSDIR_PATH_TMP."/{$nameHash}_installer.php"), 0644);
-                @chmod(DUP_Util::safePath(DUPLICATOR_SSDIR_PATH_TMP."/{$nameHash}_scan.json"), 0644);
-                @chmod(DUP_Util::safePath(DUPLICATOR_SSDIR_PATH_TMP."/{$nameHash}.log"), 0644);
+                @chmod($tmpPath."/{$archiveFile}", 0644);
+                @chmod($tmpPath."/{$nameHash}_database.sql", 0644);
+                @chmod($tmpPath."/{$nameHash}_installer.php", 0644);
+                @chmod($tmpPath."/{$nameHash}_scan.json", 0644);
+                @chmod($tmpPath."/{$wpConfigFile}", 0644);
+                @chmod($tmpPath."/{$nameHash}.log", 0644);
 
-                @chmod(DUP_Util::safePath(DUPLICATOR_SSDIR_PATH."/{$nameHash}_archive.zip"), 0644);
-                @chmod(DUP_Util::safePath(DUPLICATOR_SSDIR_PATH."/{$nameHash}_database.sql"), 0644);
-                @chmod(DUP_Util::safePath(DUPLICATOR_SSDIR_PATH."/{$nameHash}_installer.php"), 0644);
-                @chmod(DUP_Util::safePath(DUPLICATOR_SSDIR_PATH."/{$nameHash}_scan.json"), 0644);
-                @chmod(DUP_Util::safePath(DUPLICATOR_SSDIR_PATH."/{$nameHash}.log"), 0644);
+                @chmod($ssdPath."/{$archiveFile}", 0644);
+                @chmod($ssdPath."/{$nameHash}_database.sql", 0644);
+                @chmod($ssdPath."/{$nameHash}_installer.php", 0644);
+                @chmod($ssdPath."/{$nameHash}_scan.json", 0644);
+                // In older version, The plugin was storing [HASH]_wp-config.txt in main storage area. The below line code is for backward compatibility
+                @chmod($ssdPath."/{$wpConfigFile}", 0644);
+                @chmod($ssdPath."/{$nameHash}.log", 0644);
                 //Remove
-                @unlink(DUP_Util::safePath(DUPLICATOR_SSDIR_PATH_TMP."/{$nameHash}_archive.zip"));
-                @unlink(DUP_Util::safePath(DUPLICATOR_SSDIR_PATH_TMP."/{$nameHash}_database.sql"));
-                @unlink(DUP_Util::safePath(DUPLICATOR_SSDIR_PATH_TMP."/{$nameHash}_installer.php"));
-                @unlink(DUP_Util::safePath(DUPLICATOR_SSDIR_PATH_TMP."/{$nameHash}_scan.json"));
-                @unlink(DUP_Util::safePath(DUPLICATOR_SSDIR_PATH_TMP."/{$nameHash}.log"));
+                @unlink($tmpPath."/{$archiveFile}");
+                @unlink($tmpPath."/{$nameHash}_database.sql");
+                @unlink($tmpPath."/{$nameHash}_installer.php");
+                @unlink($tmpPath."/{$nameHash}_scan.json");
+                @unlink($tmpPath."/{$wpConfigFile}");
+                @unlink($tmpPath."/{$nameHash}.log");
 
-                @unlink(DUP_Util::safePath(DUPLICATOR_SSDIR_PATH."/{$nameHash}_archive.zip"));
-                @unlink(DUP_Util::safePath(DUPLICATOR_SSDIR_PATH."/{$nameHash}_database.sql"));
-                @unlink(DUP_Util::safePath(DUPLICATOR_SSDIR_PATH."/{$nameHash}_installer.php"));
-                @unlink(DUP_Util::safePath(DUPLICATOR_SSDIR_PATH."/{$nameHash}_scan.json"));
-                @unlink(DUP_Util::safePath(DUPLICATOR_SSDIR_PATH."/{$nameHash}.log"));
+                @unlink($ssdPath."/{$archiveFile}");
+                @unlink($ssdPath."/{$nameHash}_database.sql");
+                @unlink($ssdPath."/{$nameHash}_installer.php");
+                @unlink($ssdPath."/{$nameHash}_scan.json");
+                // In older version, The plugin was storing [HASH]_wp-config.txt in main storage area. The below line code is for backward compatibility
+                @unlink($ssdPath."/{$wpConfigFile}");
+                @unlink($ssdPath."/{$nameHash}.log");
             }
         }
     }
@@ -507,7 +537,7 @@ class DUP_Package
         if ($this->Status >= DUP_PackageStatus::COMPLETE) {
             $size = $this->Archive->Size;
         } else {
-            $tmpSearch = glob(DUPLICATOR_SSDIR_PATH_TMP . "/{$this->NameHash}_*");
+            $tmpSearch = glob(DUP_Settings::getSsdirTmpPath() . "/{$this->NameHash}_*");
             if (is_array($tmpSearch)) {
                 $result = array_map('filesize', $tmpSearch);
                 $size = array_sum($result);
@@ -801,7 +831,7 @@ class DUP_Package
 
         //------------------------
         //SQL CHECK:  File should be at minimum 5K.  A base WP install with only Create tables is about 9K
-        $sql_temp_path = DUP_Util::safePath(DUPLICATOR_SSDIR_PATH_TMP . '/' . $this->Database->File);
+        $sql_temp_path = DUP_Settings::getSsdirTmpPath() . '/' . $this->Database->File;
         $sql_temp_size = @filesize($sql_temp_path);
         $sql_easy_size = DUP_Util::byteSize($sql_temp_size);
         $sql_done_txt = DUP_Util::tailFile($sql_temp_path, 3);
@@ -814,7 +844,7 @@ class DUP_Package
             $error_text = "ERROR: SQL file not complete.  The file {$sql_temp_path} looks too small ($sql_temp_size bytes) or the end of file marker was not found.";
             $this->BuildProgress->set_failed($error_text);
             $this->setStatus(DUP_PackageStatus::ERROR);
-            DUP_Log::Error("$error_text", '', Dup_ErrorBehavior::LogOnly);
+            DUP_Log::error("$error_text", '', Dup_ErrorBehavior::LogOnly);
             return;
         }
 
@@ -823,7 +853,7 @@ class DUP_Package
 
         //------------------------
         //INSTALLER CHECK:
-        $exe_temp_path = DUP_Util::safePath(DUPLICATOR_SSDIR_PATH_TMP . '/' . $this->Installer->File);
+        $exe_temp_path = DUP_Settings::getSsdirTmpPath() . '/' . $this->Installer->File;
 
         $exe_temp_size = @filesize($exe_temp_path);
         $exe_easy_size = DUP_Util::byteSize($exe_temp_size);
@@ -857,7 +887,7 @@ class DUP_Package
                 return;
             }
 
-            $scan_filepath = DUPLICATOR_SSDIR_PATH_TMP . "/{$this->NameHash}_scan.json";
+            $scan_filepath = DUP_Settings::getSsdirTmpPath() . "/{$this->NameHash}_scan.json";
             $json = '';
 
             DUP_LOG::Trace("***********Does $scan_filepath exist?");
@@ -871,7 +901,7 @@ class DUP_Package
                 $this->BuildProgress->set_failed($error_message);
                 $this->setStatus(DUP_PackageStatus::ERROR);
 
-                DUP_Log::Error($error_message, '', Dup_ErrorBehavior::LogOnly);
+                DUP_Log::error($error_message, '', Dup_ErrorBehavior::LogOnly);
                 return;
             }
 
@@ -924,7 +954,7 @@ class DUP_Package
         /* ------ ZIP CONSISTENCY CHECK ------ */
         if ($this->Archive->getBuildMode() == DUP_Archive_Build_Mode::ZipArchive) {
             DUP_LOG::trace("Running ZipArchive consistency check");
-            $zipPath = DUP_Util::safePath("{$this->StorePath}/{$this->Archive->File}");
+            $zipPath = DUP_Settings::getSsdirTmpPath()."/{$this->Archive->File}";
                         
             $zip = new ZipArchive();
 
@@ -983,7 +1013,7 @@ class DUP_Package
             $file_name = $this->getLogFilename();
         }
 
-        $file_path = Dup_Util::safePath(DUPLICATOR_SSDIR_PATH) . "/$file_name";
+        $file_path = DUP_Settings::getSsdirPath() . "/$file_name";
         DUP_Log::Trace("File path $file_path");
 
         if (file_exists($file_path)) {
@@ -998,9 +1028,19 @@ class DUP_Package
         return $this->NameHash . '_scan.json';
     }
 
+    public function getScanUrl()
+    {
+        return DUP_Settings::getSsdirUrl()."/".$this->getScanFilename();
+    }
+
     public function getLogFilename()
     {
         return $this->NameHash . '.log';
+    }
+
+    public function getLogUrl()
+    {
+        return DUP_Settings::getSsdirUrl()."/".$this->getLogFilename();
     }
 
     public function getArchiveFilename()
@@ -1021,16 +1061,59 @@ class DUP_Package
     }
 
     /**
+     * @param int $type
+     * @return array
+     */
+    public function getPackageFileDownloadInfo($type)
+    {
+        $result = array(
+            "filename" => "",
+            "url"      => ""
+        );
+
+        switch ($type){
+            case DUP_PackageFileType::Archive;
+                $result["filename"] = $this->Archive->File;
+                $result["url"]      = $this->Archive->getURL();
+                break;
+            case DUP_PackageFileType::SQL;
+                $result["filename"] = $this->Database->File;
+                $result["url"]      = $this->Database->getURL();
+                break;
+            case DUP_PackageFileType::Log;
+                $result["filename"] = $this->getLogFilename();
+                $result["url"]      = $this->getLogUrl();
+                break;
+            case DUP_PackageFileType::Scan;
+                $result["filename"] = $this->getScanFilename();
+                $result["url"]      = $this->getScanUrl();
+                break;
+            default:
+                break;
+        }
+
+        return $result;
+    }
+
+    public function getInstallerDownloadInfo()
+    {
+        return array(
+            "id"   => $this->ID,
+            "hash" => $this->Hash
+        );
+    }
+
+    /**
      * Removes all files except those of active packages
      */
     public static function not_active_files_tmp_cleanup()
 	{
 		//Check for the 'tmp' folder just for safe measures
-		if (! is_dir(DUPLICATOR_SSDIR_PATH_TMP) && (strpos(DUPLICATOR_SSDIR_PATH_TMP, 'tmp') !== false) ) {
+		if (! is_dir(DUP_Settings::getSsdirTmpPath()) && (strpos(DUP_Settings::getSsdirTmpPath(), 'tmp') !== false) ) {
 			return;
 		}
 
-        $globs = glob(DUPLICATOR_SSDIR_PATH_TMP.'/*.*');
+        $globs = glob(DUP_Settings::getSsdirTmpPath().'/*.*');
 		if (! is_array($globs) || $globs === FALSE) {
 			return;
 		}
@@ -1107,17 +1190,17 @@ class DUP_Package
     public static function safeTmpCleanup($purge_temp_archives = false)
     {
         if ($purge_temp_archives) {
-            $dir = DUPLICATOR_SSDIR_PATH_TMP . "/*_archive.zip.*";
+            $dir = DUP_Settings::getSsdirTmpPath() . "/*_archive.zip.*";
             foreach (glob($dir) as $file_path) {
                 unlink($file_path);
             }
-            $dir = DUPLICATOR_SSDIR_PATH_TMP . "/*_archive.daf.*";
+            $dir = DUP_Settings::getSsdirTmpPath() . "/*_archive.daf.*";
             foreach (glob($dir) as $file_path) {
                 unlink($file_path);
             }
         } else {
             //Remove all temp files that are 24 hours old
-            $dir = DUPLICATOR_SSDIR_PATH_TMP . "/*";
+            $dir = DUP_Settings::getSsdirTmpPath() . "/*";
 
             $files = glob($dir);
 
@@ -1230,7 +1313,7 @@ class DUP_Package
         //START BUILD
         //PHPs serialze method will return the object, but the ID above is not passed
         //for one reason or another so passing the object back in seems to do the trick
-        $this->Database->build($this);
+        $this->Database->build($this, Dup_ErrorBehavior::ThrowException);
         $this->Database->validateTableWiseRowCounts();
         $this->Archive->build($this);
         $this->Installer->build($this);
@@ -1243,23 +1326,6 @@ class DUP_Package
         $dbSizeRead  = DUP_Util::byteSize($this->Database->Size);
         $zipSizeRead = DUP_Util::byteSize($this->Archive->Size);
         $exeSizeRead = DUP_Util::byteSize($this->Installer->Size);
-
-        /*
-        DUP_Log::Info("SQL File: {$dbSizeRead}");
-        DUP_Log::Info("Installer File: {$exeSizeRead}");
-        DUP_Log::Info("Archive File: {$zipSizeRead} ");
-
-        if (!($this->Archive->Size && $this->Database->Size && $this->Installer->Size)) {
-            DUP_Log::Error("A required file contains zero bytes.", "Archive Size: {$zipSizeRead} | SQL Size: {$dbSizeRead} | Installer Size: {$exeSizeRead}");
-        }
-
-        //Validate SQL files completed
-        $sql_tmp_path     = DUP_Util::safePath(DUPLICATOR_SSDIR_PATH_TMP.'/'.$this->Database->File);
-        $sql_complete_txt = DUP_Util::tailFile($sql_tmp_path, 3);
-        if (!strstr($sql_complete_txt, 'DUPLICATOR_MYSQLDUMP_EOF')) {
-            DUP_Log::Error("ERROR: SQL file not complete.  The end of file marker was not found.  Please try to re-create the package.");
-        }*/
-        
 
         $timerEnd = DUP_Util::getMicrotime();
         $timerSum = DUP_Util::elapsedTime($timerEnd, $timerStart);
@@ -1359,7 +1425,7 @@ class DUP_Package
 
             $this->Notes                    = sanitize_textarea_field($post['package-notes']);
             //ARCHIVE
-            $this->Archive->PackDir         = rtrim(DUPLICATOR_WPROOTPATH, '/');
+            $this->Archive->PackDir         = duplicator_get_abs_path();
             $this->Archive->Format          = 'ZIP';
             $this->Archive->FilterOn        = isset($post['filter-on']) ? 1 : 0;
 			$this->Archive->ExportOnlyDB    = isset($post['export-onlydb']) ? 1 : 0;
@@ -1371,6 +1437,8 @@ class DUP_Package
             $this->Installer->OptsDBPort		= sanitize_text_field($post['dbport']);
             $this->Installer->OptsDBName		= sanitize_text_field($post['dbname']);
             $this->Installer->OptsDBUser		= sanitize_text_field($post['dbuser']);
+            $this->Installer->OptsDBCharset		= sanitize_text_field($post['dbcharset']);
+            $this->Installer->OptsDBCollation   = sanitize_text_field($post['dbcollation']);
             $this->Installer->OptsSecureOn		= isset($post['secure-on']) ? 1 : 0;
             $post_secure_pass                   = sanitize_text_field($post['secure-pass']);
 			$this->Installer->OptsSecurePass	= DUP_Util::installerScramble($post_secure_pass);
@@ -1398,7 +1466,7 @@ class DUP_Package
         $packageObj = serialize($this);
 
         if (!$packageObj) {
-            DUP_Log::Error("Package SetStatus was unable to serialize package object while updating record.");
+            DUP_Log::error("Package SetStatus was unable to serialize package object while updating record.");
         }
 
         $wpdb->flush();
@@ -1442,7 +1510,7 @@ class DUP_Package
     public function setStatus($status)
     {
         if (!isset($status)) {
-            DUP_Log::Error("Package SetStatus did not receive a proper code.");
+            DUP_Log::error("Package SetStatus did not receive a proper code.");
         }
         $this->Status = $status;
         $this->update();
@@ -1565,14 +1633,14 @@ class DUP_Package
     {
         //Delete all files now
         if ($all) {
-            $dir = DUPLICATOR_SSDIR_PATH_TMP."/*";
+            $dir = DUP_Settings::getSsdirTmpPath()."/*";
             foreach (glob($dir) as $file) {
                 @unlink($file);
             }
         }
         //Remove scan files that are 24 hours old
         else {
-            $dir = DUPLICATOR_SSDIR_PATH_TMP."/*_scan.json";
+            $dir = DUP_Settings::getSsdirTmpPath()."/*_scan.json";
             foreach (glob($dir) as $file) {
                 if (filemtime($file) <= time() - 86400) {
                     @unlink($file);
@@ -1631,8 +1699,8 @@ class DUP_Package
      */
     public function buildCleanup()
     {
-        $files   = DUP_Util::listFiles(DUPLICATOR_SSDIR_PATH_TMP);
-        $newPath = DUPLICATOR_SSDIR_PATH;
+        $files   = DUP_Util::listFiles(DUP_Settings::getSsdirTmpPath());
+        $newPath = DUP_Settings::getSsdirPath();
 
         if (function_exists('rename')) {
             foreach ($files as $file) {
@@ -1663,6 +1731,18 @@ class DUP_Package
         $hashParts = explode('_', $this->Hash);
         $firstPart = substr($hashParts[0], 0, 7);
         $secondPart = substr($hashParts[1], -8);
+        $package_hash = $firstPart.'-'.$secondPart;
+        return $package_hash;
+    }
+    
+    public function getSecondaryPackageHash() {
+        $newHash = $this->makeHash();
+        $hashParts = explode('_', $newHash);
+        $firstPart = substr($hashParts[0], 0, 7);
+        
+        $hashParts = explode('_', $this->Hash);
+        $secondPart = substr($hashParts[1], -8);
+        
         $package_hash = $firstPart.'-'.$secondPart;
         return $package_hash;
     }

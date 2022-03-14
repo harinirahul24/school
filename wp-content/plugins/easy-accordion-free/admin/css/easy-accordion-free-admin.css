@@ -4,73 +4,6 @@
     margin-top: 4px;
 }
 
-/* Help Page */
-.sp-eap-text-center{
-    text-align: center;
-}
-div.sp-eap-help .wp-badge{
-    border: none;
-    background: url(../img/logo.png) right no-repeat;
-    box-shadow: none;
-    height: auto;
-    top: -75px;
-}
-.sp-eap-help.about-wrap [class$="-col"] {
-    display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
-}
-.sp-eap-help.about-wrap [class$="-col"] .col {
-    flex: 1;
-    align-self: flex-start;
-}
-.sp-eap-help.about-wrap .feature-section .col {
-    margin-top: 40px;
-}
-.sp-eap-help.about-wrap [class$="-col"] .col+.col {
-    margin-left: 20px;
-}
-.about-wrap.sp-eap-help .headline-feature.feature-video{
-    position: relative;
-    margin: 40px 0;
-    padding-bottom: 56.25%;
-    width: 100%;
-    max-width: 100%;
-    height: 0;
-    text-align: center;
-}
-
-div.sp-eap-help .headline-feature.feature-video iframe{
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-}
-div.sp-eap-help .feature-section .sp-eap-feature{
-    background-color: #fff;
-    padding: 20px 20px;
-    border: 1px solid #ddd;
-}
-div.sp-eap-help .feature-section .sp-eap-feature h3{
-    font-size: 16px;
-    margin-top: 18px;
-}
-
-div.sp-eap-help .feature-section i.sp-eap-font-icon{
-    font-size: 30px;
-    display: block;
-    color: #fd946f;
-    font-family: fontawesome;
-    font-style: normal;
-}
-@media (max-width: 500px) {
-    div.sp-eap-help .wp-badge {
-        background-position-x: center;
-        top: 0;
-    }
-}
-
 /* Review notice */
 #sp-eafree-review-notice {
     padding:15px 15px 15px 0;
@@ -116,4 +49,56 @@ div.sp-eap-help .feature-section i.sp-eap-font-icon{
 }
 #sp-eafree-review-notice .sp-eafree-notice-text .sp-eafree-review-actions a.button {
     color:#fff;
+}
+
+/* Live preview */
+#sp__eap-show-preview {
+    position: fixed;
+    right: 144px;
+    bottom: 30px;
+    z-index: 1001;
+    width: 155px;
+    text-align: center;
+    padding: 10px 0px;
+    background: #54b154;
+    color: #fff;
+    border-radius: 3px;
+    text-decoration: none;
+    display: block;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.2px;
+    margin: 0;
+    box-sizing: border-box;
+    border-color: #44a944;
+    overflow: hidden;
+  }
+
+  .sp-easy-accordion .ea-body p{
+      font-size: 16px;
+      line-height: 24px;
+  }
+
+  #sp_eap_live_preview .handle-order-higher,
+  #sp_eap_live_preview .handle-order-lower {
+      display: none;
+  }
+
+/* Gutenberg selector field style */
+.speaf-gutenberg-shortcode.editor-styles-wrapper {
+    padding: 0;
+    line-height: 24px;
+}
+.block-editor-page .editor-styles-wrapper select,
+.block-editor-page select.speaf-shortcode-selector,
+.block-editor-page select.speaf-shortcode-selector:focus,
+.block-editor-page select.speaf-shortcode-selector:focus-visible {
+    width: 250px;
+    padding: 5px;
+    border: 1px solid #ccc;
+    font-size: 13px;
+    padding-right: 24px;
+    -webkit-appearance: inherit;
+    background: #fff url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10' fill='%2328303d'><polygon points='0,0 10,0 5,5'/></svg>") no-repeat;
+    background-position: right 10px top 60%;
 }

@@ -1,16 +1,16 @@
 <?php
-if (!defined('ABSPATH'))
-    exit;
+/* @var $this NewsletterUsers */
+defined('ABSPATH') || exit;
 
-@include_once NEWSLETTER_INCLUDES_DIR . '/controls.php';
+
+include_once NEWSLETTER_INCLUDES_DIR . '/controls.php';
+$controls = new NewsletterControls();
 
 wp_enqueue_script('tnp-chart');
 
 $all_count = $wpdb->get_var("select count(*) from " . NEWSLETTER_USERS_TABLE);
 $options_profile = get_option('newsletter_profile');
 
-$module = NewsletterUsers::instance();
-$controls = new NewsletterControls();
 ?>
 
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
@@ -86,12 +86,18 @@ $controls = new NewsletterControls();
                                 <?php echo $wpdb->get_var("select count(*) from " . NEWSLETTER_USERS_TABLE . " where status='B'"); ?>
                             </td>
                         </tr>
+                        <tr>
+                            <td><?php _e('Complained', 'newsletter') ?></td>
+                            <td>
+                                <?php echo $wpdb->get_var("select count(*) from " . NEWSLETTER_USERS_TABLE . " where status='P'"); ?>
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
                 
-                <?php if ($module->is_multilanguage()) { ?>
+                <?php if ($this->is_multilanguage()) { ?>
                 <h3>By language</h3>
-                <?php $languages = $module->get_languages(); ?>
+                <?php $languages = $this->get_languages(); ?>
                 
                 <table class="widefat" style="width: auto">
                     <thead>
@@ -133,7 +139,7 @@ $controls = new NewsletterControls();
                         </tr>
                     </thead>
                     <tbody>
-                        <?php $lists = $module->get_lists(); ?>
+                        <?php $lists = $this->get_lists(); ?>
                         <?php foreach ($lists as $list) { ?>
                             <tr>
                                 <td><?php echo $list->id ?></td>
@@ -165,7 +171,7 @@ $controls = new NewsletterControls();
                     <?php $controls->panel_help('https://www.thenewsletterplugin.com/documentation/subscribers-statistics#referrer') ?>
                 </p>
                 <?php
-                $list = $wpdb->get_results("select referrer, SUM(if(status='C', 1, 0)) as confirmed, SUM(if(status='S', 1, 0)) as unconfirmed, SUM(if(status='B', 1, 0)) as bounced, SUM(if(status='U', 1, 0)) as unsubscribed from " . NEWSLETTER_USERS_TABLE . " group by referrer order by confirmed desc");
+                $list = $wpdb->get_results("select referrer, SUM(if(status='C', 1, 0)) as confirmed, SUM(if(status='S', 1, 0)) as unconfirmed, SUM(if(status='B', 1, 0)) as bounced, SUM(if(status='U', 1, 0)) as unsubscribed, SUM(if(status='P', 1, 0)) as complained from " . NEWSLETTER_USERS_TABLE . " group by referrer order by confirmed desc");
                 ?>
                 <table class="widefat" style="width: auto">
                     <thead>
@@ -175,6 +181,7 @@ $controls = new NewsletterControls();
                             <th><?php _e('Not confirmed', 'newsletter') ?></th>
                             <th><?php _e('Unsubscribed', 'newsletter') ?></th>
                             <th><?php _e('Bounced', 'newsletter') ?></th>
+                            <th><?php _e('Complained', 'newsletter') ?></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -185,6 +192,7 @@ $controls = new NewsletterControls();
                                 <td><?php echo $row->unconfirmed; ?></td>
                                 <td><?php echo $row->unsubscribed; ?></td>
                                 <td><?php echo $row->bounced; ?></td>
+                                <td><?php echo $row->complained; ?></td>
                             </tr>
                         <?php } ?>
                     </tbody>

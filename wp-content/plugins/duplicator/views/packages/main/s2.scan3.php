@@ -4,9 +4,9 @@ defined('ABSPATH') || defined('DUPXABSPATH') || exit;
 	/* @var $Package DUP_Package */
 	function _duplicatorGetRootPath() {
 		$txt   = __('Root Path', 'duplicator');
-		$root  = rtrim(DUPLICATOR_WPROOTPATH, '//');
+		$root  = duplicator_get_abs_path();
 		$sroot = strlen($root) > 50 ? substr($root, 0, 50) . '...' : $root;
-		echo "<div title='{$root}' class='divider'><i class='fa fa-folder-open'></i> {$sroot}</div>";
+		echo "<div title=".str_replace('\\/', '/', json_encode($root))." class='divider'><i class='fa fa-folder-open'></i> {$sroot}</div>";
 	}
 
 $archive_type_label		=  DUP_Settings::Get('archive_build_mode') == DUP_Archive_Build_Mode::ZipArchive ? "ZipArchive" : "DupArchive";
@@ -53,11 +53,12 @@ ARCHIVE -->
 if ($Package->Archive->ExportOnlyDB) { ?>
 <div class="scan-item ">
 	<div class='title' onclick="Duplicator.Pack.toggleScanItem(this);">
-		<div class="text"><i class="fa fa-caret-right"></i> <?php esc_html_e('Database only', 'duplicator');?></div>
+		<div class="text"><i class="fa fa-caret-right"></i> <?php esc_html_e('Database Only', 'duplicator');?></div>
 		<div id="only-db-scan-status"><div class="badge badge-warn"><?php esc_html_e("Notice", 'duplicator'); ?></div></div>
 	</div>
     <div class="info">
-        <?php esc_html_e("Only the database and a copy of the installer.php will be included in the archive.zip file.", 'duplicator'); ?>
+        <?php esc_html_e("Only the database and a copy of the installer will be included in the archive file.  This notice simply indicates that the package "
+            . "will not be capable of restoring a full WordPress site, but only the database.  If this is the desired intention then this notice can be ignored.", 'duplicator'); ?>
     </div>
 </div>
 <?php
@@ -314,7 +315,7 @@ FILE NAME CHECKS -->
 </div>
 <!-- ======================
 UNREADABLE FILES -->
-<div id="scan-unreadable-items" class="scan-item scan-item-last">
+<div id="scan-unreadable-items" class="scan-item">
     <div class='title' onclick="Duplicator.Pack.toggleScanItem(this);">
         <div class="text"><i class="fa fa-caret-right"></i> <?php esc_html_e('Read Checks');?></div>
         <div id="data-arc-status-unreadablefiles"></div>
@@ -359,7 +360,7 @@ UNREADABLE FILES -->
 
 <!-- ======================
 Restore only package -->
-<div id="migratepackage-block"  class="scan-item scan-item-last">
+<div id="migratepackage-block"  class="scan-item">
 	<div class='title' onclick="Duplicator.Pack.toggleScanItem(this);">
 		<div class="text"><i class="fa fa-caret-right"></i> <?php esc_html_e('Migration Status', 'duplicator');?></div>
         <div id="data-arc-status-migratepackage"></div>
@@ -384,37 +385,6 @@ Restore only package -->
         <div id="migrate-package-result"></div>
     </div>
 </div>
-<?php
-$procedures = $GLOBALS['wpdb']->get_col("SHOW PROCEDURE STATUS WHERE `Db` = '{$wpdb->dbname}'", 1);
-if (count($procedures)) {
-?>
-<div id="showcreateproc-block"  class="scan-item scan-item-last">
-	<div class='title' onclick="Duplicator.Pack.toggleScanItem(this);">
-		<div class="text"><i class="fa fa-caret-right"></i> <?php esc_html_e('Sufficient privileges to SHOW CREATE FUNCTION', 'duplicator');?></div>
-        <div id="data-arc-status-showcreateproc"></div>
-	</div>
-    <div class="info">
-        <script id="hb-showcreateproc-result" type="text/x-handlebars-template">
-            <div class="container">
-                <div class="data">					
-                    {{#if ARC.Status.showCreateProc}}
-                        <?php esc_html_e("The database user you are using have sufficient permissions to dump database with stored procedures.", 'duplicator'); ?>
-                    {{else}}
-                        <span style="color: red;">
-                            <?php
-                            esc_html_e("The database user you are using doesn't have sufficient permissions to dump database with stored procedures.", 'duplicator');
-                            ?>
-                        </span>
-                    {{/if}}			
-                </div>
-            </div>
-        </script>
-        <div id="showcreateproc-package-result"></div>
-    </div>
-</div>
-<?php
-}
-?>
 
 <!-- ============
 DATABASE -->
@@ -441,7 +411,7 @@ DATABASE -->
 		</div>
 	</div>
 
-	<div class="scan-item scan-item-last">
+	<div class="scan-item">
 		<div class="title" onclick="Duplicator.Pack.toggleScanItem(this);">
 			<div class="text"><i class="fa fa-caret-right"></i> <?php esc_html_e('Overview', 'duplicator');?></div>
 			<div id="data-db-status-size"></div>
@@ -485,6 +455,61 @@ DATABASE -->
 			?>
 		</div>
 	</div>
+    <?php
+    $triggers = $GLOBALS['wpdb']->get_col("SHOW TRIGGERS", 1);
+    if (count($triggers)) { ?>
+        <div class="scan-item">
+            <div class='title' onclick="Duplicator.Pack.toggleScanItem(this);">
+                <div class="text"><i class="fa fa-caret-right"></i> <?php esc_html_e('Triggers', 'duplicator');?></div>
+                <div id="data-arc-status-triggers"></div>
+            </div>
+            <div class="info">
+                <script id="hb-triggers-result" type="text/x-handlebars-template">
+                    <div class="container">
+                        <div class="data">
+                            <span class="color:maroon">
+                               <?php
+                                   $lnk = '<a href="https://dev.mysql.com/doc/refman/8.0/en/triggers.html" target="_blank">' . esc_html__('triggers', 'duplicator') . '</a>';
+                                   printf(__('This database makes use of %1$s which can manually be imported at install time.  Instructions and SQL statement queries will be '
+                                       . 'provided at install time for users to execute. No actions need to be performed at this time, this message is simply a notice.', 'duplicator'), $lnk);
+                               ?>
+                            </span>
+                        </div>
+                    </div>
+                </script>
+                <div id="triggers-result"></div>
+            </div>
+        </div>
+    <?php } ?>
+    <?php
+    $procedures = $GLOBALS['wpdb']->get_col("SHOW PROCEDURE STATUS WHERE `Db` = '{$GLOBALS['wpdb']->dbname}'", 1);
+    $functions  = $GLOBALS['wpdb']->get_col("SHOW FUNCTION STATUS WHERE `Db` = '{$GLOBALS['wpdb']->dbname}'", 1);
+    if (count($procedures) || count($functions)) { ?>
+    <div id="showcreateprocfunc-block"  class="scan-item">
+        <div class='title' onclick="Duplicator.Pack.toggleScanItem(this);">
+            <div class="text"><i class="fa fa-caret-right"></i> <?php esc_html_e('Object Access', 'duplicator');?></div>
+            <div id="data-arc-status-showcreateprocfunc"></div>
+        </div>
+        <div class="info">
+            <script id="hb-showcreateprocfunc-result" type="text/x-handlebars-template">
+                <div class="container">
+                    <div class="data">
+                        {{#if ARC.Status.showCreateProcFunc}}
+                        <?php esc_html_e("The database user for this WordPress site has sufficient permissions to write stored procedures and functions to the sql file of the archive. [The command SHOW CREATE FUNCTION will work.]", 'duplicator'); ?>
+                        {{else}}
+                        <span style="color: red;">
+                            <?php
+                            esc_html_e("The database user for this WordPress site does NOT sufficient permissions to write stored procedures or functions to the sql file of the archive.  Stored procedures will not be added to the sql file.", 'duplicator');
+                            ?>
+                        </span>
+                        {{/if}}
+                    </div>
+                </div>
+            </script>
+            <div id="showcreateprocfunc-package-result"></div>
+        </div>
+    </div>
+    <?php } ?>
     
 	<!-- ============
 	TOTAL SIZE -->
@@ -503,19 +528,19 @@ DATABASE -->
 		</div>
 	</div>
 
-	<div class="data-ll-section scan-item scan-item-last" style="display: none">
+	<div class="data-ll-section scan-item" style="display: none">
 		<div style="padding: 7px; background-color:#F3B2B7; font-weight: bold ">
 		<?php
 			printf(__('The build can\'t continue because the total size of files and the database exceeds the %s limit that can be processed when creating a DupArchive package. ', 'duplicator'), $duparchive_max_limit);
-            printf(__('<a href="javascript:void(0)" onclick="jQuery(\'#data-ll-status-recommendations\').toggle()">Click for recommendations.</a>', 'duplicator'));
 		?>
+			<a href="javascript:void(0)" onclick="jQuery('#data-ll-status-recommendations').slideToggle('slow');"><?php esc_html_e('Click for recommendations.', 'duplicator'); ?></a>
 		</div>
 		<div class="info" id="data-ll-status-recommendations">
 		<?php
 			echo '<b>';
 			$lnk = '<a href="admin.php?page=duplicator-settings&tab=package" target="_blank">' . esc_html__('Archive Engine', 'duplicator') . '</a>';
-			printf(__("The {$lnk} is set to create packages in the 'DupArchive' format.  This custom format is used to overcome budget host constraints."
-					. " With DupArchive, Duplicator is restricted to processing sites up to %s.  To process larger sites, consider these recommendations. ", 'duplicator'), $duparchive_max_limit, $duparchive_max_limit);
+			printf(esc_html__("The %s is set to create packages in the 'DupArchive' format.  This custom format is used to overcome budget host constraints."
+					. " With DupArchive, Duplicator is restricted to processing sites up to %s.  To process larger sites, consider these recommendations. ", 'duplicator'), $lnk, $duparchive_max_limit, $duparchive_max_limit);
 			echo '</b>';
 			echo '<br/><hr size="1" />';
 
@@ -616,7 +641,7 @@ DIALOG: Scan Results -->
 		<small><?php echo ($Package->Archive->FilterOn) ? __('Enabled', 'duplicator') : __('Disabled', 'duplicator') ;?></small>
 	</h2>
 	<div class="filter-area">
-		<b><i class="fa fa-folder-open"></i> <?php echo rtrim(DUPLICATOR_WPROOTPATH, "//");?></b>
+		<b><i class="fa fa-folder-open"></i> <?php echo duplicator_get_abs_path();?></b>
 
 		<script id="hb-filter-file-list" type="text/x-handlebars-template">
 			<div class="file-info">
@@ -711,7 +736,7 @@ jQuery(document).ready(function($)
 {
 
 	Handlebars.registerHelper('stripWPRoot', function(path) {
-		return  path.replace('<?php echo rtrim(DUPLICATOR_WPROOTPATH, "//") ?>', '');
+		return path.replace(<?php echo str_replace('\\/', '/', json_encode(duplicator_get_abs_path())); ?>, '');
 	});
 
 	//Uncheck file names if directory is checked
@@ -859,9 +884,10 @@ jQuery(document).ready(function($)
 		$('#data-arc-status-size').html(Duplicator.Pack.setScanStatus(data.ARC.Status.Size));
 		$('#data-arc-status-names').html(Duplicator.Pack.setScanStatus(data.ARC.Status.Names));
         $('#data-arc-status-unreadablefiles').html(Duplicator.Pack.setScanStatus(data.ARC.Status.UnreadableItems));
+        $('#data-arc-status-triggers').html(Duplicator.Pack.setScanStatus(data.DB.Status.Triggers));
         
 		$('#data-arc-status-migratepackage').html(Duplicator.Pack.setScanStatus(data.ARC.Status.MigratePackage));
-+        $('#data-arc-status-showcreateproc').html(Duplicator.Pack.setScanStatus(data.ARC.Status.showCreateProcStatus));
++        $('#data-arc-status-showcreateprocfunc').html(Duplicator.Pack.setScanStatus(data.ARC.Status.showCreateProcFuncStatus));
 		$('#data-arc-size1').text(data.ARC.Size || errMsg);
 		$('#data-arc-size2').text(data.ARC.Size || errMsg);
 		$('#data-arc-files').text(data.ARC.FileCount || errMsg);
@@ -914,11 +940,19 @@ jQuery(document).ready(function($)
         }
 
         //SHOW CREATE
-        if ($("#hb-showcreateproc-result").length) {
-            var template = $('#hb-showcreateproc-result').html();
+        if ($("#hb-showcreateprocfunc-result").length) {
+            var template = $('#hb-showcreateprocfunc-result').html();
             var templateScript = Handlebars.compile(template);
             var html = templateScript(data);
-            $('#showcreateproc-package-result').html(html);
+            $('#showcreateprocfunc-package-result').html(html);
+        }
+
+        //TRIGGERS
+        if ($("#hb-triggers-result").length) {
+            var template = $('#hb-triggers-result').html();
+            var templateScript = Handlebars.compile(template);
+            var html = templateScript(data);
+            $('#triggers-result').html(html);
         }
 
 		Duplicator.UI.loadQtip();

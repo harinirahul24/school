@@ -1,0 +1,1 @@
+<?php return array('dependencies' => array('wp-block-editor', 'wp-element', 'wp-escape-html'), 'version' => 'f5a7b7c1d80947a9071e2e0b0e598f33');

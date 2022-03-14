@@ -3,8 +3,8 @@ Contributors: malihu
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=UYJ5G65M6ZA28
 Tags: page scrolling, page animation, smooth scroll, navigation, single-page navigation
 Requires at least: 3.3
-Tested up to: 5.2
-Stable tag: 1.6.6
+Tested up to: 5.9
+Stable tag: 1.7.5
 License: The MIT License (MIT)
 License URI: http://opensource.org/licenses/MIT
 
@@ -99,6 +99,61 @@ Because it works and it already has a ton of features. The plugin has little dep
 7. Gutenberg block editor "Page scoll to id target" custom block
 
 == Changelog ==
+
+= 1.7.5 =
+
+* Fixed various PHP 7.4 and PHP 8 notices and warnings appearing on plugin installation.
+* Fixed a minor javascript expression issue. 
+* Fixed PHP warning with old PHP versions (5.2 and 5.3). 
+
+= 1.7.4 =
+
+* Added link-specific offset special class (ps2id-offset-NUMBER) for WordPress Menu items. For example adding the class ps2id-offset-150 to a menu item, will give the link an offset of 150.
+* Extended plugin's offset selector expressions with the :sticky selector. 
+
+= 1.7.3 =
+
+* Fixed issue with target id attribute having special characters (like %, &, # etc.).
+* Extended "Prevent other scripts from handling plugin’s links" option with special selector option field. 
+* Removed jQuery 1.x deprecated functions from plugin script (.bind, .delegate, .unbind etc. are replaced with .on, .off etc.).
+* Updated plugin's contextual help and notices. 
+
+= 1.7.2 =
+
+* Added an extended "Verify target position and readjust scrolling" option for lazy-load images, iframes, changes in document's length etc.
+* Added "Force scroll type/easing" option for dealing with conflicts with outdated easing libraries added by themes or other plugins. 
+* Updated plugin's settings page, contextual help and notices. 
+
+= 1.7.1 =
+
+* Update plugin's settings page and notices.
+
+= 1.7.0 =
+
+* Removed recommended plugins. 
+* Updated plugin screenshots. 
+* Updated readme.txt
+
+= 1.6.9 =
+
+* Added warning message in plugin settings when the selector option value lacks quotes (invalid without jquery migrate or with jquery 3.x).
+* Fixed Uncaught TypeError of undefined data when actual page is inside an iframe - [related issue](http://manos.malihu.gr/page-scroll-to-id-for-wordpress/comment-page-7/#comment-23715).
+* Added 'Encode unicode characters on links URL' option in plugin settings help panel.
+* Extended "Prevent other scripts from handling plugin’s links" option function handler. 
+* Replaced jQuery deprecated ready event in plugin script. 
+
+= 1.6.8 =
+
+* Fixed PHP notice/warning regarding contextual_help being deprecated (https://wordpress.org/support/topic/deprecated-contextual_help-is-obsolete-since-version-3-3-0/). 
+* Added new option 'Encode unicode characters on links URL'. This option can be used when having links with encoded unicode characters (e.g. on internationalized domain names) in their href/URL.
+* Added support for dynamic/live selectors for newer jQuery versions (3.x) and the upcoming WordPress 5.6.
+
+= 1.6.7 =
+
+* Fixed issue with links having meta characters (e.g. %) in URL. 
+* Extended the default excluded selectors. 
+* Fixed issue with TwentyTwenty theme smooth scrolling feature (https://wordpress.org/support/topic/scrolling-not-working-5/) 
+* New feature for developers: add plugin options manually (via js) to overwrite the ones in plugin settings. 
 
 = 1.6.6 =
 
@@ -242,6 +297,42 @@ Because it works and it already has a ton of features. The plugin has little dep
 * Launch!
 
 == Upgrade Notice ==
+
+= 1.7.5 =
+
+Fixed various PHP 7.4 and PHP 8 notices and warnings appearing on plugin installation, fixed minor javascript issue, Fixed PHP 5.2 and 5.3 warnings. 
+
+= 1.7.4 =
+
+Added link-specific offset special class (ps2id-offset-NUMBER) for WordPress Menu items, extended plugin's offset selector expressions with the :sticky selector. 
+
+= 1.7.3 =
+
+Fixed issue with target id attribute having special characters, extended "Prevent other scripts from handling plugin’s links" option with special selector option field, removed jQuery 1.x deprecated functions from plugin script, updated plugin's contextual help and notices. 
+
+= 1.7.2 =
+
+Added an extended 'Verify target position and readjust scrolling' option (for lazy-load images, iframes etc.), added 'Force scroll type/easing' option, updated plugin's settings page, contextual help and notices.
+
+= 1.7.1 =
+
+Update plugin's settings page and notices.
+
+= 1.7.0 =
+
+Removed recommended plugins, updated plugin screenshots and readme.txt.
+
+= 1.6.9 =
+
+Added warning message in plugin settings when the selector option value lacks quotes, fixed Uncaught TypeError of undefined data when actual page is inside an iframe, Extended "Prevent other scripts from handling plugin’s links" option, updated help.
+
+= 1.6.8 =
+
+Fixed PHP notice/warning regarding contextual_help, added new option 'Encode unicode characters on links URL', added support for newer jQuery versions (3.x) and the upcoming WordPress 5.6.
+
+= 1.6.7 =
+
+Fixed issue with links having meta characters in URL, extended the default excluded selectors, fixed issue with TwentyTwenty theme smooth scrolling.
 
 = 1.6.6 =
 

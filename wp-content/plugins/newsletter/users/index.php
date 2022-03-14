@@ -1,10 +1,10 @@
 <?php
+/* @var $this NewsletterUsers */
 defined('ABSPATH') || exit;
 
 require_once NEWSLETTER_INCLUDES_DIR . '/controls.php';
 
 $controls = new NewsletterControls();
-$module = NewsletterUsers::instance();
 
 $options = $controls->data;
 $options_profile = get_option('newsletter_profile');
@@ -17,27 +17,27 @@ if ($controls->is_action()) {
     } else {
         $controls->data['search_page'] = (int) $controls->data['search_page'] - 1;
     }
-    $module->save_options($controls->data, 'search');
+    $this->save_options($controls->data, 'search');
 } else {
-    $controls->data = $module->get_options('search');
+    $controls->data = $this->get_options('search');
     if (empty($controls->data['search_page']))
         $controls->data['search_page'] = 0;
 }
 
 if ($controls->is_action('resend')) {
-    $user = $module->get_user($controls->button_data);
+    $user = $this->get_user($controls->button_data);
     NewsletterSubscription::instance()->send_message('confirmation', $user, true);
     $controls->messages = __('Activation email sent.', 'newsletter');
 }
 
 if ($controls->is_action('resend_welcome')) {
-    $user = $module->get_user($controls->button_data);
+    $user = $this->get_user($controls->button_data);
     NewsletterSubscription::instance()->send_message('confirmed', $user, true);
     $controls->messages = __('Welcome email sent.', 'newsletter');
 }
 
-if ($controls->is_action('remove')) {
-    $module->delete_user($controls->button_data);
+if ($controls->is_action('delete')) {
+    $this->delete_user($controls->button_data);
     unset($controls->data['subscriber_id']);
 }
 
@@ -121,6 +121,10 @@ $controls->data['search_page'] ++;
         <h2><?php _e('Subscribers', 'newsletter') ?>
             <a class="tnp-btn-h1" href="?page=newsletter_users_new"><?php _e('Add a subscriber', 'newsletter') ?></a>
         </h2>
+        
+        <p>
+            See the <a href="admin.php?page=newsletter_users_massive">maintenance panel</a> to move subscribers between list, massively delete and so on.
+        </p>
 
     </div>
 
@@ -133,7 +137,7 @@ $controls->data['search_page'] ++;
                 <?php $controls->text('search_text', 45, __('Search text', 'newsletter')); ?>
 
                 <?php _e('filter by', 'newsletter') ?>:
-                <?php $controls->select('search_status', array('' => 'Any status', 'T' => 'Test subscribers', 'C' => 'Confirmed', 'S' => 'Not confirmed', 'U' => 'Unsubscribed', 'B' => 'Bounced')); ?>
+                <?php $controls->select('search_status', ['' => 'Any status', 'T' => 'Test subscribers', 'C' => 'Confirmed', 'S' => 'Not confirmed', 'U' => 'Unsubscribed', 'B' => 'Bounced', 'P'=> TNP_User::get_status_label('P')]); ?>
                 <?php $controls->lists_select('search_list', '-'); ?>
 
                 <?php $controls->button('search', __('Search', 'newsletter')); ?>
@@ -165,7 +169,7 @@ $controls->data['search_page'] ++;
             <table class="widefat">
                 <thead>
                     <tr>
-                        <th><input type="checkbox" onchange="jQuery('input.tnp-selector').prop('checked', this.checked)"</th>
+                        <td class="check-column"><input type="checkbox" onchange="jQuery('input.tnp-selector').prop('checked', this.checked)"></th>
                         <th>Id</th>
                         <th>Email</th>
                         <th><?php _e('Name', 'newsletter') ?></th>
@@ -174,61 +178,35 @@ $controls->data['search_page'] ++;
                             <th><?php _e('Lists', 'newsletter') ?></th>
                         <?php } ?>
                         <th>&nbsp;</th>
-                        <th>&nbsp;</th>
+                        
                         <th>&nbsp;</th>
                     </tr>
                 </thead>
                 <?php $i = 0; ?>
                 <?php foreach ($list as $s) { ?>
-                    <tr class="<?php echo ($i++ % 2 == 0) ? 'alternate' : ''; ?>">
-                        <td><input class="tnp-selector" type="checkbox" name="ids[]" value="<?php echo $s->id; ?>"/></td>
-                        <td>
-                            <?php echo $s->id; ?>
-                        </td>
-
-                        <td>
-                            <?php echo esc_html($s->email); ?>
-                        </td>
-                        
-                        <td>
-                            <?php echo esc_html($s->name); ?> <?php echo esc_html($s->surname); ?>
-                        </td>
-
-                        <td>
-                            <small>
-                                <?php echo $module->get_user_status_label($s) ?>
-                            </small>
-                        </td>
-
+                    <tr>
+                        <th scope="row" class="check-column" style="vertical-align: middle"><input class="tnp-selector" type="checkbox" name="ids[]" value="<?php echo $s->id; ?>"/></td>
+                        <td><?php echo $s->id; ?></td>
+                        <td><?php echo esc_html($s->email); ?></td>
+                        <td><?php echo esc_html($s->name); ?> <?php echo esc_html($s->surname); ?></td>
+                        <td><small><?php echo $this->get_user_status_label($s, true) ?></small></td>
                         <?php if (isset($options['show_preferences']) && $options['show_preferences'] == 1) { ?>
-                            <td>
-                                <small>
-                                    <?php
-                                    $lists = $module->get_lists();
+                            <td><small><?php
+                                    $lists = $this->get_lists();
                                     foreach ($lists as $item) {
                                         $l = 'list_' . $item->id;
                                         if ($s->$l == 1)
                                             echo esc_html($item->name) . '<br>';
                                     }
-                                    ?>
-                                </small>
-                            </td>
+                                    ?></small></td>
                         <?php } ?>
-
-                        <td>
-                            <a class="button-secondary" href="<?php echo $module->get_admin_page_url('edit'); ?>&amp;id=<?php echo $s->id; ?>"><?php _e('Edit', 'newsletter') ?></a>
-                        </td>
-                        <td>
-                            <?php $controls->button_confirm('remove', __('Remove', 'newsletter'), '', $s->id); ?>
-                        </td>
-                        <td style="text-align: center">    
+                        <td><?php $controls->button_icon_edit($this->get_admin_page_url('edit') . '&amp;id=' . $s->id)?></td>
+                        <td style="white-space: nowrap"><?php $controls->button_icon_delete($s->id); ?>
                             <?php if ($s->status == "C") { ?>
-                            <?php $controls->button_confirm('resend_welcome', __('Resend welcome', 'newsletter'), '', $s->id); ?>
+                            <?php $controls->button_icon('resend_welcome', 'fa-redo', __('Resend welcome', 'newsletter'), $s->id, true); ?>
                             <?php } else { ?>
-                            <?php $controls->button_confirm('resend', __('Resend activation', 'newsletter'), '', $s->id); ?>
-                            <?php } ?>
-                        </td>
-
+                            <?php $controls->button_icon('resend', 'fa-redo', __('Resend activation', 'newsletter'), $s->id, true); ?>
+                            <?php } ?></td>
                     </tr>
                 <?php } ?>
             </table>
@@ -236,7 +214,6 @@ $controls->data['search_page'] ++;
 
                 <?php $controls->button('first', '«'); ?>
                 <?php $controls->button('prev', '‹'); ?>
-                <?php $controls->text('search_page', 3); ?> of <?php echo $last_page + 1 ?> <?php $controls->button('go', __('Go', 'newsletter')); ?>
                 <?php $controls->button('next', '›'); ?>
                 <?php $controls->button('last', '»'); ?>
             </div>

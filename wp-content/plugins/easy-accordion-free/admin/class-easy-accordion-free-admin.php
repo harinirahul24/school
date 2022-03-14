@@ -15,6 +15,18 @@
 class Easy_Accordion_Free_Admin {
 
 	/**
+	 * Instance
+	 *
+	 * @since 2.1.10
+	 *
+	 * @access private
+	 * @static
+	 *
+	 * @var Easy_Accordion_Free_Admin The single instance of the class.
+	 */
+	private static $instance = null;
+
+	/**
 	 * Allows for accessing single instance of class. Class should only be constructed once per call.
 	 *
 	 * @since 2.0.0
@@ -22,10 +34,10 @@ class Easy_Accordion_Free_Admin {
 	 * @return self Main instance.
 	 */
 	public static function instance() {
-		if ( is_null( self::$_instance ) ) {
-			self::$_instance = new self();
+		if ( is_null( self::$instance ) ) {
+			self::$instance = new self();
 		}
-		return self::$_instance;
+		return self::$instance;
 	}
 
 	/**
@@ -38,9 +50,9 @@ class Easy_Accordion_Free_Admin {
 		$current_screen        = get_current_screen();
 		$the_current_post_type = $current_screen->post_type;
 		if ( 'sp_easy_accordion' === $the_current_post_type ) {
-			wp_enqueue_style( 'font-awesome', SP_EA_URL . 'public/assets/css/font-awesome.min.css', array(), SP_EA_VERSION, 'all' );
+			wp_enqueue_style( 'font-awesome', esc_url( SP_EA_URL . 'public/assets/css/font-awesome.min.css' ), array(), SP_EA_VERSION, 'all' );
 		}
-		wp_enqueue_style( SP_PLUGIN_NAME . 'admin', SP_EA_URL . 'admin/css/easy-accordion-free-admin.css', array(), SP_EA_VERSION, 'all' );
+		wp_enqueue_style( SP_PLUGIN_NAME . 'admin', esc_url( SP_EA_URL . 'admin/css/easy-accordion-free-admin.min.css' ), array(), SP_EA_VERSION, 'all' );
 	}
 
 	/**
@@ -57,11 +69,11 @@ class Easy_Accordion_Free_Admin {
 			2  => '',
 			3  => '',
 			4  => __( ' updated.', 'easy-accordion-free' ),
-			5  => isset( $_GET['revision'] ) ? sprintf( __( 'Accordion restored to revision from %s', 'easy-accordion-free' ), wp_post_revision_title( (int) $_GET['revision'], false ) ) : false,
+			5  => isset( $_GET['revision'] ) ? sprintf( wp_kses_post( 'Accordion restored to revision from %s', 'easy-accordion-free' ), wp_post_revision_title( (int) $_GET['revision'], false ) ) : false,
 			6  => sprintf( __( 'Accordion published.', 'easy-accordion-free' ) ),
 			7  => __( 'Accordion saved.', 'easy-accordion-free' ),
 			8  => sprintf( __( 'Accordion submitted.', 'easy-accordion-free' ) ),
-			9  => sprintf( __( 'Accordion scheduled for: <strong>%1$s</strong>.', 'easy-accordion-free' ), date_i18n( __( 'M j, Y @ G:i', 'easy-accordion-free' ), strtotime( $post->post_date ) ) ),
+			9  => sprintf( wp_kses_post( 'Accordion scheduled for: <strong>%1$s</strong>.', 'easy-accordion-free' ), date_i18n( __( 'M j, Y @ G:i', 'easy-accordion-free' ), strtotime( $post->post_date ) ) ),
 			10 => sprintf( __( 'Accordion draft updated.', 'easy-accordion-free' ) ),
 		);
 		return $messages;
@@ -93,12 +105,10 @@ class Easy_Accordion_Free_Admin {
 		$accordion_type = isset( $upload_data['eap_accordion_type'] ) ? $upload_data['eap_accordion_type'] : '';
 		switch ( $column ) {
 			case 'shortcode':
-				$column_field = '<input style="width: 270px; padding: 6px;" type="text" onClick="this.select();" readonly="readonly" value="[sp_easyaccordion id=&quot;' . $post_id . '&quot;]"/>';
-				echo $column_field;
+				echo '<div class="sp_eap-after-copy-text"><i class="fa fa-check-circle"></i>  Shortcode  Copied to Clipboard! </div><input style="width: 270px; padding: 6px; cursor:pointer;"  type="text" onClick="this.select();" readonly="readonly" value="[sp_easyaccordion id=&quot;' . esc_attr( $post_id ) . '&quot;]"/>';
 				break;
 			case 'accordion_type':
-				echo ucwords( str_replace( '-', ' ', $accordion_type ) );
-
+				echo esc_html( ucwords( str_replace( '-', ' ', $accordion_type ) ) );
 		} // end switch.
 	}
 
@@ -110,9 +120,9 @@ class Easy_Accordion_Free_Admin {
 	 */
 	public function sp_eap_review_text( $text ) {
 		$screen = get_current_screen();
-		if ( 'sp_easy_accordion' === get_post_type() || $screen->id === 'sp_easy_accordion_page_eap_settings' || $screen->id === 'sp_easy_accordion_page_eap_help' ) {
+		if ( 'sp_easy_accordion' === get_post_type() || 'sp_easy_accordion_page_eap_settings' === $screen->id || 'sp_easy_accordion_page_eap_help' === $screen->id ) {
 			$url  = 'https://wordpress.org/support/plugin/easy-accordion-free/reviews/?filter=5';
-			$text = sprintf( __( 'If you like <strong>Easy Accordion</strong>, please leave us a <a href="%s" target="_blank">&#9733;&#9733;&#9733;&#9733;&#9733;</a> rating. Your Review is very important to us as it helps us to grow more. ', 'easy-accordion-free' ), $url );
+			$text = sprintf( wp_kses_post( 'If you like <strong>Easy Accordion</strong>, please leave us a <a href="%s" target="_blank">&#9733;&#9733;&#9733;&#9733;&#9733;</a> rating. Your Review is very important to us as it helps us to grow more. ', 'easy-accordion-free' ), $url );
 		}
 		return $text;
 	}
@@ -124,8 +134,8 @@ class Easy_Accordion_Free_Admin {
 	 * @return array
 	 */
 	public function after_easy_accodion_row_meta( $plugin_meta, $file ) {
-		if ( $file == SP_EA_BASENAME ) {
-			$plugin_meta[] = '<a href="https://shapedplugin.com/demo/easy-accordion-pro/" target="_blank">' . __( 'Live Demo', 'easy-accordion-free' ) . '</a>';
+		if ( SP_EA_BASENAME === $file ) {
+			$plugin_meta[] = '<a href="https://demo.shapedplugin.com/easy-accordion/" target="_blank">' . __( 'Live Demo', 'easy-accordion-free' ) . '</a>';
 		}
 		return $plugin_meta;
 	}

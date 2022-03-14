@@ -3,7 +3,7 @@
 Plugin Name: WP Add Custom CSS
 Plugin URI: http://www.danieledesantis.net
 Description: Add custom css to the whole website and to specific posts, pages and custom post types.
-Version: 1.1.5
+Version: 1.1.6
 Author: Daniele De Santis
 Author URI: http://www.danieledesantis.net
 Text Domain: wp-add-custom-css
@@ -69,32 +69,19 @@ if(!class_exists('Wpacc'))
 	      if ( ( in_array( $hook, array('post.php', 'post-new.php') ) && $this->is_enabled_post_type() ) || $hook === 'toplevel_page_wp-add-custom-css_settings' ) {
 	        $this->options = get_option( 'wpacc_settings' );
 	        if ( isset($this->options['enable_advanced_editor']) ) {
-	        	/*global $current_screen;
-	    		if (!isset($current_screen)) {$current_screen = get_current_screen();}
-	    		if ( ( method_exists($current_screen, 'is_block_editor') && $current_screen->is_block_editor() )
-	    		|| ( function_exists('is_gutenberg_page') && is_gutenberg_page() )
-	    		|| ( $hook === 'toplevel_page_wp-add-custom-css_settings' && function_exists('is_gutenberg_page') ) ) {*/
-	    			$wp_scripts = wp_scripts();
-				    wp_enqueue_style(
-				      'jquery-ui-theme-smoothness',
-				      sprintf(
-				        '//ajax.googleapis.com/ajax/libs/jqueryui/%s/themes/smoothness/jquery-ui.css',
-				        $wp_scripts->registered['jquery-ui-core']->ver
-				      )
-				    );
-	    			wp_enqueue_script('jquery-ui-resizable');
-	      			wp_enqueue_style( 'wpacc_ace', plugin_dir_url( __FILE__ ) . 'lib/ace/ace-custom.css' );
-	      			wp_enqueue_script( 'wpacc_ace', plugin_dir_url( __FILE__ ) . 'lib/ace/ace.js');
-	      			wp_enqueue_script( 'wpacc_scripts_ace', plugin_dir_url( __FILE__ ) . 'js/scripts-ace.js', array('jquery', 'jquery-ui-resizable', 'wpacc_ace') );
-	        	/*} else {
-	  				wp_enqueue_style( 'wpacc_codemirror', plugin_dir_url( __FILE__ ) . 'lib/codemirror/codemirror.css' );
-			        if ( isset($this->options['advanced_editor_theme']) && $this->options['advanced_editor_theme'] === 'dark' ) {
-			        	wp_enqueue_style( 'wpacc_codemirror_dark', plugin_dir_url( __FILE__ ) . 'lib/codemirror/theme/tomorrow-night-bright.css', array('wpacc_codemirror') );
-			        }
-	    			wp_enqueue_script( 'wpacc_codemirror', plugin_dir_url( __FILE__ ) . 'lib/codemirror/codemirror.js' );
-	          		wp_enqueue_script( 'wpacc_codemirror_css', plugin_dir_url( __FILE__ ) . 'lib/codemirror/mode/css/css.js', array('wpacc_codemirror') );
-	          		wp_enqueue_script( 'wpacc_scripts', plugin_dir_url( __FILE__ ) . 'js/scripts.js', array('jquery', 'wpacc_codemirror_css') );
-	  			}*/
+	        	if ( function_exists( 'vc_is_inline' ) && vc_is_inline() ) return; // fix issues with WPBakery Frontend Editor
+    			$wp_scripts = wp_scripts();
+			    wp_enqueue_style(
+			      'jquery-ui-theme-smoothness',
+			      sprintf(
+			        '//ajax.googleapis.com/ajax/libs/jqueryui/%s/themes/smoothness/jquery-ui.css',
+			        $wp_scripts->registered['jquery-ui-core']->ver
+			      )
+			    );
+    			wp_enqueue_script('jquery-ui-resizable');
+      			wp_enqueue_style( 'wpacc_ace', plugin_dir_url( __FILE__ ) . 'lib/ace/ace-custom.css' );
+      			wp_enqueue_script( 'wpacc_ace', plugin_dir_url( __FILE__ ) . 'lib/ace/ace.js');
+      			wp_enqueue_script( 'wpacc_scripts_ace', plugin_dir_url( __FILE__ ) . 'js/scripts-ace.js', array('jquery', 'jquery-ui-resizable', 'wpacc_ace') );
 	  		}
 	      }
 	    }

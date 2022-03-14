@@ -1,23 +1,41 @@
 <?php
 /**
+ * Old shortcode file.
+ *
+ * @link       https://shapedplugin.com/
+ * @since      2.0.0
+ *
+ * @package    easy-accordion-free
+ * @subpackage easy-accordion-free/public
+ */
+
+/**
  * Registering shortcode.
  *
  * @package Easy Accordion Free
  */
 function lazy_p_wp_accordion_free_files() {
-		wp_enqueue_script( 'jquery', false, array(), false, false );
+		wp_enqueue_script( 'jquery', false, array(), SP_EA_VERSION, false );
 		wp_register_style( 'lazy--p-accordion-main-css', SP_EA_URL . 'public/views/deprecated/css/style.css', array(), SP_EA_VERSION );
 		wp_register_script( 'lazy-p-accordion-main-js', SP_EA_URL . 'public/views/deprecated/js/jquery.beefup.min.js', array( 'jquery' ), SP_EA_VERSION, false );
 }
 add_action( 'wp_enqueue_scripts', 'lazy_p_wp_accordion_free_files' );
 
+/**
+ * Old Shortcode main function.
+ *
+ * @param array $atts The attributes of the shortcode.
+ * @param null  $content The shortcode content.
+ * @return statement
+ */
 function easy_accordion_free_wrapper( $atts, $content = null ) {
-	/* Including all files */
+	// @codingStandardsIgnoreLine
 	extract(
 		shortcode_atts(
 			array(
 				'id' => '',
-			), $atts
+			),
+			$atts
 		)
 	);
 	wp_enqueue_style( 'lazy--p-accordion-main-css' );
@@ -44,14 +62,23 @@ function easy_accordion_free_wrapper( $atts, $content = null ) {
 }
 add_shortcode( 'efaccordion', 'easy_accordion_free_wrapper' );
 
+/**
+ * Easy accordion free items function.
+ *
+ * @param array $atts The attributes of the shortcode.
+ * @param null  $content The shortcode content.
+ * @return statement
+ */
 function easy_accordion_free_items( $atts, $content = null ) {
 
+	// @codingStandardsIgnoreLine
 	extract(
 		shortcode_atts(
 			array(
 				'title' => '',
 				'text'  => '',
-			), $atts
+			),
+			$atts
 		)
 	);
 
@@ -64,14 +91,22 @@ function easy_accordion_free_items( $atts, $content = null ) {
 }
 add_shortcode( 'efitems', 'easy_accordion_free_items' );
 
-// Accordion form shortcode.
+/**
+ * Accordion form shortcode.
+ *
+ * @param array $atts The attributes of the shortcode.
+ * @return statement
+ */
 function wap_accordion_items_shortcode( $atts ) {
+	// @codingStandardsIgnoreLine
 	extract(
 		shortcode_atts(
 			array(
 				'id'    => '01',
 				'items' => '10',
-			), $atts, 'wcp_testimonial'
+			),
+			$atts,
+			'wcp_testimonial'
 		)
 	);
 	wp_enqueue_style( 'lazy--p-accordion-main-css' );
@@ -118,7 +153,7 @@ function wap_accordion_items_shortcode( $atts ) {
 	endwhile;
 	$list .= '</div>';
 
-	wp_reset_query();
+	wp_reset_postdata();
 	return $list;
 }
 add_shortcode( 'eaf_items', 'wap_accordion_items_shortcode' );

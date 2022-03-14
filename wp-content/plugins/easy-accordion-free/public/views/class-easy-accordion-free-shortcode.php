@@ -1,5 +1,4 @@
 <?php
-
 /**
  * The file that defines the shortcode plugin class.
  *
@@ -20,7 +19,7 @@
  * @since      2.0.0
  * @package   easy-accordion-free
  * @subpackage easy-accordion-free/includes
- * @author     ShapedPlugin <shapedplugin@gmail.com>
+ * @author     ShapedPlugin <support@shapedplugin.com>
  */
 class Easy_Accordion_Free_Shortcode {
 
@@ -82,34 +81,27 @@ class Easy_Accordion_Free_Shortcode {
 
 
 	/**
-	 * A shortcode for rendering the accordion.
+	 * Full html show.
 	 *
-	 * @param [string] $attributes Shortcode attributes.
-	 * @param [string] $content Shortcode content.
-	 * @return array
+	 * @param array $post_id Shortcode ID.
+	 * @param array $upload_data get all layout options.
+	 * @param array $shortcode_data get all meta options.
+	 * @param array $main_section_title shows section title.
 	 */
-	public function sp_easy_accordion_shortcode( $attributes, $content = null ) {
-		if ( empty( $attributes['id'] ) || ( get_post_status( $attributes['id'] ) === 'trash' ) ) {
+	public static function sp_eap_html_show( $post_id, $upload_data, $shortcode_data, $main_section_title ) {
+		if ( empty( $upload_data ) ) {
 			return;
 		}
-
-		$post_id = intval( $attributes['id'] );
-
-		// Content Accordion.
-		$upload_data = get_post_meta( $post_id, 'sp_eap_upload_options', true );
-		if ( empty( $upload_data ) ) {
-				return;
-		}
 		$accordion_type  = isset( $upload_data['eap_accordion_type'] ) ? $upload_data['eap_accordion_type'] : '';
-		$content_sources = $upload_data['accordion_content_source'];
+		$content_sources = isset( $upload_data['accordion_content_source'] ) ? $upload_data['accordion_content_source'] : '';
 
 		// Shortcode Option.
-		$shortcode_data        = get_post_meta( $post_id, 'sp_eap_shortcode_options', true );
 		$accordion_layout      = isset( $shortcode_data['eap_accordion_layout'] ) ? $shortcode_data['eap_accordion_layout'] : '';
 		$accordion_theme_class = isset( $shortcode_data['eap_accordion_theme'] ) ? $shortcode_data['eap_accordion_theme'] : '';
-		global $accordion_wraper_class;
-		$accordion_wraper_class = $accordion_theme_class . ' sp-easy-accordion';
-		$accordion_item_class   = 'sp-ea-single';
+		global $accordion_wrapper_class;
+		$accordion_wrapper_class = $accordion_theme_class . ' sp-easy-accordion';
+		$accordion_item_class    = 'sp-ea-single';
+		$eap_schema_markup       = isset( $shortcode_data['eap_schema_markup'] ) ? $shortcode_data['eap_schema_markup'] : false;
 		// Accordion settings.
 		$eap_preloader                   = isset( $shortcode_data['eap_preloader'] ) ? $shortcode_data['eap_preloader'] : false;
 		$eap_active_event                = isset( $shortcode_data['eap_accordion_event'] ) ? $shortcode_data['eap_accordion_event'] : '';
@@ -128,11 +120,11 @@ class Easy_Accordion_Free_Shortcode {
 		$eap_border_color = isset( $eap_border['color'] ) ? $eap_border['color'] : '';
 		// Section title.
 		$section_title_typho       = isset( $shortcode_data['eap_section_title_typography'] ) ? $shortcode_data['eap_section_title_typography'] : '';
-		$section_title_typho_color = isset( $section_title_typho['color'] ) ? $section_title_typho['color'] : '';
+		$section_title_typho_color = isset( $section_title_typho['color'] ) ? $section_title_typho['color'] : '#444';
 		// Accordion title.
 		$eap_title_typho       = isset( $shortcode_data['eap_title_typography'] ) ? $shortcode_data['eap_title_typography'] : '';
 		$eap_title_tag         = isset( $shortcode_data['ea_title_heading_tag'] ) ? $shortcode_data['ea_title_heading_tag'] : '3';
-		$eap_title_typho_color = isset( $shortcode_data['eap_title_color'] ) ? $shortcode_data['eap_title_color'] : '';
+		$eap_title_typho_color = isset( $eap_title_typho['color'] ) ? $eap_title_typho['color'] : '#444';
 		$eap_title_padding     = isset( $shortcode_data['eap_title_padding'] ) ? $shortcode_data['eap_title_padding'] : '';
 		$eap_header_bg         = isset( $shortcode_data['eap_header_bg_color'] ) ? $shortcode_data['eap_header_bg_color'] : '';
 		// header icon.
@@ -145,19 +137,39 @@ class Easy_Accordion_Free_Shortcode {
 		$eap_collapse_icon        = 'fa-plus';
 		$eap_expand_icon          = 'fa-minus';
 		// Description.
+		$eap_autop              = isset( $shortcode_data['eap_autop'] ) ? $shortcode_data['eap_autop'] : true;
 		$eap_content_typo       = isset( $shortcode_data['eap_content_typography'] ) ? $shortcode_data['eap_content_typography'] : '';
-		$eap_content_typo_color = isset( $shortcode_data['eap_description_color'] ) ? $shortcode_data['eap_description_color'] : '';
+		$eap_content_typo_color = isset( $eap_content_typo['color'] ) ? $eap_content_typo['color'] : '#444';
 		$eap_description_bg     = isset( $shortcode_data['eap_description_bg_color'] ) ? $shortcode_data['eap_description_bg_color'] : '';
-		wp_enqueue_style( 'sp-ea-style' );
+
 		wp_enqueue_script( 'sp-ea-accordion-js' );
 		wp_enqueue_script( 'sp-ea-accordion-config' );
-		include SP_EA_PATH . '/public/dynamic_style.php';
 		ob_start();
-		echo $ea_dynamic_css;
 		include SP_EA_PATH . '/public/views/templates/default-accordion.php';
 		$html = ob_get_contents();
-		ob_end_clean();
 		return apply_filters( 'sp_easy_accordion', $html, $post_id );
 	}
-};
+
+	/**
+	 * A shortcode for rendering the accordion.
+	 *
+	 * @param [string] $attributes Shortcode attributes.
+	 * @param [string] $content Shortcode content.
+	 * @return array
+	 */
+	public function sp_easy_accordion_shortcode( $attributes, $content = null ) {
+		if ( empty( $attributes['id'] ) || ( get_post_status( $attributes['id'] ) === 'trash' ) ) {
+			return;
+		}
+
+		$post_id = intval( $attributes['id'] );
+
+		// Content Accordion.
+		$upload_data        = get_post_meta( $post_id, 'sp_eap_upload_options', true );
+		$shortcode_data     = get_post_meta( $post_id, 'sp_eap_shortcode_options', true );
+		$main_section_title = get_the_title( $post_id );
+		self::sp_eap_html_show( $post_id, $upload_data, $shortcode_data, $main_section_title );
+		return ob_get_clean();
+	}
+}
 new Easy_Accordion_Free_Shortcode();

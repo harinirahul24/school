@@ -1,11 +1,11 @@
 <?php // @codingStandardsIgnoreLine.
 /**
- * Plugin Name: WP Mail SMTP Plugin by Mail Bank
+ * Plugin Name: Mail Bank
  * Plugin URI: https://tech-banker.com/wp-mail-bank/
  * Description: Mail Bank is a WordPress smtp plugin that solves email deliverability issue. Configures Gmail Smtp Settings, OAuth, and any SMTP server.
  * Author: Tech Banker
  * Author URI: https://tech-banker.com/wp-mail-bank/
- * Version: 4.0.10
+ * Version: 4.0.14
  * License: GPLv3
  * Text Domain: wp-mail-bank
  * Domain Path: /languages
@@ -948,7 +948,7 @@ function mail_bank_admin_notice_class() {
 			$two_week_review_temp   = add_query_arg(
 				array(
 					'mb_admin_notice_temp_ignore' => 'two_week_review',
-					'int'                         => 7,
+					'int'                         => 14,
 				)
 			);
 
@@ -964,7 +964,7 @@ function mail_bank_admin_notice_class() {
 												<span class="dashicons dashicons-smiley tech-banker-admin-notice"></span><span class="tech-banker-admin-notice"><a href="' . $two_week_review_ignore . '" class="tech-banker-admin-notice-link">' . $mb_leave_review . '</a></span>
 												<span class="dashicons dashicons-calendar-alt tech-banker-admin-notice"></span><span class="tech-banker-admin-notice"><a href="' . $two_week_review_temp . '" class="tech-banker-admin-notice-link"> ' . $mb_may_be_later . ' </a></span>',
 				'later_link' => $two_week_review_temp,
-				'int'        => 7,
+				'int'        => 14,
 			);
 
 			$this->change_admin_notice_mail_bank( $notices );

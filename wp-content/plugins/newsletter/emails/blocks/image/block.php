@@ -10,8 +10,11 @@
 
 $defaults = array(
     'image' => '',
+    'image-alt' => '',
     'url' => '',
-    'block_background' => '#ffffff',
+    'width' => 0,
+    'align' => 'center',
+    'block_background' => '',
     'block_padding_left' => 0,
     'block_padding_right' => 0,
     'block_padding_bottom' => 15,
@@ -20,24 +23,44 @@ $defaults = array(
 
 $options = array_merge($defaults, $options);
 
-$alt = '';
 if (empty($options['image']['id'])) {
-    // A placeholder can be set by a preset and it is kept indefinitely
-    if (!empty($options['placeholder'])) {
-        $image = $options['placeholder'];
+    if (!empty($options['image-url'])) {
+        $media = new TNP_Media();
+        $media->url = $options['image-url'];
     } else {
-        $image = 'https://source.unsplash.com/600x250/daily';
+        $media = new TNP_Media();
+        // A placeholder can be set by a preset and it is kept indefinitely
+        if (!empty($options['placeholder'])) {
+            $media->url = $options['placeholder'];
+            $media->width = 600;
+            $media->height = 250;
+        } else {
+            $media->url = 'https://source.unsplash.com/1200x500/daily';
+            $media->width = 600;
+            $media->height = 250;
+        }
     }
 } else {
-    $image = tnp_media_resize($options['image']['id'], array(600, 0));
-    $alt = $options['image_alt'];
+    $media = tnp_resize_2x($options['image']['id'], [600, 0]);
+    // Should never happen but... it happens
+    if (!$media) {
+        echo 'The selected media file cannot be processed';
+        return;
+    }
 }
 
-$url = $options['url'];
+if (!empty($options['width'])) {
+    $media->set_width($options['width']);
+}
+$media->link = $options['url'];
+$media->alt = $options['image-alt'];
+
 ?>
 
-<?php if (!empty($url)) { ?>
-    <a href="<?php echo $url ?>" target="_blank"><img src="<?php echo $image ?>" border="0" alt="" style="max-width: 100%!important; height: auto!important; display: inline-block;"></a>                
-<?php } else { ?>
-    <img src="<?php echo $image ?>" border="0" alt="<?php echo esc_attr($alt) ?>" style="max-width: 100%!important; height: auto!important; display: inline-block;">              
-<?php } ?>
+<table border="0" cellspacing="0" cellpadding="0" width="100%" class="responsive" style="margin: 0;">
+    <tr>
+        <td align="<?php echo esc_attr($options['align']) ?>" valign="middle" width="100%">
+            <?php echo TNP_Composer::image($media); ?>
+        </td>
+    </tr>
+</table>

@@ -62,7 +62,7 @@ defined('ABSPATH') || defined('DUPXABSPATH') || exit;
 
 <!-- =========================================
 VIEW: STEP 3- INPUT -->
-<form id='s3-input-form' method="post" class="content-form">
+<form id='s3-input-form' method="post" class="content-form" autocomplete="off">
 
 	<div class="logfile-link">
 		<?php DUPX_View_Funcs::installerLogLink(); ?>
@@ -86,8 +86,7 @@ VIEW: STEP 3- INPUT -->
 		<input type="hidden" name="view"		  value="step3" />
 		<input type="hidden" name="csrf_token" value="<?php echo DUPX_CSRF::generate('step3'); ?>">
 		<input type="hidden" name="secure-pass"   value="<?php echo DUPX_U::esc_attr($_POST['secure-pass']); ?>" />
-		<input type="hidden" name="bootloader" value="<?php echo DUPX_U::esc_attr($GLOBALS['BOOTLOADER_NAME']); ?>" />
-		<input type="hidden" name="archive" value="<?php echo DUPX_U::esc_attr($GLOBALS['FW_PACKAGE_PATH']); ?>" />
+		<input type="hidden" name="secure-archive" value="<?php echo DUPX_U::esc_attr($_POST['secure-archive']); ?>" />
 		<input type="hidden" name="logging"		  value="<?php echo DUPX_U::esc_attr($_POST['logging']); ?>" />
 		<input type="hidden" name="dbhost"		  value="<?php echo DUPX_U::esc_attr($_POST['dbhost']); ?>" />
 		<input type="hidden" name="dbuser" 		  value="<?php echo DUPX_U::esc_attr($_POST['dbuser']); ?>" />
@@ -122,7 +121,7 @@ VIEW: STEP 3- INPUT -->
             </tr>
         </table>
     </div>
-    <br/><br/>
+    <br/>
 
     <!-- =========================
     SEARCH AND REPLACE -->
@@ -138,7 +137,7 @@ VIEW: STEP 3- INPUT -->
 		This option is available only in
 		<a href="https://snapcreek.com/duplicator/?utm_source=duplicator_free&utm_medium=wordpress_plugin&utm_campaign=duplicator_pro&utm_content=free_inst_replaceopts">Duplicator Pro</a>
     </div>
-    <br/><br/>
+    <br/>
     
 	<!-- ==========================
     OPTIONS -->
@@ -234,37 +233,46 @@ VIEW: STEP 3- INPUT -->
 				</tr>
 			</table><br/>
 
-			<table>
+			<table style="width:100%">
 				<tr>
-					<td style="padding-right:10px">
+					<td style="padding-right:10px;width:50%">
 						<b>Scan Tables:</b>
 						<div class="s3-allnonelinks">
 							<a href="javascript:void(0)" onclick="$('#tables option').prop('selected',true);">[All]</a>
 							<a href="javascript:void(0)" onclick="$('#tables option').prop('selected',false);">[None]</a>
 						</div><br style="clear:both" />
-						<select id="tables" name="tables[]" multiple="multiple" style="width:315px;" size="10">
+						<select id="tables" name="tables[]" multiple="multiple" style="width:100%;" size="10">
 							<?php
 							foreach( $all_tables as $table ) {
 								echo '<option selected="selected" value="' . DUPX_U::esc_attr( $table ) . '">' . DUPX_U::esc_html($table) . '</option>';
 							}
 							?>
 						</select>
-
 					</td>
-					<td valign="top">
+					<td style="width:50%">
 						<b>Activate Plugins:</b>
 						<?php echo ($_POST['exe_safe_mode'] > 0) ? '<small class="s3-warn">Safe Mode Enabled</small>' : '' ; ?>
 						<div class="s3-allnonelinks" style="<?php echo ($_POST['exe_safe_mode']>0)? 'display:none':''; ?>">
 							<a href="javascript:void(0)" onclick="$('#plugins option').prop('selected',true);">[All]</a>
 							<a href="javascript:void(0)" onclick="$('#plugins option').prop('selected',false);">[None]</a>
 						</div><br style="clear:both" />
-						<select id="plugins" name="plugins[]" multiple="multiple" style="width:315px;" <?php echo ($_POST['exe_safe_mode'] > 0) ? 'disabled="true"' : ''; ?> size="10">
+						<select id="plugins" name="plugins[]" multiple="multiple" style="width:100%;"  size="10">
 							<?php
 							$selected_string = 'selected="selected"';
-							foreach ($active_plugins as $plugin) {
-								$label = dirname($plugin) == '.' ? $plugin : dirname($plugin);
-                                echo "<option {$selected_string} value='" . DUPX_U::esc_attr( $plugin ) . "'>" . DUPX_U::esc_html($label) . '</option>';
-							}
+                            if ($_POST['exe_safe_mode'] > 0) {
+                                foreach ($active_plugins as $plugin) {
+                                    if (strpos($plugin, '/duplicator.php') !== false) {
+                                        $label = dirname($plugin) == '.' ? $plugin : dirname($plugin);
+                                        echo "<option {$selected_string} value='" . DUPX_U::esc_attr( $plugin ) . "'>" . DUPX_U::esc_html($label) . '</option>';
+                                        break;
+                                    }
+                                }
+                            } else {
+                                foreach ($active_plugins as $plugin) {
+                                    $label = dirname($plugin) == '.' ? $plugin : dirname($plugin);
+                                    echo "<option {$selected_string} value='" . DUPX_U::esc_attr( $plugin ) . "'>" . DUPX_U::esc_html($label) . '</option>';
+                                }
+                            }
 							?>
 						</select>
 					</td>
@@ -299,7 +307,7 @@ VIEW: STEP 3- INPUT -->
 			$wpconfig_ark_path	= ($GLOBALS['DUPX_AC']->installSiteOverwriteOn) ? "{$root_path}/dup-wp-config-arc__{$GLOBALS['DUPX_AC']->package_hash}.txt" : "{$root_path}/wp-config.php";
 
             if (file_exists($wpconfig_ark_path)) {
-				$config_transformer = new WPConfigTransformer($wpconfig_ark_path);
+				$config_transformer = new DupLiteWPConfigTransformer($wpconfig_ark_path);
             } else {
                 $config_transformer = null;
             }
@@ -371,7 +379,7 @@ VIEW: STEP 3- INPUT -->
 
 <!-- =========================================
 VIEW: STEP 3 - AJAX RESULT  -->
-<form id='s3-result-form' method="post" class="content-form" style="display:none">
+<form id='s3-result-form' method="post" class="content-form" style="display:none" autocomplete="off">
 
 	<div class="logfile-link"><?php DUPX_View_Funcs::installerLogLink(); ?></div>
 	<div class="hdr-main">
@@ -385,8 +393,7 @@ VIEW: STEP 3 - AJAX RESULT  -->
 		<input type="hidden" name="view"  value="step4" />
 		<input type="hidden" name="csrf_token" value="<?php echo DUPX_CSRF::generate('step4'); ?>">
 		<input type="hidden" name="secure-pass" value="<?php echo DUPX_U::esc_attr($_POST['secure-pass']); ?>" />
-		<input type="hidden" name="bootloader" value="<?php echo DUPX_U::esc_attr($GLOBALS['BOOTLOADER_NAME']); ?>" />
-	<input type="hidden" name="archive" value="<?php echo DUPX_U::esc_attr($GLOBALS['FW_PACKAGE_PATH']); ?>" />
+		<input type="hidden" name="secure-archive" value="<?php echo DUPX_U::esc_attr($_POST['secure-archive']); ?>" />
 		<input type="hidden" name="logging" id="logging" value="<?php echo DUPX_U::esc_attr($_POST['logging']); ?>" />
 		<input type="hidden" name="url_new" id="ajax-url_new"  />
 		<input type="hidden" name="exe_safe_mode" id="ajax-exe-safe-mode" />
@@ -515,10 +522,10 @@ DUPX.runUpdate = function()
 				$("#ajax-url_new").val($("#url_new").val());
 				$("#ajax-exe-safe-mode").val($("#exe-safe-mode").val());
 				$("#ajax-json").val(escape(JSON.stringify(data)));
-				<?php if (! $GLOBALS['DUPX_DEBUG']) : ?>
+				<?php if (!DUPX_Log::isLevel(DUPX_Log::LV_DEBUG)) : ?>
 					setTimeout(function(){$('#s3-result-form').submit();}, 1000);
 				<?php endif; ?>
-				$('#progress-area').fadeOut(1800);
+				//$('#progress-area').fadeOut(1500);
 			} else {
 				DUPX.hideProgressBar();
 			}
@@ -603,7 +610,7 @@ $(document).ready(function()
 	$("#tabs").tabs();
 	DUPX.getNewURL('url_new');
 	DUPX.getNewURL('siteurl');
-	$("*[data-type='toggle']").click(DUPX.toggleClick);
+	DUPX.initToggle();
 	$("#wp_password").passStrength({
 			shortPass: 		"top_shortPass",
 			badPass:		"top_badPass",

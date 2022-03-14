@@ -14,7 +14,7 @@ class Red_Csv_File extends Red_FileIO {
 	}
 
 	public function get_data( array $items, array $groups ) {
-		$lines[] = implode( ',', array( 'source', 'target', 'regex', 'type', 'code', 'match', 'hits', 'title' ) );
+		$lines = [ implode( ',', array( 'source', 'target', 'regex', 'type', 'code', 'match', 'hits', 'title' ) ) ];
 
 		foreach ( $items as $line ) {
 			$lines[] = $this->item_as_csv( $line );
@@ -31,7 +31,6 @@ class Red_Csv_File extends Red_FileIO {
 			$item->get_url(),
 			$data,
 			$item->is_regex() ? 1 : 0,
-			$item->get_action_type(),
 			$item->get_action_code(),
 			$item->get_action_type(),
 			$item->get_hits(),
@@ -39,7 +38,7 @@ class Red_Csv_File extends Red_FileIO {
 		);
 
 		$csv = array_map( array( $this, 'escape_csv' ), $csv );
-		return join( $csv, ',' );
+		return implode( ',', $csv );
 	}
 
 	public function escape_csv( $item ) {
@@ -53,18 +52,24 @@ class Red_Csv_File extends Red_FileIO {
 
 		ini_set( 'auto_detect_line_endings', false );
 
-		$count = 0;
 		if ( $file ) {
-			$count = $this->load_from_file( $group, $file, ',' );
+			$separators = [
+				',',
+				';',
+				'|',
+			];
 
-			// Try again with semicolons - Excel often exports CSV with semicolons
-			if ( $count === 0 ) {
+			foreach ( $separators as $separator ) {
 				fseek( $file, 0 );
-				$count = $this->load_from_file( $group, $file, ';' );
+				$count = $this->load_from_file( $group, $file, $separator );
+
+				if ( $count > 0 ) {
+					return $count;
+				}
 			}
 		}
 
-		return $count;
+		return 0;
 	}
 
 	public function load_from_file( $group_id, $file, $separator ) {

@@ -18,7 +18,7 @@ class DUPX_HTTP
 		$html = "<form id='".DUPX_U::esc_attr($id)."' method='post' action='".DUPX_U::esc_url($url)."'>\n";
 		foreach ($data as $name => $value)
 		{
-			$html .= "<input type='hidden' name='".DUPX_U::esc_attr($name)."' value='".DUPX_U::esc_attr($value)."' />\n";
+			$html .= "<input type='hidden' name='".DUPX_U::esc_attr($name)."' value='".DUPX_U::esc_attr($value)."' autocomplete=\"off\" />\n";
 		}
 		$html .= "</form>\n";
 		$html .= "<script>$(document).ready(function() { $('#{$id}').submit(); });</script>";
@@ -33,8 +33,10 @@ class DUPX_HTTP
 	public static function get_request_uri($show_query = true)
 	{
 		$isSecure = false;
-
-		if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || ($_SERVER['SERVER_PORT'] == 443))
+        if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') {
+            $_SERVER ['HTTPS'] = 'on';
+        }
+        if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || ($_SERVER['SERVER_PORT'] == 443))
 		{
 			$isSecure = true;
 		}

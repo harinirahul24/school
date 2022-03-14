@@ -4,8 +4,8 @@ Contributors: diana_burduja
 Email: diana@burduja.eu
 Tags: CSS, JS, javascript, custom CSS, custom JS, custom style, site css, add style, customize theme, custom code, external css, css3, style, styles, stylesheet, theme, editor, design, admin
 Requires at least: 3.0.1
-Tested up to: 5.3 
-Stable tag: 3.28
+Tested up to: 5.9 
+Stable tag: 3.38.1
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 Requires PHP: 5.2.4
@@ -14,7 +14,7 @@ Easily add Custom CSS or JS to your website with an awesome editor.
 
 == Description ==
 
-Customize your WordPress site's appearance by easily adding custom CSS and JS code without even having to modify your theme or plugin files. This is perfect for adding custom CSS tweaks to your site.
+Customize your WordPress site's appearance by easily adding custom CSS and JS code without even having to modify your theme or plugin files. This is perfect for adding custom CSS tweaks to your site. 
 
 = Features =
 * **Text editor** with syntax highlighting 
@@ -90,7 +90,7 @@ By default only the Administrator will be able to publish/edit/delete Custom Cod
 * If the [qTranslate X](https://wordpress.org/plugins/qtranslate-x/) plugin is adding some `[:]` or `[:en]` characters to your code, then you need to remove the `custom-css-js` post type from the qTranslate settings. Check out [this screenshot](https://www.silkypress.com/wp-content/uploads/2016/08/ccj_qtranslate_compatibility.png) on how to do that.
 
 = My website has HTTPS urls, but the codes are linked as HTTP =
-The URL for the linked Codes is built just like the URL for other media (from Media Library) by using the WordPress Address option found on the WP Admin -> Settings -> General page, as shown in [this screenshot](https://www.silkypress.com/wp-content/uploads/2016/12/ccj-siteurl.png). If the WordPress Address has HTTPS in the url, then the Custom Codes and all the other media will have HTTPS in the url.
+The URL for the linked Codes is built just like the URL for other media (from Media Library) by using the WordPress Address option found on the WP Admin -> Settings -> General page, as shown in [this screenshot](https://www.silkypress.com/wp-content/uploads/2016/12/ccj-siteurl.png). If the WordPress Address has HTTPS in the url, then the Custom Codes and all the other media will have HTTPS in the url. 
 
 
 == Screenshots ==
@@ -104,6 +104,73 @@ The URL for the linked Codes is built just like the URL for other media (from Me
 $. Add/Edit HTML 
 
 == Changelog ==
+
+= 3.38.1 =
+* 12/02/2021
+* Fix: revert the code related to the compatibility with the `HTML Editor Syntax Highlighter` plugin
+
+= 3.38 =
+* 11/09/2021
+* Fix: escape labels on the "Add new custom code" page
+* Feature: Keep the last cursor position in the editor and let the editor get focus when the page loads 
+
+= 3.37 =
+* 07/12/2021
+* Fix: allow the TablePress plugin to load its JS files on the "Add custom code" page in admin
+* Feature: highlight active line in the editor 
+* Feature: add "Ctrl + J" shortcut to the editor for jumping to the matching tag
+
+= 3.36 =
+* 02/23/2021
+* Fix: fatal error with PHP8.0
+
+= 3.35 =
+* 01/19/2021
+* Tweak: change dummy revision dates to fictional dates before 2000
+* Fix: replace the deprecated postL10n JS object with wp.i18n
+* Fix: add "tipsy-no-html" to the tooltips on the settings page
+
+= 3.34 =
+* 11/01/2020
+* Feature: enqueue the jQuery library if one of the JS custom codes requires it
+* Fix: set cookie SameSite attribute to lax
+
+= 3.33 =
+* 08/20/2020
+* Fix: the user language preferrence was ignored in favor of the site defined language
+* Fix: allow the jQuery library added by plugins like Enable jQuery Migrate Helper or Test jQuery Updates
+* Fix: permalink was not editable with WordPress 5.5
+* Feature: fullscreen editor
+* Feature: button for beautifying the code
+
+= 3.32  =
+* 07/08/2020
+* Fix: add "Cmd + " editor shortcuts for MacOS computers
+* Fix: use file_get_contents instead of include_once to load the custom codes
+* Fix: compatibility issue with the Product Slider for WooCommerce by ShapedPlugin
+* Feature: "Ctrl + /" in the editor will comment out the code
+* Feature: order custom codes table by "type" and "active" state
+* Feature: autocomplete in the editor
+
+= 3.31 =
+* 03/21/2020
+* Declare compatibility WooCommerce 4.1
+* Feature: add "After <body> tag" option for HTML codes, if the theme allows it 
+* Feature: don't show type attribute for script and style tags if the theme adds html5 support for it
+* Code refactory
+* Fix: the permalink was mistakingly showing a ".css" file extension when being edited
+
+= 3.30 =
+* 03/12/2020
+* Feature: color the matching brackets in the editor
+* Declare compatibility WooCommerce 4.0 
+* Declare compatibility WordPress 5.4 
+
+= 3.29 =
+* 01/31/2020
+* Fix: date Published and Modified date wasn't shown in Japanese
+* Feature: indentation in the editor
+* Feature: close brackets in the editor
 
 = 3.28 =
 * 11/05/2019

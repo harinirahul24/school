@@ -1,16 +1,17 @@
 <?php
+/* @var $this NewsletterUsers */
+
 defined('ABSPATH') || exit;
 
 require_once NEWSLETTER_INCLUDES_DIR . '/controls.php';
 $controls = new NewsletterControls();
-$module = NewsletterUsers::instance();
 
 $id = (int) $_GET['id'];
-$user = $module->get_user($id);
+$user = $this->get_user($id);
 
 if ($controls->is_action('save')) {
 
-    $email = $module->normalize_email($controls->data['email']);
+    $email = $this->normalize_email($controls->data['email']);
     if (empty($email)) {
         $controls->errors = __('Wrong email address', 'newsletter');
     } else {
@@ -19,7 +20,7 @@ if ($controls->is_action('save')) {
 
 
     if (empty($controls->errors)) {
-        $u = $module->get_user($controls->data['email']);
+        $u = $this->get_user($controls->data['email']);
         if ($u && $u->id != $id) {
             $controls->errors = __('The email address is already in use', 'newsletter');
         }
@@ -34,12 +35,12 @@ if ($controls->is_action('save')) {
         }
 
         if (empty($controls->data['token'])) {
-            $controls->data['token'] = $module->get_token();
+            $controls->data['token'] = $this->get_token();
         }
 
         $controls->data['id'] = $id;
-        $user = $module->save_user($controls->data);
-        $module->add_user_log($user, 'edit');
+        $user = $this->save_user($controls->data);
+        $this->add_user_log($user, 'edit');
         if ($user === false) {
             $controls->errors = __('Error. Check the log files.', 'newsletter');
         } else {
@@ -50,8 +51,8 @@ if ($controls->is_action('save')) {
 }
 
 if ($controls->is_action('delete')) {
-    $module->delete_user($id);
-    $controls->js_redirect($module->get_admin_page_url('index'));
+    $this->delete_user($id);
+    $controls->js_redirect($this->get_admin_page_url('index'));
     return;
 }
 
@@ -95,7 +96,7 @@ function percentValue($value, $total) {
 
         <form method="post" action="">
             <p>
-                <?php $controls->button_back('?page=newsletter_users_index'); ?>
+                <?php $controls->button_icon_back('?page=newsletter_users_index'); ?>
                 <?php $controls->button_save(); ?>
             </p>
             <?php $controls->init(); ?>
@@ -139,35 +140,43 @@ function percentValue($value, $total) {
                         <tr>
                             <th><?php _e('Gender', 'newsletter'); ?></th>
                             <td>
-                                <?php $controls->select('sex', array('n' => 'Not specified', 'f' => 'female', 'm' => 'male')); ?>
+                                <?php $controls->select('sex', array('n' => __('Not specified', 'newsletter'), 'f' => __('Female', 'newsletter'), 'm' => __('Male', 'newsletter'))); ?>
                             </td>
                         </tr>
                         <tr>
                             <th><?php _e('Status', 'newsletter'); ?></th>
                             <td>
-                                <?php $controls->select('status', array('C' => 'Confirmed', 'S' => 'Not confirmed', 'U' => 'Unsubscribed', 'B' => 'Bounced')); ?>
+                                <?php
+                                $controls->select('status', [
+                                    'C' => TNP_User::get_status_label('C'),
+                                    'S' => TNP_User::get_status_label('S'),
+                                    'U' => TNP_User::get_status_label('U'),
+                                    'B' => TNP_User::get_status_label('B'),
+                                    'P' => TNP_User::get_status_label('P')
+                                ]);
+                                ?>
                             </td>
                         </tr>
                         <tr>
                             <th><?php _e('Language', 'newsletter'); ?></th>
                             <td>
-                                <?php $controls->language(); ?>
+<?php $controls->language('language', __('None', 'newsletter')); ?>
                             </td>
                         </tr>
                         <tr>
                             <th><?php _e('Test subscriber', 'newsletter'); ?>
                                 <br><?php $controls->help('https://www.thenewsletterplugin.com/documentation/subscribers#test-subscribers') ?></th>
                             <td>
-                                <?php $controls->yesno('test'); ?>
+<?php $controls->yesno('test'); ?>
                             </td>
                         </tr>
 
-                        <?php do_action('newsletter_user_edit_extra', $controls); ?>
+<?php do_action('newsletter_user_edit_extra', $controls); ?>
 
                         <tr>
                             <th>Feed by mail</th>
                             <td>
-                                <?php $controls->yesno('feed'); ?>
+<?php $controls->yesno('feed'); ?>
                             </td>
                         </tr>
                     </table>
@@ -177,7 +186,7 @@ function percentValue($value, $total) {
                         <tr>
                             <th><?php _e('Lists', 'newsletter') ?><br><?php echo $controls->help('https://www.thenewsletterplugin.com/plugins/newsletter/newsletter-preferences') ?></th>
                             <td>
-                                <?php $controls->preferences('list'); ?>
+<?php $controls->preferences('list'); ?>
                             </td>
                         </tr>
                     </table>
@@ -215,43 +224,49 @@ function percentValue($value, $total) {
                         <tr>
                             <th>ID</th>
                             <td>
-                                <?php $controls->value('id'); ?>
+<?php $controls->value('id'); ?>
                             </td>
                         </tr>
                         <tr>
                             <th><?php _e('Created', 'newsletter') ?></th>
                             <td>
-                                <?php echo $controls->print_date(strtotime($controls->data['created'])); ?>
+<?php echo $controls->print_date(strtotime($controls->data['created'])); ?>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th><?php _e('Referrer', 'newsletter') ?></th>
+                            <td>
+<?php echo $controls->value('referrer'); ?>
                             </td>
                         </tr>
                         <tr>
                             <th><?php _e('Last activity', 'newsletter') ?></th>
                             <td>
-                                <?php echo $controls->print_date($controls->data['last_activity']); ?>
+<?php echo $controls->print_date($controls->data['last_activity']); ?>
                             </td>
                         </tr>
                         <tr>
                             <th><?php _e('WP user ID', 'newsletter') ?></th>
                             <td>
-                                <?php $controls->text('wp_user_id'); ?>
+<?php $controls->text('wp_user_id'); ?>
                             </td>
                         </tr>
                         <tr>
                             <th><?php _e('IP address', 'newsletter'); ?></th>
                             <td>
-                                <?php $controls->value('ip'); ?>
+<?php $controls->value('ip'); ?>
                             </td>
                         </tr>
                         <tr>
                             <th><?php _e('Secret token', 'newsletter'); ?></th>
                             <td>
-                                <?php $controls->text('token', 50); ?>
+<?php $controls->text('token', 50); ?>
                             </td>
                         </tr>
                         <tr>
                             <th><?php _e('Profile URL', 'newsletter'); ?></th>
                             <td>
-                                <?php $profile_url = NewsletterProfile::instance()->get_profile_url($user) ?>
+<?php $profile_url = NewsletterProfile::instance()->get_profile_url($user) ?>
                                 <a href='<?php echo $profile_url ?>' target="_blank"><?php echo $profile_url ?></a>
                             </td>
                         </tr>
@@ -259,7 +274,7 @@ function percentValue($value, $total) {
                     </table>
                 </div>
                 <div id="tabs-newsletters" class="tnp-tab">
-                    <?php if (!has_action('newsletter_user_newsletters_tab') && !has_action('newsletter_users_edit_newsletters')) { ?>
+<?php if (!has_action('newsletter_user_newsletters_tab') && !has_action('newsletter_users_edit_newsletters')) { ?>
                         <div class="tnp-tab-notice">
                             This panel requires the <a href="https://www.thenewsletterplugin.com/plugins/newsletter/reports-module" target="_blank">Reports Extension 4+</a>.
                         </div>
@@ -277,11 +292,12 @@ function percentValue($value, $total) {
                     ?>
                     <?php if (empty($logs)) { ?>
                         <p>No logs available</p>
-                    <?php } else { ?>
+<?php } else { ?>
                         <p>Only public lists are recorded.</p>
                         <table class="widefat" style="width: auto">
                             <thead>
                                 <tr>
+                                    <th>ID</th>
                                     <th>Date</th>
                                     <th>Source</th>
                                     <th>IP</th>
@@ -296,6 +312,7 @@ function percentValue($value, $total) {
                                         $data = $data['new'];
                                     ?>
                                     <tr>
+                                        <td><?php echo $log->id ?></td>
                                         <td><?php echo $controls->print_date($log->created) ?></td>
                                         <td><?php echo esc_html($log->source) ?></td>
                                         <td><?php echo esc_html($log->ip) ?></td>

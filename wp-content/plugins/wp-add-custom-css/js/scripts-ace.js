@@ -15,7 +15,8 @@
     editor.session.setMode("ace/mode/css");
     editor.setOptions({
       fontSize: 14,
-      tabSize: 2
+      tabSize: 2,
+      wrap: true
     });
 
     editor.getSession().setValue(textarea.val());

@@ -3,7 +3,7 @@
 Plugin Name: Page scroll to id
 Plugin URI: http://manos.malihu.gr/page-scroll-to-id
 Description: Page scroll to id is an easy-to-use jQuery plugin that enables animated (smooth) page scrolling to specific id within the document. 
-Version: 1.6.6
+Version: 1.7.5
 Author: malihu
 Author URI: http://manos.malihu.gr
 License: MIT License (MIT)
@@ -47,7 +47,7 @@ if(!class_exists('malihuPageScroll2id')){ // --edit--
 	
 	class malihuPageScroll2id{ // --edit--
 		
-		protected $version='1.6.6'; // Plugin version --edit--
+		protected $version='1.7.5'; // Plugin version --edit--
 		protected $update_option=null;
 		
 		protected $plugin_name='Page scroll to id'; // Plugin name --edit--
@@ -65,6 +65,7 @@ if(!class_exists('malihuPageScroll2id')){ // --edit--
 		protected $plugin_script='jquery.malihu.PageScroll2id.js'; // Plugin public script (main js plugin file) --edit--
 		protected $plugin_init_script='jquery.malihu.PageScroll2id-init.js'; // Plugin public initialization script --edit--
 		protected $plugin_production_script='page-scroll-to-id.min.js'; // Plugin public production script (main + init) --edit--
+		protected $plugin_unbind_defer_script='jquery.malihu.PageScroll2id-unbind-defer.js'; // Plugin public special script --edit--
 		
 		private function __construct(){
 			// Plugin requires PHP version 5.2 or higher
@@ -105,7 +106,7 @@ if(!class_exists('malihuPageScroll2id')){ // --edit--
 			// Add plugin settings link
 			add_filter('plugin_action_links_'.plugin_basename(__FILE__), array($this, 'add_plugin_action_links'));
 			// Add contextual help for the plugin
-			add_action('contextual_help', array($this, 'plugin_contextual_help'), 10, 3);
+			add_action('admin_head', array($this, 'plugin_contextual_help'), 10, 3);
 			// Plugin API (actions, hooks, filters etc.)
 			$this->pluginAPI_functions();
 		}
@@ -373,7 +374,7 @@ if(!class_exists('malihuPageScroll2id')){ // --edit--
 			}
 			$params=array(
 				'instances' => $instancesOptions, //pass filtered values
-				'total_instances' => count($instances),
+				'total_instances' => count((array)$instances),
 				'shortcode_class' => '_'.$this->sc_pfx
 			);
 			$loc_script=PS2ID_MINIFIED_JS ? $this->plugin_slug.'-plugin-script' : $this->plugin_slug.'-plugin-init-script';
@@ -448,7 +449,7 @@ if(!class_exists('malihuPageScroll2id')){ // --edit--
 			}
 			if($this->version!==$current_version){
 				// Update plugin options to new version ones
-				$pl_instances=get_option($this->db_prefix.'instances');
+				$pl_instances=get_option($this->db_prefix.'instances', $this->default);
 				$pl_instances_count=(is_array($pl_instances) || $pl_instances instanceof Countable) ? count($pl_instances) : 1;
 				for($i=0; $i<$pl_instances_count; $i++){
 					$j=$pl_instances[$this->pl_pfx.'instance_'.$i];
@@ -499,7 +500,8 @@ if(!class_exists('malihuPageScroll2id')){ // --edit--
 			echo('<script>var _debugData_='.json_encode($data).'; console.log("PHP: "+_debugData_);</script>');
 		}
 		
-		public function plugin_contextual_help($contextual_help, $screen_id, $screen){
+		public function plugin_contextual_help(){
+			$screen=get_current_screen();
 			 if(strcmp($screen->id, $this->plugin_screen_hook_suffix)==0){
 				if(get_bloginfo('version') >= '3.6'){
 					// --edit--
@@ -547,10 +549,8 @@ if(!class_exists('malihuPageScroll2id')){ // --edit--
 						));
 						$screen->set_help_sidebar($help_sidebar);
 					}
-					return $contextual_help;
 				}
 			 }
-			 return $contextual_help;
 		}
 		
 		// Plugin API (actions, hooks, filters etc.) fn
@@ -574,11 +574,35 @@ if(!class_exists('malihuPageScroll2id')){ // --edit--
 			if(isset($pl_i['dummyOffset']) && $pl_i['dummyOffset']['value']=='true'){
 				add_action('wp_footer', array($this, 'dummy_offset_element'), 99);
 			}
+			// Unbind unrelated click events with specific selector (requires PHP 5.3 or higher)
+			if(version_compare(PHP_VERSION, '5.3', '>')){
+				$_ENV["ps2id_p_plugin_slug"] = $this->plugin_slug;
+				$_ENV["ps2id_p_plugin_unbind_defer_script"] = $this->plugin_unbind_defer_script;
+				$_ENV["ps2id_p_version"] = $this->version;
+				$_ENV["ps2id_p_pl_pfx"] = $this->pl_pfx;
+				include_once(
+					plugin_dir_path( __FILE__ ).'includes/malihu-pagescroll2id-unbind-click-php53.php'
+				);
+			}
 		}
 		
 		// WP Menu API menus HTML attributes fn 
 		public function wp_menu_links_custom_atts($atts, $item, $args){
 			$atts['data-ps2id-api'] = 'true';
+			//link specific offset special class (ps2id-offset-NUMBER)
+			if(preg_match("/ps2id-offset-/s", var_export($item->classes, true))){
+				foreach ( $item->classes as $key => $value ) {
+					if( substr_count($value, 'ps2id-offset-') > 0 ) {
+							$ps2id_offset_value = $value;
+					}
+				}
+				if(isset($ps2id_offset_value)){
+					$ps2id_offset_value = explode('ps2id-offset-', $ps2id_offset_value);
+					if(is_numeric($ps2id_offset_value[1])){
+						$atts['data-ps2id-offset'] = $ps2id_offset_value[1];
+					}
+				}
+			}
 			return $atts;
 		}
 		
@@ -607,14 +631,16 @@ if(!class_exists('malihuPageScroll2id')){ // --edit--
 			// Defaults
 			$d0='a[href*=\'#\']:not([href=\'#\'])';
 			$d19='true';
-			$d29='a[href^=\'#tab-\'], a[href^=\'#tabs-\'], a[data-toggle]:not([data-toggle=\'tooltip\']), a[data-slide], a[data-vc-tabs], a[data-vc-accordion]';
+			$d29='a[href^=\'#tab-\'], a[href^=\'#tabs-\'], a[data-toggle]:not([data-toggle=\'tooltip\']), a[data-slide], a[data-vc-tabs], a[data-vc-accordion], a.screen-reader-text.skip-link';
 			$d1=800;
 			$d2='true';
 			$d3='easeInOutQuint';
 			$d4='easeOutQuint';
+			$d32='false';
 			$d5='true';
 			$d24='false';
 			$d26='false';
+			$d33='false';
 			$d6='vertical';
 			$d7=0;
 			$d30='false';
@@ -635,7 +661,9 @@ if(!class_exists('malihuPageScroll2id')){ // --edit--
 			$d20='true';
 			$d21='true';
 			$d23='false';
+			$d34='';
 			$d25='false';
+			$d31='false';
 			// Values
 			switch($action){
 				case 'validate':
@@ -646,9 +674,11 @@ if(!class_exists('malihuPageScroll2id')){ // --edit--
 					$v2=(isset($_POST[$this->db_prefix.$i.'_autoScrollSpeed'])) ? 'true' : 'false';
 					$v3=$_POST[$this->db_prefix.$i.'_scrollEasing'];
 					$v4=$_POST[$this->db_prefix.$i.'_scrollingEasing'];
+					$v32=(isset($_POST[$this->db_prefix.$i.'_forceScrollEasing'])) ? 'true' : 'false';
 					$v5=(isset($_POST[$this->db_prefix.$i.'_pageEndSmoothScroll'])) ? 'true' : 'false';
 					$v24=(isset($_POST[$this->db_prefix.$i.'_stopScrollOnUserAction'])) ? 'true' : 'false';
 					$v26=(isset($_POST[$this->db_prefix.$i.'_autoCorrectScroll'])) ? 'true' : 'false';
+					$v33=(isset($_POST[$this->db_prefix.$i.'_autoCorrectScrollExtend'])) ? 'true' : 'false';
 					$v6=$_POST[$this->db_prefix.$i.'_layout'];
 					$v7=$this->sanitize_input('text', $_POST[$this->db_prefix.$i.'_offset'], $d7);
 					$v30=(isset($_POST[$this->db_prefix.$i.'_dummyOffset'])) ? 'true' : 'false';
@@ -669,7 +699,9 @@ if(!class_exists('malihuPageScroll2id')){ // --edit--
 					$v20=(isset($_POST[$this->db_prefix.$i.'_adminDisplayWidgetsId'])) ? 'true' : 'false';
 					$v21=(isset($_POST[$this->db_prefix.$i.'_adminTinyMCEbuttons'])) ? 'true' : 'false';
 					$v23=(isset($_POST[$this->db_prefix.$i.'_unbindUnrelatedClickEvents'])) ? 'true' : 'false';
+					$v34=$this->sanitize_input('text', $_POST[$this->db_prefix.$i.'_unbindUnrelatedClickEventsSelector'], $d34);
 					$v25=(isset($_POST[$this->db_prefix.$i.'_normalizeAnchorPointTargets'])) ? 'true' : 'false';
+					$v31=(isset($_POST[$this->db_prefix.$i.'_encodeLinks'])) ? 'true' : 'false';
 					break;
 				case 'upgrade':
 					if(isset($old)){
@@ -708,11 +740,15 @@ if(!class_exists('malihuPageScroll2id')){ // --edit--
 					$v20=(isset($j['adminDisplayWidgetsId'])) ? $j['adminDisplayWidgetsId']['value'] : $d20;
 					$v21=(isset($j['adminTinyMCEbuttons'])) ? $j['adminTinyMCEbuttons']['value'] : $d21;
 					$v23=(isset($j['unbindUnrelatedClickEvents'])) ? $j['unbindUnrelatedClickEvents']['value'] : $d23;
+					$v34=(isset($j['unbindUnrelatedClickEventsSelector'])) ? $j['unbindUnrelatedClickEventsSelector']['value'] : $d34;
 					$v24=(isset($j['stopScrollOnUserAction'])) ? $j['stopScrollOnUserAction']['value'] : $d24;
 					$v25=(isset($j['normalizeAnchorPointTargets'])) ? $j['normalizeAnchorPointTargets']['value'] : $d25;
 					$v26=(isset($j['autoCorrectScroll'])) ? $j['autoCorrectScroll']['value'] : $d26;
+					$v33=(isset($j['autoCorrectScrollExtend'])) ? $j['autoCorrectScrollExtend']['value'] : $d33;
 					$v27=(isset($j['scrollToHashUseElementData'])) ? $j['scrollToHashUseElementData']['value'] : $d27;
 					$v28=(isset($j['scrollToHashRemoveUrlHash'])) ? $j['scrollToHashRemoveUrlHash']['value'] : $d28;
+					$v31=(isset($j['encodeLinks'])) ? $j['encodeLinks']['value'] : $d31;
+					$v32=(isset($j['forceScrollEasing'])) ? $j['forceScrollEasing']['value'] : $d32;
 					break;
 				default:
 					$v0=$d0;
@@ -722,9 +758,11 @@ if(!class_exists('malihuPageScroll2id')){ // --edit--
 					$v2=$d2;
 					$v3=$d3;
 					$v4=$d4;
+					$v32=$d32;
 					$v5=$d5;
 					$v24=$d24;
 					$v26=$d26;
+					$v33=$d33;
 					$v6=$d6;
 					$v7=$d7;
 					$v30=$d30;
@@ -745,7 +783,9 @@ if(!class_exists('malihuPageScroll2id')){ // --edit--
 					$v20=$d20;
 					$v21=$d21;
 					$v23=$d23;
+					$v34=$d34;
 					$v25=$d25;
+					$v31=$d31;
 			}
 			// Options array
 			/*
@@ -846,6 +886,18 @@ if(!class_exists('malihuPageScroll2id')){ // --edit--
 					'description' => 'Alternative animation easing (applied when a link is clicked while the page is animated/scrolling)',
 					'wrapper' => null
 				),
+				'forceScrollEasing' => array(
+					'value' => $v32,
+					'values' => null,
+					'id' => $this->db_prefix.$i.'_forceScrollEasing',
+					'field_type' => 'checkbox',
+					'label' => '',
+					'checkbox_label' => 'Force scroll type/easing',
+					'radio_labels' => null,
+					'field_info' => null,
+					'description' => 'Enable if the selected animation easing does not seem to take effect and/or there\'s conflict with other easing libraries and plugins',
+					'wrapper' => 'fieldset'
+				),
 				'pageEndSmoothScroll' => array(
 					'value' => $v5,
 					'values' => null,
@@ -877,6 +929,18 @@ if(!class_exists('malihuPageScroll2id')){ // --edit--
 					'field_type' => 'checkbox',
 					'label' => '',
 					'checkbox_label' => 'Verify target position and readjust scrolling (if necessary), after scrolling animation is complete',
+					'radio_labels' => null,
+					'field_info' => null,
+					'description' => null,
+					'wrapper' => 'fieldset'
+				),
+				'autoCorrectScrollExtend' => array(
+					'value' => $v33,
+					'values' => null,
+					'id' => $this->db_prefix.$i.'_autoCorrectScrollExtend',
+					'field_type' => 'checkbox',
+					'label' => '',
+					'checkbox_label' => 'Extend target position verification and scrolling adjustment for lazy-load scripts (images, iframes etc.) and changes in document\'s length',
 					'radio_labels' => null,
 					'field_info' => null,
 					'description' => null,
@@ -1122,6 +1186,18 @@ if(!class_exists('malihuPageScroll2id')){ // --edit--
 					'description' => 'Enable if another plugin or a theme script handles page scrolling and conflicts with "Page scroll to id" (removes other scripts js click events from the links)',
 					'wrapper' => 'fieldset'
 				),
+				'unbindUnrelatedClickEventsSelector' => array(
+					'value' => $v34,
+					'values' => null,
+					'id' => $this->db_prefix.$i.'_unbindUnrelatedClickEventsSelector',
+					'field_type' => 'text',
+					'label' => '',
+					'checkbox_label' => null,
+					'radio_labels' => null,
+					'field_info' => null,
+					'description' => 'Prevent other scripts from handling plugin&#8217;s links selector(s) <br /><small>Requires PHP version 5.3 or higher</small>',
+					'wrapper' => null
+				),
 				'normalizeAnchorPointTargets' => array(
 					'value' => $v25,
 					'values' => null,
@@ -1132,6 +1208,18 @@ if(!class_exists('malihuPageScroll2id')){ // --edit--
 					'radio_labels' => null,
 					'field_info' => null,
 					'description' => 'Force zero dimensions (via CSS) on targets created with <code>[ps2id]</code> shortcode',
+					'wrapper' => 'fieldset'
+				),
+				'encodeLinks' => array(
+					'value' => $v31,
+					'values' => null,
+					'id' => $this->db_prefix.$i.'_encodeLinks',
+					'field_type' => 'checkbox',
+					'label' => '',
+					'checkbox_label' => 'Encode unicode characters on links URL',
+					'radio_labels' => null,
+					'field_info' => null,
+					'description' => 'Enable if you have links that have encoded unicode characters (e.g. on internationalized domain names) in their URL',
 					'wrapper' => 'fieldset'
 				)
 			);
@@ -1151,8 +1239,8 @@ if(class_exists('malihuPageScroll2id')){ // --edit--
 	// Widget class --edit--
 	require_once(plugin_dir_path( __FILE__ ).'includes/class-malihu-pagescroll2id-widget.php');
 
-	// MO notice class --edit--
-	require_once(plugin_dir_path( __FILE__ ).'includes/mo-admin-notice.php');
+	// plugin notice class (see also admin.php and admin.css for settings page banner) --edit--
+	require_once(plugin_dir_path( __FILE__ ).'includes/ps2id-plugin-admin-notice.php');
 
 }
 ?>

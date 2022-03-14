@@ -1,5 +1,6 @@
 <?php
 require get_theme_file_path('/inc/google-sheets/vendor/autoload.php');
+require get_theme_file_path('/inc/custom-functions.php');
 
 function register_customfonts_style() {
 wp_enqueue_style( 'wpb-gotham-fonts', get_stylesheet_directory_uri() . '/css/gotham.css' );
@@ -249,4 +250,46 @@ function save_custom_meta_box($post_id, $post, $update)
 }
 
 add_action("save_post", "save_custom_meta_box", 10, 3);
+
+//Custom post type for school tour submissions
+function create_custom_post_type_school_tour() {
+	
+	$labels = array(
+		'name'                => __( 'School Tour' ),
+		'singular_name'       => __( 'Submission'),
+		'menu_name'           => __( 'School Tour'),
+		'all_items'           => __( 'All Submissions'),
+		'view_item'           => __( 'View Submission'),
+		'add_new_item'        => __( 'Add New Submission'),
+		'add_new'             => __( 'Add New'),
+		'edit_item'           => __( 'Edit Submission'),
+		'update_item'         => __( 'Update Submission'),
+		'search_items'        => __( 'Search Submission'),
+		'not_found'           => __( 'Not Found'),
+		'not_found_in_trash'  => __( 'Not found in Trash')
+	);
+	
+
+	$args = array(
+		'label'               => $labels['name'],
+		'labels'              => $labels,
+		'supports'            => array( 'title', 'editor', 'excerpt', 'author', 'thumbnail', 'revisions', 'custom-fields'),
+		'public'              => true,
+		'hierarchical'        => false,
+		'show_ui'             => true,
+		'show_in_menu'        => true,
+		'show_in_nav_menus'   => true,
+		'show_in_admin_bar'   => true,
+		'has_archive'         => true,
+		'can_export'          => true,
+		'exclude_from_search' => false,
+		'yarpp_support'       => true,
+		'publicly_queryable'  => true,
+		'capability_type'     => 'page'
+	);
+	register_post_type('stour_submissions', $args);
+	
+	
+}
+add_action( 'init', 'create_custom_post_type_school_tour', 0 );
 

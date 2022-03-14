@@ -16,12 +16,18 @@ defined('ABSPATH') || exit;
         </ul>
     </div>
     <div>
-        <form target="_blank" action="https://www.thenewsletterplugin.com/?na=s" method="post">
-            <input type="email" name="ne" placeholder="Your email" required size="20" value="<?php echo esc_attr($current_user->user_email) ?>">
+        <form target="_blank" action="https://www.thenewsletterplugin.com/?na=s" method="post" style="margin: 0">
+            <input type="email" name="ne" placeholder="Your email" required size="20" value="<?php echo esc_attr($current_user_email) ?>">
             <input type="hidden" value="plugin-footer" name="nr">
             <input type="hidden" value="3" name="nl[]">
-            <input type="hidden" value="single" name="optin">
-            <input type="submit" value="<?php _e('Stay updated', 'newsletter') ?>">
+            <input type="hidden" value="1" name="nl[]">
+            <input type="hidden" value="double" name="optin">
+            <input type="submit" value="<?php _e('Get news and promotions', 'newsletter') ?>">
+            <span style="color: #bbb; margin-bottom: 0px; display: block; line-height: normal">
+                Proceeding you agree to the 
+                <a href="https://www.thenewsletterplugin.com/privacy" target="_blank" style="color: #2ECC71">privacy policy</a>
+            </span>
+
         </form>
     </div>
 </div>
