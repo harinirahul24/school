@@ -21,10 +21,11 @@ function save_stour_submission()
 	$post_title = esc_html($_POST['parent_name']);
 	$sheet_id = get_field('google_sheet_id', 'option');
 	$sheet_range = get_field('google_sheet_name', 'option');
+	$col_index = get_field('google_sheet_column_index', 'option');
 	
-	if($_POST[$prefix.'sub_id'] != ''){
+	if($_POST['sub_id'] != ''){
 		//Update Submissions		
-		$id = $_POST[$prefix.'sub_id'];
+		$id = $_POST['sub_id'];
 		foreach($_POST as $key => $value){
 			update_post_meta($id, $prefix.$key, $value);		
 		}
@@ -46,8 +47,10 @@ function save_stour_submission()
 		$dataForSheet = array();
 		$dataForSheet[] = array($parent_name, $email, $phone, $student_name, $standard, $address, $date, $slot, $transport, $count, $vehicle_number, $updated_date);
 		
+		//var_dump($dataForSheet);exit;
+		
 		$row_index = get_google_sheet_row_index($id, $sheet_id, $sheet_name);
-		update_sheet($post_data, $row_index, 2, $sheet_id, $sheet_range);
+		update_sheet($dataForSheet, $row_index, $col_index, $sheet_id, $sheet_range);
 		echo true;
 	}else{
 		//Save Submissions			
@@ -63,7 +66,7 @@ function save_stour_submission()
 			'meta_input'   => $meta_input
 		);		
 		$id = wp_insert_post($post_arr);
-		
+		update_post_meta($id, 'update_key', rand(999999,9999999).$id);
 		
 		$created_date = date("d/m/Y H:i");
 		$parent_name = get_post_meta($id, $prefix.'parent_name', true);
@@ -78,6 +81,7 @@ function save_stour_submission()
 		$count = get_post_meta($id, $prefix.'count', true);
 		$vehicle_number = get_post_meta($id, $prefix.'vehicle_number', true);
 		$updated_date = date("d/m/Y H:i");
+		
 		
 		
 		$dataForSheet = array();
@@ -166,6 +170,46 @@ function get_submission_count(){
 
 }
 
+add_action('wp_ajax_get_stour_submission', 'get_stour_submission');
+add_action('wp_ajax_nopriv_get_stour_submission', 'get_stour_submission');
+
+function get_stour_submission(){
+	
+	$p_type = 'stour_submissions';
+	$update_key = $_POST['update_key'];
+	
+	$args = array( 'post_type' => $p_type,
+	'post_status' => 'publish',	
+	'posts_per_page' => -1,	
+	'orderby' => 'id',
+	'order'	=> 'DESC',
+	'meta_query' => array(
+		'relation' => 'AND',				
+		array(
+			'key' => 'update_key',
+			'value' => $update_key,
+			'compare' => '='
+		)
+	)
+	);
+	$the_query = new WP_Query( $args ); 
+	
+	if ( $the_query->have_posts() ){
+		while ( $the_query->have_posts() ){
+			$the_query->the_post();
+			$stour_fields = get_post_meta(get_the_ID());
+			$stour_fields['id']=get_the_ID();
+			echo json_encode($stour_fields);
+			die(0);
+		}
+	}else{
+		echo false;
+	}
+	
+    die(0);
+
+}
+
 
 function append_sheet($post_data, $sheet_id, $sheet_name){
 	//echo '<pre>';print_r($post_data);exit;
@@ -196,10 +240,9 @@ function update_sheet($post_data, $row_index, $col_index, $sheet_id, $sheet_rang
 	$service = new Google_Service_Sheets($client);
 
 	$spreadsheetId = $sheet_id;	
-	$update_range = $sheet_range.'!'.$col_index.$row_index.':'.$col_index.$row_index; 
+	$update_range = $sheet_range.'!'.$col_index.$row_index.':N'.$row_index; 
 	$body = new Google_Service_Sheets_ValueRange([
-		  //'range' => $sheet_range.'!Y'.$row_index.':Y'.$row_index,
-		  'values' => $post_data
+		 'values' => $post_data
 	]);	
 	$params = ['valueInputOption' => 'RAW'];
 	$update_sheet = $service->spreadsheets_values->update($spreadsheetId, $update_range, $body, $params);
@@ -217,7 +260,7 @@ function get_google_sheet_row_index($sub_id, $sheet_id, $sheet_name)
 	
 	$service = new Google_Service_Sheets($client);
 	$spreadsheetId = $sheet_id;	
-	$update_range =  $sheet_name.'!Y:Y'; 	
+	$update_range =  $sheet_name.'!A:A'; 	
 	$response = $service->spreadsheets_values->get($spreadsheetId, $update_range);	
 	$col = array();	
 	foreach($response->values as $val){
