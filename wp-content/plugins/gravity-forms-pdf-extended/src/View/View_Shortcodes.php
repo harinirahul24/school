@@ -6,7 +6,7 @@ use GFPDF\Helper\Helper_Abstract_View;
 
 /**
  * @package     Gravity PDF
- * @copyright   Copyright (c) 2019, Blue Liquid Designs
+ * @copyright   Copyright (c) 2022, Blue Liquid Designs
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU Public License
  */
 
@@ -78,7 +78,7 @@ class View_Shortcodes extends Helper_Abstract_View {
 	/**
 	 * Generate the Gravity PDF link
 	 *
-	 * @param  array $attr The parameters
+	 * @param array $attr The parameters
 	 *
 	 * @return string       The Shortcode Markup
 	 *

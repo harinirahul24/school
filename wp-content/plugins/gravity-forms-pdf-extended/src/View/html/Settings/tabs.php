@@ -4,7 +4,7 @@
  * Navigation Settings View
  *
  * @package     Gravity PDF
- * @copyright   Copyright (c) 2019, Blue Liquid Designs
+ * @copyright   Copyright (c) 2022, Blue Liquid Designs
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU Public License
  * @since       4.0
  */
@@ -14,10 +14,19 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+/** @var $args array */
+
 ?>
 
-<h2 class="nav-tab-wrapper">
+<nav class="gform-settings-tabs__navigation" role="tablist">
 	<?php foreach ( $args['tabs'] as $tab ): ?>
-		<a data-id="<?php echo esc_attr( $tab['id'] ); ?>" class="nav-tab <?php echo ( $args['selected'] === $tab['id'] ) ? 'nav-tab-active' : ''; ?>" href="<?php echo $args['data']->settings_url . '&amp;tab=' . $tab['id']; ?>"><?php echo $tab['name']; ?></a>
+		<a
+				role="tab"
+				aria-selected="<?= $args['selected'] === $tab['id'] ? 'true' : 'false' ?>"
+				data-id="<?= esc_attr( $tab['id'] ); ?>"
+				class="<?= $args['selected'] === $tab['id'] ? 'active' : ''; ?>"
+				href="<?= $args['data']->settings_url . '&amp;tab=' . esc_attr( $tab['id'] ); ?>">
+			<?= esc_html( $tab['name'] ); ?>
+		</a>
 	<?php endforeach; ?>
-</h2>
+</nav>

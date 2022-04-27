@@ -217,6 +217,12 @@ if (!empty($return_path)) {
                                     $controls->button('create', __('Create the page', 'newsletter'));
                                 }
                                 ?>
+                                <?php if ($this->is_multilanguage()) { ?>
+                                <p class="description">
+                                    With multilanguage plugins be sure the selected page is translated in every language (usually only the title needs to be translated, the content
+                                    should just be the <code>[newsletter]</code> shortcode).
+                                </p>
+                                <?php } ?> 
                             </td>
                         </tr>
 

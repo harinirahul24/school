@@ -3,10 +3,11 @@
 namespace GFPDF\Helper\Fields;
 
 use GFPDF\Helper\Helper_QueryPath;
+use GFPDF_Vendor\QueryPath\Exception;
 
 /**
  * @package     Gravity PDF
- * @copyright   Copyright (c) 2019, Blue Liquid Designs
+ * @copyright   Copyright (c) 2022, Blue Liquid Designs
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU Public License
  */
 
@@ -31,6 +32,7 @@ class Field_V3_Products extends Field_Products {
 	 *
 	 * @return string
 	 *
+	 * @throws Exception
 	 * @since 4.0
 	 */
 	public function html( $value = '', $label = true ) {

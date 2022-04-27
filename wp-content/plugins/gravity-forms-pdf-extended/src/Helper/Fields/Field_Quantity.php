@@ -6,7 +6,7 @@ use GFPDF\Helper\Helper_Abstract_Field_Products;
 
 /**
  * @package     Gravity PDF
- * @copyright   Copyright (c) 2019, Blue Liquid Designs
+ * @copyright   Copyright (c) 2022, Blue Liquid Designs
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU Public License
  */
 
@@ -29,6 +29,7 @@ class Field_Quantity extends Helper_Abstract_Field_Products {
 	 */
 	public function form_data() {
 		$value = esc_html( $this->value() );
+
 		return $this->set_form_data( $value, $value );
 	}
 

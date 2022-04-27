@@ -214,9 +214,36 @@ class CustomCSSandJS_Admin {
 			'deactivate'     => __( 'Deactivate', 'custom-css-js' ),
 			'active_title'   => __( 'The code is active. Click to deactivate it', 'custom-css-js' ),
 			'deactive_title' => __( 'The code is inactive. Click to activate it', 'custom-css-js' ),
+
+			/* CodeMirror options */
+			'codemirror' => array(
+				'indentUnit'       => 4,
+				'indentWithTabs'   => true,
+				'inputStyle'       => 'contenteditable',
+				'lineNumbers'      => true,
+				'lineWrapping'     => true,
+				'styleActiveLine'  => true,
+				'continueComments' => true,
+				'extraKeys'        => array(
+					'Ctrl-Space' => 'autocomplete',
+					'Cmd-Space'  => 'autocomplete',
+					'Ctrl-/'     => 'toggleComment',
+					'Cmd-/'      => 'toggleComment',
+					'Alt-F'      => 'findPersistent',
+					'Ctrl-F'     => 'findPersistent',
+					'Cmd-F'      => 'findPersistent',
+					'Ctrl-J'     =>  'toMatchingTag',
+				),
+				'direction'        => 'ltr', // Code is shown in LTR even in RTL languages.
+				'gutters'          => array( 'CodeMirror-lint-markers' ),
+				'matchBrackets'    => true,
+				'matchTags'        => array( 'bothTags' => true ),
+				'autoCloseBrackets' => true,
+				'autoCloseTags'    => true,
+			)
 		);
 
-		return $vars;
+		return apply_filters( 'ccj_code_editor_settings', $vars);
 	}
 
 	public function add_meta_boxes() {

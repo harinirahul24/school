@@ -2,14 +2,16 @@
 
 namespace GFPDF\Helper;
 
-use Mpdf\Config\FontVariables;
-use Mpdf\Utils\UtfString;
-use Psr\Log\LoggerInterface;
 use Exception;
+use GFPDF_Vendor\Mpdf\Config\FontVariables;
+use GFPDF_Vendor\Mpdf\Mpdf;
+use GFPDF_Vendor\Mpdf\MpdfException;
+use GFPDF_Vendor\Mpdf\Utils\UtfString;
+use Psr\Log\LoggerInterface;
 
 /**
  * @package     Gravity PDF
- * @copyright   Copyright (c) 2019, Blue Liquid Designs
+ * @copyright   Copyright (c) 2022, Blue Liquid Designs
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU Public License
  */
 
@@ -26,7 +28,7 @@ class Helper_PDF {
 	/**
 	 * Holds our PDF Object
 	 *
-	 * @var \mPDF
+	 * @var Mpdf
 	 *
 	 * @since 4.0
 	 */
@@ -126,7 +128,7 @@ class Helper_PDF {
 	/**
 	 * Holds the abstracted Gravity Forms API specific to Gravity PDF
 	 *
-	 * @var \GFPDF\Helper\Helper_Form
+	 * @var Helper_Form
 	 *
 	 * @since 4.0
 	 */
@@ -136,7 +138,7 @@ class Helper_PDF {
 	 * Holds our Helper_Data object
 	 * which we can autoload with any data needed
 	 *
-	 * @var \GFPDF\Helper\Helper_Data
+	 * @var Helper_Data
 	 *
 	 * @since 4.0
 	 */
@@ -146,7 +148,7 @@ class Helper_PDF {
 	 * Holds our Helper_Misc object
 	 * Makes it easy to access common methods throughout the plugin
 	 *
-	 * @var \GFPDF\Helper\Helper_Misc
+	 * @var Helper_Misc
 	 *
 	 * @since 4.0
 	 */
@@ -156,7 +158,7 @@ class Helper_PDF {
 	 * Holds our Helper_Templates object
 	 * used to ease access to our PDF templates
 	 *
-	 * @var \GFPDF\Helper\Helper_Templates
+	 * @var Helper_Templates
 	 *
 	 * @since 4.0
 	 */
@@ -165,7 +167,7 @@ class Helper_PDF {
 	/**
 	 * Holds our log class
 	 *
-	 * @var \Monolog\Logger|LoggerInterface
+	 * @var LoggerInterface
 	 *
 	 * @since 5.0
 	 */
@@ -174,13 +176,14 @@ class Helper_PDF {
 	/**
 	 * Initialise our class
 	 *
-	 * @param array                              $entry    The Gravity Form Entry to be processed
-	 * @param array                              $settings The Gravity PDF Settings Array
+	 * @param array                $entry    The Gravity Form Entry to be processed
+	 * @param array                $settings The Gravity PDF Settings Array
 	 *
-	 * @param \GFPDF\Helper\Helper_Abstract_Form $gform
-	 * @param \GFPDF\Helper\Helper_Data          $data
-	 * @param \GFPDF\Helper\Helper_Misc          $misc     Our miscellanious methods
-	 * @param \GFPDF\Helper\Helper_Templates     $templates
+	 * @param Helper_Abstract_Form $gform
+	 * @param Helper_Data          $data
+	 * @param Helper_Misc          $misc
+	 * @param Helper_Templates     $templates
+	 * @param LoggerInterface      $log
 	 *
 	 * @since 4.0
 	 */
@@ -204,6 +207,7 @@ class Helper_PDF {
 	 *
 	 * @return void
 	 *
+	 * @throws Exception
 	 * @since 4.0
 	 */
 	public function init() {
@@ -220,7 +224,7 @@ class Helper_PDF {
 		/*
 		 * Allow $mpdf object class to be modified after it is fully initialised
 		 *
-		 * See https://gravitypdf.com/documentation/v5/gfpdf_mpdf_post_init_class/ for more details about this filter
+		 * See https://docs.gravitypdf.com/v6/developers/filters/gfpdf_mpdf_post_init_class/ for more details about this filter
 		 */
 		$this->mpdf = apply_filters( 'gfpdf_mpdf_post_init_class', $this->mpdf, $this->form, $this->entry, $this->settings, $this );
 	}
@@ -233,6 +237,8 @@ class Helper_PDF {
 	 *
 	 * @return void
 	 *
+	 * @throws MpdfException
+	 * @throws Exception
 	 * @since 4.0
 	 */
 	public function render_html( $args = [], $html = '' ) {
@@ -248,7 +254,7 @@ class Helper_PDF {
 		if ( apply_filters( 'gfpdf_skip_pdf_html_render', false, $args, $this ) ) {
 			do_action( 'gfpdf_skipped_html_render', $args, $this );
 
-			return false;
+			return;
 		}
 
 		/* Load in our PHP template */
@@ -260,7 +266,7 @@ class Helper_PDF {
 		$html = apply_filters( 'gfpdfe_pdf_template', $html, $form['id'], $this->entry['id'], $args['settings'] ); /* Backwards compat */
 		$html = apply_filters( 'gfpdfe_pdf_template_' . $form['id'], $html, $this->entry['id'], $args['settings'] ); /* Backwards compat */
 
-		/* See https://gravitypdf.com/documentation/v5/gfpdf_pdf_html_output/ for more details about these filters */
+		/* See https://docs.gravitypdf.com/v6/developers/filters/gfpdf_pdf_html_output/ for more details about these filters */
 		$html = apply_filters( 'gfpdf_pdf_html_output', $html, $form, $this->entry, $args['settings'], $this );
 		$html = apply_filters( 'gfpdf_pdf_html_output_' . $form['id'], $html, $this->gform, $this->entry, $args['settings'], $this );
 
@@ -276,6 +282,7 @@ class Helper_PDF {
 	 *
 	 * @return string
 	 *
+	 * @throws MpdfException
 	 * @since 4.0
 	 */
 	public function generate() {
@@ -289,7 +296,7 @@ class Helper_PDF {
 		/*
 		 * Allow $mpdf object class to be modified
 		 *
-		 * See https://gravitypdf.com/documentation/v5/gfpdf_mpdf_class/ for more details about this filter
+		 * See https://docs.gravitypdf.com/v6/developers/filters/gfpdf_mpdf_class/ for more details about this filter
 		 */
 		$this->mpdf = apply_filters( 'gfpdf_mpdf_class', $this->mpdf, $form, $this->entry, $this->settings, $this );
 
@@ -305,17 +312,14 @@ class Helper_PDF {
 				$this->prevent_caching();
 				$this->mpdf->Output( $this->filename, 'I' );
 				exit;
-			break;
 
 			case 'DOWNLOAD':
 				$this->prevent_caching();
 				$this->mpdf->Output( $this->filename, 'D' );
 				exit;
-			break;
 
 			case 'SAVE':
 				return $this->mpdf->Output( '', 'S' );
-			break;
 		}
 
 		return false;
@@ -452,7 +456,7 @@ class Helper_PDF {
 	}
 
 	/**
-	 * Public Method to set how the PDF should be displyed when first open
+	 * Public Method to set how the PDF should be displayed when first open
 	 *
 	 * @param mixed  $mode   A string or integer setting the zoom mode
 	 * @param string $layout The PDF layout format
@@ -518,7 +522,7 @@ class Helper_PDF {
 	 *
 	 * Get the current Gravity Form Entry
 	 *
-	 * @return string
+	 * @return array
 	 * @since 4.0
 	 */
 	public function get_entry() {
@@ -528,7 +532,7 @@ class Helper_PDF {
 	/**
 	 * Get the current PDF Settings
 	 *
-	 * @return string
+	 * @return array
 	 *
 	 * @since 4.0
 	 */
@@ -596,7 +600,7 @@ class Helper_PDF {
 	/**
 	 * Gets the absolute path to the PDF
 	 *
-	 * Works with our legacy Tier 2 add-on without adding a filter because we have stuck with the same naming convension
+	 * Works with our legacy Tier 2 add-on without adding a filter because we have stuck with the same naming convention
 	 *
 	 *
 	 * @return string The full path and filename of the PDF
@@ -612,6 +616,7 @@ class Helper_PDF {
 	 *
 	 * @return void
 	 *
+	 * @throws MpdfException
 	 * @since 4.0
 	 */
 	protected function begin_pdf() {
@@ -663,20 +668,20 @@ class Helper_PDF {
 		 * Allow $mpdf object class to be modified
 		 * Note: in some circumstances using WriteHTML() during this filter will break headers/footers
 		 *
-		 * See https://gravitypdf.com/documentation/v5/gfpdf_mpdf_init_class/ for more details about this filter
+		 * See https://docs.gravitypdf.com/v6/developers/filters/gfpdf_mpdf_init_class/ for more details about this filter
 		 */
 		$this->mpdf = apply_filters( 'gfpdf_mpdf_init_class', $this->mpdf, $this->form, $this->entry, $this->settings, $this );
 	}
 
 	/**
-	 * @return \mPDF
+	 * @return Mpdf
 	 */
 	public function get_pdf_class() {
 		return $this->mpdf;
 	}
 
 	/**
-	 * Set up the paper size and orentation
+	 * Set up the paper size and orientation
 	 *
 	 * @throws Exception
 	 *
@@ -782,7 +787,7 @@ class Helper_PDF {
 	protected function set_custom_paper_size() {
 		$custom_paper_size = ( isset( $this->settings['custom_pdf_size'] ) ) ? $this->settings['custom_pdf_size'] : [];
 
-		if ( sizeof( $custom_paper_size ) !== 3 ) {
+		if ( count( $custom_paper_size ) !== 3 ) {
 			throw new Exception( 'Custom paper size not valid. Array should contain three keys: width, height and unit type' );
 		}
 
@@ -800,8 +805,8 @@ class Helper_PDF {
 	 * @since  4.0
 	 */
 	protected function get_paper_size( $size ) {
-		$size[0] = ( $size[2] === 'inches' ) ? (int) $size[0] * 25.4 : (int) $size[0];
-		$size[1] = ( $size[2] === 'inches' ) ? (int) $size[1] * 25.4 : (int) $size[1];
+		$size[0] = ( $size[2] === 'inches' ) ? (float) $size[0] * 25.4 : (float) $size[0];
+		$size[1] = ( $size[2] === 'inches' ) ? (float) $size[1] * 25.4 : (float) $size[1];
 
 		/* tidy up custom paper size array */
 		unset( $size[2] );
@@ -948,9 +953,9 @@ class Helper_PDF {
 		/* Security settings cannot be applied to pdfa1b or pdfx1a formats */
 		if ( strtolower( $this->settings['format'] ) === 'standard' && strtolower( $this->settings['security'] ) === 'yes' ) {
 
-			$password        = ( isset( $this->settings['password'] ) ) ? $this->gform->process_tags( $this->settings['password'], $this->form, $this->entry ) : '';
+			$password        = ( isset( $this->settings['password'] ) ) ? wp_specialchars_decode( $this->gform->process_tags( $this->settings['password'], $this->form, $this->entry ), ENT_QUOTES ) : '';
 			$privileges      = ( isset( $this->settings['privileges'] ) ) ? $this->settings['privileges'] : [];
-			$master_password = ( isset( $this->settings['master_password'] ) ) ? $this->gform->process_tags( $this->settings['master_password'], $this->form, $this->entry ) : '';
+			$master_password = ( isset( $this->settings['master_password'] ) ) ? wp_specialchars_decode( $this->gform->process_tags( $this->settings['master_password'], $this->form, $this->entry ), ENT_QUOTES ) : '';
 
 			/* GitHub Issue #662 - Fix issue with possibility of blank master password being set */
 			if ( strlen( $master_password ) === 0 ) {

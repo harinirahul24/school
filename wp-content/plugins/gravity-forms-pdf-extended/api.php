@@ -8,7 +8,7 @@
 
 /**
  * @package     Gravity PDF
- * @copyright   Copyright (c) 2019, Blue Liquid Designs
+ * @copyright   Copyright (c) 2022, Blue Liquid Designs
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU Public License
  */
 
@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * An easy-to-use API developers can use to work with Gravity PDF
  *
- * See https://gravitypdf.com/documentation/v5/developer-api-whats-it-for/ for more information about this API
+ * See https://docs.gravitypdf.com/v6/developers/api/whats-it-for/ for more information about this API
  *
  * @since 4.0
  */
@@ -31,20 +31,20 @@ final class GPDFAPI {
 	 *
 	 * Log messages can be added with any of the following:
 	 *
-	 * $gfpdf->log->addDebug( $message, [$parameters = array()] )
-	 * $gfpdf->log->addInfo( $message, [$parameters = array()] )
-	 * $gfpdf->log->addNotice( $message, [$parameters = array()] )
-	 * $gfpdf->log->addWarning( $message, [$parameters = array()] )
-	 * $gfpdf->log->addError( $message, [$parameters = array()] )
-	 * $gfpdf->log->addCritical( $message, [$parameters = array()] )
-	 * $gfpdf->log->addAlert( $message, [$parameters = array()] )
-	 * $gfpdf->log->addEmergency( $message, [$parameters = array()] )
+	 * $gfpdf->log->debug( $message, [$parameters = array()] )
+	 * $gfpdf->log->info( $message, [$parameters = array()] )
+	 * $gfpdf->log->notice( $message, [$parameters = array()] )
+	 * $gfpdf->log->warning( $message, [$parameters = array()] )
+	 * $gfpdf->log->error( $message, [$parameters = array()] )
+	 * $gfpdf->log->critical( $message, [$parameters = array()] )
+	 * $gfpdf->log->alert( $message, [$parameters = array()] )
+	 * $gfpdf->log->emergency( $message, [$parameters = array()] )
 	 *
 	 * When in production Gravity PDF will only log to a file when the Gravity Forms Logging plugin is enabled and Gravity PDF is set to "Log errors only" ($log->addError() or higher) or "Log all messages" ($log->addNotice() or higher)
 	 *
-	 * See https://gravitypdf.com/documentation/v5/api_get_log_class/ for more information about this method
+	 * See https://docs.gravitypdf.com/v6/developers/api/get_log_class/ for more information about this method
 	 *
-	 * @return \Monolog\Logger
+	 * @return \Psr\Log\LoggerInterface
 	 *
 	 * @since 4.0
 	 */
@@ -63,7 +63,7 @@ final class GPDFAPI {
 	 *
 	 * This taps into the 'admin_notices' or 'network_admin_notices' WordPress hooks so you need to add your notices before then.
 	 *
-	 * See https://gravitypdf.com/documentation/v5/api_get_notice_class/ for more information about this method
+	 * See https://docs.gravitypdf.com/v6/developers/api/get_notice_class/ for more information about this method
 	 *
 	 * @return \GFPDF\Helper\Helper_Notices
 	 *
@@ -87,7 +87,7 @@ final class GPDFAPI {
 	 *
 	 * Note: Our __get() magic method returns variables by reference
 	 *
-	 * See https://gravitypdf.com/documentation/v5/get_data_class/ for more information about this method
+	 * See https://docs.gravitypdf.com/v6/developers/api/get_data_class for more information about this method
 	 *
 	 * @return \GFPDF\Helper\Helper_Data
 	 *
@@ -104,7 +104,7 @@ final class GPDFAPI {
 	 *
 	 * Note: Most relevant methods have been broken our and are avaiable through the GPDFAPI directly (GPDFAPI::get_pdf, GPDFAPI::get_plugin_settings ect)
 	 *
-	 * See https://gravitypdf.com/documentation/v5/api_get_options_class/ for more information about this method
+	 * See https://docs.gravitypdf.com/v6/developers/api/get_options_class/ for more information about this method
 	 *
 	 * @return \GFPDF\Helper\Helper_Options_Fields
 	 *
@@ -123,7 +123,7 @@ final class GPDFAPI {
 	 *
 	 * $misc->is_gfpdf_page();
 	 *
-	 * See https://gravitypdf.com/documentation/v5/api_get_misc_class/ for more information about this method
+	 * See https://docs.gravitypdf.com/v6/developers/api/get_misc_class/ for more information about this method
 	 *
 	 * @return \GFPDF\Helper\Helper_Misc
 	 *
@@ -142,7 +142,7 @@ final class GPDFAPI {
 	 *
 	 * $templates->get_all_templates();
 	 *
-	 * See @TODO https://gravitypdf.com/documentation/v5/api_get_templates_class/ for more information about this method
+	 * See https://docs.gravitypdf.com/v6/developers/api/get_templates_class/ for more information about this method
 	 *
 	 * @return \GFPDF\Helper\Helper_Templates
 	 *
@@ -164,7 +164,7 @@ final class GPDFAPI {
 	 *
 	 * $gform->get_form( $form_id );
 	 *
-	 * See https://gravitypdf.com/documentation/v5/api_get_form_class/ for more information about this method
+	 * See https://docs.gravitypdf.com/v6/developers/api/get_form_class/ for more information about this method
 	 *
 	 * @return \GFPDF\Helper\Helper_Form
 	 *
@@ -196,7 +196,7 @@ final class GPDFAPI {
 	 *     remove_filter( 'gfpdf_pdf_middleware', array( $class, 'middle_active' ), 10 );
 	 * }
 	 *
-	 * See https://gravitypdf.com/documentation/v5/api_get_mvc_class/ for more information about this method
+	 * See https://docs.gravitypdf.com/v6/developers/api/get_mvc_class/ for more information about this method
 	 *
 	 * @param string $class_name The name of one of our MVC classes (no namespace)
 	 *
@@ -235,9 +235,9 @@ final class GPDFAPI {
 	/**
 	 * Gets a list of current PDFs setup for a particular Gravity Form
 	 *
-	 * See https://gravitypdf.com/documentation/v5/api_get_form_pdfs/ for more information about this method
+	 * See https://docs.gravitypdf.com/v6/developers/api/get_form_pdfs/ for more information about this method
 	 *
-	 * @param  integer $form_id The Gravity Form ID
+	 * @param  int $form_id The Gravity Form ID
 	 *
 	 * @return array|WP_Error Array of PDF settings or WP_Error
 	 *
@@ -250,9 +250,39 @@ final class GPDFAPI {
 	}
 
 	/**
+	 * Gets a list of current PDFs setup for a particular Entry
+	 * This differs from \GPDFAPI::get_form_pdfs() as it'll filter out any PDFs that don't pass the conditional logic
+	 * for the current entry.
+	 *
+	 * See https://docs.gravitypdf.com/v6/developers/api/get_entry_pdfs/ for more information about this method
+	 *
+	 * @param int $entry_id The Gravity Forms Entry ID
+	 *
+	 * @return array|WP_Error Array of PDFs available to the entry or WP_Error
+	 *
+	 * @since 6.0
+	 */
+	public static function get_entry_pdfs( $entry_id ) {
+		$form_class = static::get_form_class();
+
+		/* Get our entry */
+		$entry = $form_class->get_entry( $entry_id );
+
+		if ( is_wp_error( $entry ) ) {
+			return new WP_Error( 'invalid_entry', esc_html__( 'Make sure to pass in a valid Gravity Forms Entry ID', 'gravity-forms-pdf-extended' ) );
+		}
+
+		/** @var \GFPDF\Model\Model_PDF $model_pdf */
+		$model_pdf = static::get_mvc_class( 'Model_PDF' );
+		$pdfs      = static::get_form_pdfs( $entry['form_id'] );
+
+		return $model_pdf->get_active_pdfs( $pdfs, $entry );
+	}
+
+	/**
 	 * Gets a specific Gravity Form PDF configuration
 	 *
-	 * See https://gravitypdf.com/documentation/v5/api_get_pdf/ for more information about this method
+	 * See https://docs.gravitypdf.com/v6/developers/api/get_pdf/ for more information about this method
 	 *
 	 * @param  integer $form_id The Gravity Form ID
 	 * @param  string  $pdf_id  The PDF ID
@@ -269,7 +299,7 @@ final class GPDFAPI {
 	/**
 	 * Add a new PDF to a Gravity Form
 	 *
-	 * See https://gravitypdf.com/documentation/v5/api_add_pdf/ for more information about this method
+	 * See https://docs.gravitypdf.com/v6/developers/api/add_pdf/ for more information about this method
 	 *
 	 * @param integer $form_id  The Gravity Form ID
 	 * @param array   $settings The settings for the PDF
@@ -287,7 +317,7 @@ final class GPDFAPI {
 	/**
 	 * Updates an existing Gravity Form PDF. Passing an empty $settings array will delete the PDF
 	 *
-	 * See https://gravitypdf.com/documentation/v5/api_update_pdf/ for more information about this method
+	 * See https://docs.gravitypdf.com/v6/developers/api/update_pdf/ for more information about this method
 	 *
 	 * @param  integer $form_id  The Gravity Form ID
 	 * @param  string  $pdf_id   The PDF ID
@@ -306,7 +336,7 @@ final class GPDFAPI {
 	/**
 	 * Deletes a specific Gravity Form PDF configuration
 	 *
-	 * See https://gravitypdf.com/documentation/v5/api_delete_pdf/ for more information about this method
+	 * See https://docs.gravitypdf.com/v6/developers/api/delete_pdf/ for more information about this method
 	 *
 	 * @param  integer $form_id The Gravity Form ID
 	 * @param  string  $pdf_id  The PDF ID
@@ -324,7 +354,7 @@ final class GPDFAPI {
 	/**
 	 * Retrieve an array of the global Gravity PDF settings (this doesn't include individual form configuration details - see GPDFAPI::get_form_pdfs)
 	 *
-	 * See https://gravitypdf.com/documentation/v5/api_get_plugin_settings/ for more information about this method
+	 * See https://docs.gravitypdf.com/v6/developers/api/get_plugin_settings/ for more information about this method
 	 *
 	 * @return array
 	 *
@@ -339,7 +369,7 @@ final class GPDFAPI {
 	/**
 	 * Get an option from the global Gravity PDF settings. If it doesn't exist the $default value will be returned
 	 *
-	 * See https://gravitypdf.com/documentation/v5/api_get_plugin_option/ for more information about this method
+	 * See https://docs.gravitypdf.com/v6/developers/api/get_plugin_option/ for more information about this method
 	 *
 	 * @param string $key     The Gravity PDF option key
 	 * @param mixed  $default What's returned if the option doesn't exist
@@ -360,7 +390,7 @@ final class GPDFAPI {
 	 * If option already exists a WP_Error is returned
 	 * In most cases you'll want to use GPDFAPI::update_plugin_option() instead
 	 *
-	 * See https://gravitypdf.com/documentation/v5/api_add_plugin_option/ for more information about this method
+	 * See https://docs.gravitypdf.com/v6/developers/api/add_plugin_option/ for more information about this method
 	 *
 	 * @param string $key The option key to add
 	 * @param mixed  $value
@@ -385,7 +415,7 @@ final class GPDFAPI {
 	 *
 	 * If $value is falsy (determined by empty() ) the option is deleted.
 	 *
-	 * See https://gravitypdf.com/documentation/v5/api_update_plugin_option/ for more information about this method
+	 * See https://docs.gravitypdf.com/v6/developers/api/update_plugin_option/ for more information about this method
 	 *
 	 * @param string $key The option key to update
 	 * @param mixed  $value
@@ -403,7 +433,7 @@ final class GPDFAPI {
 	/**
 	 * Delete's a Gravity PDF global option.
 	 *
-	 * See https://gravitypdf.com/documentation/v5/api_delete_plugin_option/ for more information about this method
+	 * See https://docs.gravitypdf.com/v6/developers/api/delete_plugin_option/ for more information about this method
 	 *
 	 * @param string $key The option key to delete
 	 *
@@ -421,7 +451,7 @@ final class GPDFAPI {
 	 * When provided the Gravity Form entry ID and PDF ID, this method will correctly generate the PDF, save it to disk,
 	 * trigger appropriate actions and return the absolute path to the PDF.
 	 *
-	 * See https://gravitypdf.com/documentation/v5/api_create_pdf/ for more information about this method
+	 * See https://docs.gravitypdf.com/v6/developers/api/create_pdf/ for more information about this method
 	 *
 	 * @param  integer $entry_id The Gravity Form entry ID
 	 * @param  string  $pdf_id   The Gravity PDF ID number (the pid number in the URL when viewing a setting in the admin area)
@@ -438,22 +468,24 @@ final class GPDFAPI {
 		$entry = $form_class->get_entry( $entry_id );
 
 		if ( is_wp_error( $entry ) ) {
-			return new WP_Error( 'invalid_entry', 'Make sure to pass in a valid Gravity Forms Entry ID' );
+			return new WP_Error( 'invalid_entry', esc_html__( 'Make sure to pass in a valid Gravity Forms Entry ID', 'gravity-forms-pdf-extended' ) );
 		}
 
 		/* Get our settings */
 		$setting = static::get_pdf( $entry['form_id'], $pdf_id );
 
 		if ( is_wp_error( $setting ) ) {
-			return new WP_Error( 'invalid_pdf_setting', 'Could not located the PDF Settings. Ensure you pass in a valid PDF ID.' );
+			return new WP_Error( 'invalid_pdf_setting', esc_html__( 'Could not located the PDF Settings. Ensure you pass in a valid PDF ID.', 'gravity-forms-pdf-extended' ) );
 		}
 
 		$pdf  = static::get_mvc_class( 'Model_PDF' );
 		$form = $form_class->get_form( $entry['form_id'] );
 
+		add_filter( 'gfpdf_override_pdf_bypass', '__return_true' );
 		do_action( 'gfpdf_pre_generate_and_save_pdf', $form, $entry, $setting );
 		$filename = $pdf->generate_and_save_pdf( $entry, $setting );
 		do_action( 'gfpdf_post_generate_and_save_pdf', $form, $entry, $setting );
+		remove_filter( 'gfpdf_override_pdf_bypass', '__return_true' );
 
 		return $filename;
 	}
@@ -461,7 +493,7 @@ final class GPDFAPI {
 	/**
 	 * Generates the current entry's HTML product table
 	 *
-	 * See https://gravitypdf.com/documentation/v5/api_product_table/ for more information about this method
+	 * See https://docs.gravitypdf.com/v6/developers/api/product_table/ for more information about this method
 	 *
 	 * @param  array   $entry  The Gravity Form entry
 	 * @param  boolean $return Whether to output or return the HTML
@@ -490,7 +522,7 @@ final class GPDFAPI {
 	/**
 	 * Generates a likert table
 	 *
-	 * See https://gravitypdf.com/documentation/v5/likert_table/ for more information about this method
+	 * See https://docs.gravitypdf.com/v6/developers/api/likert_table for more information about this method
 	 *
 	 * @param  array   $entry    The Gravity Form entry
 	 * @param  integer $field_id The likert field ID
@@ -549,7 +581,7 @@ final class GPDFAPI {
 	/**
 	 * Installs a PDF font on the file system
 	 *
-	 * See https://gravitypdf.com/documentation/v5/api_add_pdf_font/ for more information about this method
+	 * See https://docs.gravitypdf.com/v6/developers/api/add_pdf_font/ for more information about this method
 	 *
 	 * @param array $font The font information to add.
 	 *
@@ -573,20 +605,41 @@ final class GPDFAPI {
 	 * @since 4.1
 	 */
 	public static function add_pdf_font( $font ) {
-		$settings = GPDFAPI::get_mvc_class( 'Model_Settings' );
 
-		if ( ! isset( $font['font_name'] ) || ! $settings->is_font_name_valid( $font['font_name'] ) ) {
-			return new WP_Error( 'invalid_font_name', 'Font name is not valid. Alphanumeric characters and spaces only.' );
+		$installed_fonts = static::get_pdf_fonts();
+		if ( array_search( $font['font_name'] ?? '', $installed_fonts[ esc_html__( 'User-Defined Fonts', 'gravity-forms-pdf-extended' ) ] ?? [], true ) !== false ) {
+			return true;
 		}
 
-		if ( ! $settings->is_font_name_unique( $font['font_name'] ) ) {
-			return new WP_Error( 'font_name_not_unique', 'A font with the same name already exists.' );
+		$files_backup = $_FILES;
+		$_FILES       = [];
+
+		$data       = self::get_data_class();
+		$model      = new \GFPDF\Model\Model_Custom_Fonts( self::get_options_class() );
+		$controller = new \GFPDF\Controller\Controller_Custom_Fonts( $model, self::get_log_class(), self::get_form_class(), $data->template_font_location, '\GFPDF\Helper\Fonts\LocalFilesystem', '\GFPDF\Helper\Fonts\LocalFile' );
+
+		$request = new WP_REST_Request();
+		$request->set_param( 'label', $font['font_name'] ?? '' );
+
+		foreach ( $controller->get_font_keys() as $id ) {
+			if ( isset( $font[ $id ] ) && is_file( $font[ $id ] ) ) {
+				$_FILES[ $id ] = [
+					'file'     => file_get_contents( $font[ $id ] ),
+					'name'     => basename( $font[ $id ] ),
+					'size'     => filesize( $font[ $id ] ),
+					'tmp_name' => $font[ $id ],
+					'error'    => UPLOAD_ERR_OK,
+				];
+			}
 		}
 
-		$results = $settings->install_fonts( $font );
+		$request->set_file_params( $_FILES );
+		$response = $controller->add_item( $request );
 
-		if ( isset( $results['errors'] ) ) {
-			return new WP_Error( 'font_installation_error', implode( "\n\n", $results['errors'] ) );
+		$_FILES = $files_backup;
+
+		if ( is_wp_error( $response ) ) {
+			return $response;
 		}
 
 		return true;
@@ -595,39 +648,27 @@ final class GPDFAPI {
 	/**
 	 * Deletes one of the v4 fonts that is installed
 	 *
-	 * See https://gravitypdf.com/documentation/v5/delete_pdf_font/ for more information about this method
+	 * See https://docs.gravitypdf.com/v6/developers/api/delete_pdf_font for more information about this method
 	 *
-	 * @param string $font_name The font that should be deleted
+	 * @param string $font_id The font that should be deleted
 	 *
 	 * @return bool|WP_Error
 	 *
-	 * @since 4.1
+	 * @Internal In 6.0 the method signature was changed from $font_name to $font_id. This ensures accuracy, as multiple
+	 * fonts can now contain the same name in the 6.0 release.
+	 *
+	 * @since    4.1
 	 */
-	public static function delete_pdf_font( $font_name ) {
-		$settings = GPDFAPI::get_mvc_class( 'Model_Settings' );
-		$options  = GPDFAPI::get_options_class();
-		$misc     = GPDFAPI::get_misc_class();
-		$data     = GPDFAPI::get_data_class();
+	public static function delete_pdf_font( $font_id ) {
+		$request = new WP_REST_Request();
+		$request->set_param( 'id', $font_id );
 
-		$fonts   = $options->get_option( 'custom_fonts' );
-		$font_id = $settings->get_font_id_by_name( $font_name );
+		/** @var \GFPDF\Controller\Controller_Custom_Fonts $controller */
+		$controller = self::get_mvc_class( 'Controller_Custom_Fonts' );
 
-		if ( ! isset( $fonts[ $font_id ] ) ) {
-			return new WP_Error( 'font_not_installed', 'Font not installed.' );
-		}
-
-		/* Remove the font files */
-		if ( ! $settings->remove_font_file( $fonts[ $font_id ] ) ) {
-			return new WP_Error( 'font_delete_failure', 'There was a problem deleting the font files.' );
-		}
-
-		/* Cleanup our mPDF directory to prevent caching issues with mPDF */
-		$misc->cleanup_dir( $data->mpdf_tmp_location );
-
-		/* Update the database */
-		unset( $fonts[ $font_id ] );
-		if ( ! $options->update_option( 'custom_fonts', $fonts ) ) {
-			return new WP_Error( 'font_delete_db_failure', 'There was a problem deleting the font from the database.' );
+		$response = $controller->delete_item( $request );
+		if ( is_wp_error( $response ) ) {
+			return $response;
 		}
 
 		return true;

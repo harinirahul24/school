@@ -8,7 +8,7 @@
 
 /**
  * @package     Gravity PDF
- * @copyright   Copyright (c) 2019, Blue Liquid Designs
+ * @copyright   Copyright (c) 2022, Blue Liquid Designs
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU Public License
  */
 
@@ -28,9 +28,9 @@ class Controller_Activation {
 	/**
 	 * Run plugin deactivation functionality
 	 *
+	 * @return void
 	 * @since 4.0
 	 *
-	 * @return void
 	 */
 	public static function deactivation() {
 
@@ -50,10 +50,10 @@ class Controller_Activation {
 			global $wp_rewrite;
 
 			/* Create two regex rules to account for users with "index.php" in the URL */
-			$query = array(
+			$query = [
 				'^' . $data->permalink,
 				'^' . $wp_rewrite->root . $data->permalink,
-			);
+			];
 
 			$match = false;
 			foreach ( $query as $rule ) {

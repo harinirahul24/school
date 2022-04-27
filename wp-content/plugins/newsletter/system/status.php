@@ -675,6 +675,29 @@ $tnp_wpdb = new TNP_WPDB(DB_USER, DB_PASSWORD, DB_NAME, DB_HOST);
 
                     <tr>
                         <?php
+                        $uploads = wp_upload_dir();
+                        ?>
+                        <td>Uploads dir and url</td>
+                        <td>
+
+                        </td>
+                        <td>
+                            <table class="widefat" style="width: auto">
+                                <thead>
+                                    <tr><th>Key</th><th>Value</th></tr>
+                                </thead>
+                                <tbody>
+                                    <?php foreach ($uploads as $k => $v) { ?>
+                                        <tr><td><?php echo esc_html($k) ?></td><td><?php echo esc_html($v) ?></td></tr>
+                                    <?php } ?>
+                                </tbody>
+                            </table>
+
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <?php
                         set_transient('newsletter_transient_test', 1, 300);
                         delete_transient('newsletter_transient_test');
                         $res = get_transient('newsletter_transient_test');

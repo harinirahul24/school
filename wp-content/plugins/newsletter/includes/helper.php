@@ -94,10 +94,7 @@ function tnp_post_title($post) {
 }
 
 function tnp_post_date($post, $format = null) {
-    if (empty($format)) {
-        $format = get_option('date_format');
-    }
-    return mysql2date($format, $post->post_date);
+    return get_the_date( $format, $post );
 }
 
 /**

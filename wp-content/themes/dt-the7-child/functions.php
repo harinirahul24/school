@@ -287,7 +287,7 @@ function create_custom_post_type_school_tour() {
 		'publicly_queryable'  => true,
 		'capability_type'     => 'page'
 	);
-	register_post_type('stour_submissions', $args);
+	//register_post_type('stour_submissions', $args);
 	
 	
 }

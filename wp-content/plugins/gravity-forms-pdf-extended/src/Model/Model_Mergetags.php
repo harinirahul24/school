@@ -4,13 +4,14 @@ namespace GFPDF\Model;
 
 use GFPDF\Helper\Helper_Abstract_Model;
 use GFPDF\Helper\Helper_Abstract_Options;
+use GFPDF\Helper\Helper_Interface_Url_Signer;
 use GFPDF\Helper\Helper_Misc;
-
+use GFPDF\Helper\Helper_Options_Fields;
 use Psr\Log\LoggerInterface;
 
 /**
  * @package     Gravity PDF
- * @copyright   Copyright (c) 2019, Blue Liquid Designs
+ * @copyright   Copyright (c) 2022, Blue Liquid Designs
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU Public License
  */
 
@@ -28,7 +29,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Model_Mergetags extends Helper_Abstract_Model {
 
 	/**
-	 * @var \GFPDF\Model\Model_PDF
+	 * @var Model_PDF
 	 *
 	 * @since 4.1
 	 */
@@ -38,7 +39,7 @@ class Model_Mergetags extends Helper_Abstract_Model {
 	 * Holds our Helper_Abstract_Options / Helper_Options_Fields object
 	 * Makes it easy to access global PDF settings and individual form PDF settings
 	 *
-	 * @var \GFPDF\Helper\Helper_Options_Fields
+	 * @var Helper_Options_Fields
 	 *
 	 * @since 4.1
 	 */
@@ -47,7 +48,7 @@ class Model_Mergetags extends Helper_Abstract_Model {
 	/**
 	 * Holds our log class
 	 *
-	 * @var \Monolog\Logger|LoggerInterface
+	 * @var LoggerInterface
 	 *
 	 * @since 4.1
 	 */
@@ -57,28 +58,35 @@ class Model_Mergetags extends Helper_Abstract_Model {
 	 * Holds our Helper_Misc object
 	 * Makes it easy to access common methods throughout the plugin
 	 *
-	 * @var \GFPDF\Helper\Helper_Misc
+	 * @var Helper_Misc
 	 *
 	 * @since 4.1
 	 */
 	protected $misc;
 
 	/**
+	 * @var Helper_Interface_Url_Signer
+	 * @since 6.0
+	 */
+	protected $url_signer;
+
+	/**
 	 * Model_Mergetags constructor.
 	 *
-	 * @param Helper_Abstract_Options         $options
-	 * @param \GFPDF\Model\Model_PDF          $pdf
-	 * @param \Monolog\Logger|LoggerInterface $log
+	 * @param Helper_Abstract_Options $options
+	 * @param Model_PDF               $pdf
+	 * @param LoggerInterface         $log
 	 *
 	 * @since    4.1
 	 */
-	public function __construct( Helper_Abstract_Options $options, Model_PDF $pdf, LoggerInterface $log, Helper_Misc $misc ) {
+	public function __construct( Helper_Abstract_Options $options, Model_PDF $pdf, LoggerInterface $log, Helper_Misc $misc, Helper_Interface_Url_Signer $url_signer ) {
 
 		/* Assign our internal variables */
-		$this->pdf     = $pdf;
-		$this->log     = $log;
-		$this->options = $options;
-		$this->misc    = $misc;
+		$this->pdf        = $pdf;
+		$this->log        = $log;
+		$this->options    = $options;
+		$this->misc       = $misc;
+		$this->url_signer = $url_signer;
 	}
 
 	/**
@@ -144,16 +152,16 @@ class Model_Mergetags extends Helper_Abstract_Model {
 		}
 
 		/* Match our PDF merge tags */
-		$results = preg_match_all( '/\{(.*?):pdf:(.*?)\}/', $text, $matches, PREG_SET_ORDER );
+		$results = preg_match_all( '/{.*?:pdf:([0-9A-Za-z]*)?:?(.*?)?}/', $text, $matches, PREG_SET_ORDER );
 
 		/* Verify we have a match */
 		if ( $results ) {
 
-			$this->log->addNotice(
+			$this->log->notice(
 				'Begin Converting PDF Mergetags',
 				[
-					'form_id'  => $form['id'],
-					'entry_id' => $entry['id'],
+					'form_id'  => $form['id'] ?? 0,
+					'entry_id' => $entry['id'] ?? 0,
 
 					'tags'     => $matches,
 					'text'     => $text,
@@ -162,23 +170,36 @@ class Model_Mergetags extends Helper_Abstract_Model {
 
 			foreach ( $matches as $tag ) {
 
+				/* If no valid form or entry, convert tag to empty string */
+				if ( $form === false || $entry === false ) {
+					$text = str_replace( $tag[0], '', $text );
+					continue;
+				}
+
 				/* Get the PDF configuration */
-				$config = $this->options->get_pdf( $form['id'], $tag[2] );
+				$config = $this->options->get_pdf( $form['id'], $tag[1] );
 
 				/* Strip tag if config not valid, it isn't active or conditional logic is not met */
 				if ( is_wp_error( $config )
 					 || $config['active'] !== true
 					 || ( isset( $config['conditionalLogic'] ) && ! $this->misc->evaluate_conditional_logic( $config['conditionalLogic'], $entry ) )
 				) {
-					$this->log->addError(
+					$error = 'Conditional logic did not pass';
+					if ( is_wp_error( $config ) ) {
+						$error  = $config->get_error_message();
+						$config = [];
+					} elseif ( $config['active'] !== true ) {
+						$error = 'PDF is not currently active';
+					}
+
+					$this->log->error(
 						'PDF Mergetag is not valid',
 						[
+							'error'    => $error,
+							'tag'      => $tag,
 							'form_id'  => $form['id'],
 							'entry_id' => $entry['id'],
-							'tag'      => $tag,
-
-							/* include the error, or the actual config array */
-							'config'   => ( is_wp_error( $config ) ) ? $config->get_error_messages() : $config,
+							'config'   => $config,
 						]
 					);
 
@@ -188,7 +209,33 @@ class Model_Mergetags extends Helper_Abstract_Model {
 				}
 
 				/* Everything is valid so get the URL and display */
-				$url = $this->pdf->get_pdf_url( $tag[2], $entry['id'], false, false, $url_encode );
+				$modifiers = explode( ':', $tag[2] ?? '' );
+				$url       = $this->pdf->get_pdf_url( $tag[1], $entry['id'], (bool) in_array( 'download', $modifiers, true ), (bool) in_array( 'print', $modifiers, true ), $url_encode );
+
+				/*
+				 * A URL cannot be modified after signing (becomes invalid), so move the signing option to the bottom
+				 */
+				foreach ( $modifiers as $key => $modifier ) {
+					if ( strpos( $modifier, 'signed' ) === 0 ) {
+						unset( $modifiers[ $key ] );
+						$modifiers[] = $modifier;
+						break;
+					}
+				}
+
+				foreach ( $modifiers as $modifier ) {
+					$modifier = explode( ',', $modifier );
+
+					switch ( $modifier[0] ?? '' ) {
+						case 'signed':
+							$expires = trim( $modifier[1] ?? '' );
+							$url     = $this->url_signer->sign( $url, $expires );
+							break;
+
+						default:
+							$url = apply_filters( 'gfpdf_mergetag_modifiers_url', $url, $modifier, $tag, $form, $entry, $config );
+					}
+				}
 
 				/* replace the merge tag */
 				$text = str_replace( $tag[0], $url, $text );

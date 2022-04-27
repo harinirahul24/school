@@ -205,13 +205,13 @@ if (strpos($current_user_email, 'admin@') === 0) {
 
         <?php if (empty($license_data)) { ?>
             <?php if (time() < 1638226799) { ?>
-            <li class="tnp-professional-extensions-button" style="background-color: #000; color: #fff; border-color: #FF5F65!important; border-width: 2px !important;"><a href="https://www.thenewsletterplugin.com/premium?utm_source=header&utm_medium=link&utm_campaign=black-friday" target="_blank">
-                    <i class="fas fa-trophy"></i> BLACK FRIDAY IS LIVE</a>
-            </li>
+                <li class="tnp-professional-extensions-button" style="background-color: #000; color: #fff; border-color: #FF5F65!important; border-width: 2px !important;"><a href="https://www.thenewsletterplugin.com/premium?utm_source=header&utm_medium=link&utm_campaign=black-friday" target="_blank">
+                        <i class="fas fa-trophy"></i> BLACK FRIDAY IS LIVE</a>
+                </li>
             <?php } else { ?>
-            <li class="tnp-professional-extensions-button"><a href="<?php echo $premium_url ?>" target="_blank">
-                    <i class="fas fa-trophy"></i> <?php _e('Get Professional Addons', 'newsletter') ?></a>
-            </li>
+                <li class="tnp-professional-extensions-button"><a href="<?php echo $premium_url ?>" target="_blank">
+                        <i class="fas fa-trophy"></i> <?php _e('Get Professional Addons', 'newsletter') ?></a>
+                </li>
             <?php } ?>
         <?php } elseif (is_wp_error($license_data)) { ?>
             <li class="tnp-professional-extensions-button-red">
@@ -220,13 +220,13 @@ if (strpos($current_user_email, 'admin@') === 0) {
 
         <?php } elseif ($license_data->expire == 0) { ?>
             <?php if (time() < 1638226799) { ?>
-            <li class="tnp-professional-extensions-button" style="background-color: #000; color: #fff; border-color: #FF5F65!important; border-width: 2px !important;"><a href="https://www.thenewsletterplugin.com/premium?utm_source=header&utm_medium=link&utm_campaign=black-friday" target="_blank">
-                    <i class="fas fa-trophy"></i> BLACK FRIDAY IS LIVE</a>
-            </li>
+                <li class="tnp-professional-extensions-button" style="background-color: #000; color: #fff; border-color: #FF5F65!important; border-width: 2px !important;"><a href="https://www.thenewsletterplugin.com/premium?utm_source=header&utm_medium=link&utm_campaign=black-friday" target="_blank">
+                        <i class="fas fa-trophy"></i> BLACK FRIDAY IS LIVE</a>
+                </li>
             <?php } else { ?>
-            <li class="tnp-professional-extensions-button"><a href="<?php echo $premium_url ?>" target="_blank">
-                    <i class="fas fa-trophy"></i> <?php _e('Get Professional Addons', 'newsletter') ?></a>
-            </li>
+                <li class="tnp-professional-extensions-button"><a href="<?php echo $premium_url ?>" target="_blank">
+                        <i class="fas fa-trophy"></i> <?php _e('Get Professional Addons', 'newsletter') ?></a>
+                </li>
             <?php } ?>
 
         <?php } elseif ($license_data->expire < time()) { ?>
@@ -310,22 +310,24 @@ if (!defined('NEWSLETTER_CRON_WARNINGS') || NEWSLETTER_CRON_WARNINGS) {
     $x = NewsletterSystem::instance()->get_job_status();
     if ($x !== NewsletterSystem::JOB_OK) {
         echo '<div class="tnpc-warning">The are issues with the delivery engine. Please <a href="?page=newsletter_system_scheduler">check them here</a>.</div>';
-    } 
+    }
 }
 ?>
 
 <?php
 if ($_GET['page'] !== 'newsletter_emails_edit') {
 
-    $last_failed_newsletters = Newsletter::instance()->get_emails_by_field('status', TNP_Email::STATUS_ERROR);
-
-    foreach ($last_failed_newsletters as $newsletter) {
-        echo '<div class="tnpc-error">';
-        printf(__('Newsletter "%s" stopped by fatal error.', 'newsletter'), esc_html($newsletter->subject));
-        echo '&nbsp;';
+    $last_failed_newsletters = Newsletter::instance()->get_emails_by_status(TNP_Email::STATUS_ERROR);
+    if ($last_failed_newsletters) {
         $c = new NewsletterControls();
-        $c->btn_link('?page=newsletter_emails_edit&id=' . $newsletter->id, __('Check', 'newsletter'));
-        echo '</div>';
+        foreach ($last_failed_newsletters as $n) {
+            echo '<div class="tnpc-error">';
+            printf(__('Newsletter "%s" stopped by fatal error.', 'newsletter'), esc_html($n->subject));
+            echo '&nbsp;';
+
+            $c->btn_link('?page=newsletter_emails_edit&id=' . $n->id, __('Check', 'newsletter'));
+            echo '</div>';
+        }
     }
 }
 ?>

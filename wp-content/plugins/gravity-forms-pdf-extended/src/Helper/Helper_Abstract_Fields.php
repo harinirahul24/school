@@ -2,16 +2,15 @@
 
 namespace GFPDF\Helper;
 
-use GFFormsModel;
+use Exception;
 use GF_Field;
 use GFCache;
 use GFCommon;
-
-use Exception;
+use GFFormsModel;
 
 /**
  * @package     Gravity PDF
- * @copyright   Copyright (c) 2019, Blue Liquid Designs
+ * @copyright   Copyright (c) 2022, Blue Liquid Designs
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU Public License
  */
 
@@ -49,7 +48,7 @@ abstract class Helper_Abstract_Fields {
 	/**
 	 * Holds the abstracted Gravity Forms API specific to Gravity PDF
 	 *
-	 * @var \GFPDF\Helper\Helper_Form
+	 * @var Helper_Form
 	 *
 	 * @since 4.0
 	 */
@@ -86,7 +85,7 @@ abstract class Helper_Abstract_Fields {
 	 * Holds our Helper_Misc object
 	 * Makes it easy to access common methods throughout the plugin
 	 *
-	 * @var \GFPDF\Helper\Helper_Misc
+	 * @var Helper_Misc
 	 *
 	 * @since 4.0
 	 */
@@ -97,11 +96,11 @@ abstract class Helper_Abstract_Fields {
 	 * Check the $entry is an array, or throw exception
 	 * The $field is validated in the child classes
 	 *
-	 * @param object                             $field The GF_Field_* Object
-	 * @param array                              $entry The Gravity Forms Entry
+	 * @param object               $field The GF_Field_* Object
+	 * @param array                $entry The Gravity Forms Entry
 	 *
-	 * @param \GFPDF\Helper\Helper_Abstract_Form $gform
-	 * @param \GFPDF\Helper\Helper_Misc          $misc
+	 * @param Helper_Abstract_Form $gform
+	 * @param Helper_Misc          $misc
 	 *
 	 * @throws Exception
 	 *
@@ -112,7 +111,7 @@ abstract class Helper_Abstract_Fields {
 		/* Assign our internal variables */
 		$this->misc = $misc;
 
-		/* Throw error if not dependacies not met */
+		/* Throw error if not dependencies not met */
 		if ( ! class_exists( 'GFFormsModel' ) ) {
 			throw new Exception( 'Gravity Forms is not correctly loaded.' );
 		}
@@ -136,7 +135,7 @@ abstract class Helper_Abstract_Fields {
 	/**
 	 * Control the getting and setting of the cache
 	 *
-	 * @param  mixed $value is passed in it will set a new cache
+	 * @param mixed $value is passed in it will set a new cache
 	 *
 	 * @return mixed The current cached_results
 	 *
@@ -199,7 +198,7 @@ abstract class Helper_Abstract_Fields {
 		/*
 		 * Get the Gravity Forms field value
 		 *
-		 * See https://gravitypdf.com/documentation/v5/gfpdf_field_value/ for more details about this filter
+		 * See https://docs.gravitypdf.com/v6/developers/filters/gfpdf_field_value for more details about this filter
 		 */
 
 		return apply_filters( 'gfpdf_field_value', GFFormsModel::get_lead_field_value( $this->entry, $this->field ), $this->field, $this->entry, $this->form, $this );
@@ -214,7 +213,7 @@ abstract class Helper_Abstract_Fields {
 	 */
 	final public function get_label() {
 		/*
-		 * See https://gravitypdf.com/documentation/v5/gfpdf_field_label/ for usage
+		 * See https://docs.gravitypdf.com/v6/developers/filters/gfpdf_field_label for usage
 		 */
 		return apply_filters( 'gfpdf_field_label', $this->field->label, $this->field, $this->entry );
 	}
@@ -222,16 +221,16 @@ abstract class Helper_Abstract_Fields {
 	/**
 	 * Used to check if the current field has a value
 	 *
-	 * @since    4.0
-	 *
+	 * @return boolean Return true if the field is empty, false if it has a value
 	 * @internal Child classes can override this method when dealing with a specific use case
 	 *
-	 * @return boolean Return true if the field is empty, false if it has a value
+	 * @since    4.0
+	 *
 	 */
 	public function is_empty() {
 		$value = $this->value();
 
-		if ( is_array( $value ) && sizeof( array_filter( $value ) ) === 0 ) { /* check for an array */
+		if ( is_array( $value ) && count( array_filter( $value ) ) === 0 ) { /* check for an array */
 			return true;
 		} elseif ( is_string( $value ) && strlen( trim( $value ) ) === 0 ) { /* check for a string */
 			return true;
@@ -254,10 +253,10 @@ abstract class Helper_Abstract_Fields {
 		$field_id = (int) $this->field->id;
 		$data     = [];
 
-		/* Add field data using standardised naming convesion */
+		/* Add field data using standardised naming conversion */
 		$data[ $field_id . '.' . $label ] = $value;
 
-		/* Add field data using standardised naming convesion */
+		/* Add field data using standardised naming conversion */
 		$data[ $field_id ] = $value;
 
 		/* Keep backwards compatibility */
@@ -269,12 +268,12 @@ abstract class Helper_Abstract_Fields {
 	/**
 	 * Get the default HTML output for this field
 	 *
-	 * @param  string  $value      The field value to be displayed
-	 * @param  boolean $show_label Whether or not to show the field's label
-	 *
-	 * @since 4.0
+	 * @param string  $value      The field value to be displayed
+	 * @param boolean $show_label Whether or not to show the field's label
 	 *
 	 * @return string
+	 * @since 4.0
+	 *
 	 */
 	public function html( $value = '', $show_label = true ) {
 
@@ -294,7 +293,8 @@ abstract class Helper_Abstract_Fields {
 		$value = apply_filters( 'gfpdf_field_content', $value, $this->field, GFFormsModel::get_lead_field_value( $this->entry, $this->field ), $this->entry['id'], $this->form['id'] );
 
 		/**
-		 * See https://gravitypdf.com/documentation/v5/gfpdf_pdf_field_content/ for usage
+		 * See https://docs.gravitypdf.com/v6/developers/filters/gfpdf_pdf_field_content for usage
+		 *
 		 * @since 4.2
 		 */
 		$value = apply_filters( 'gfpdf_pdf_field_content', $value, $this->field, $this->entry, $this->form, $this );
@@ -319,7 +319,7 @@ abstract class Helper_Abstract_Fields {
 				 . '</div>'
 				 . '</div>';
 
-		/* See https://gravitypdf.com/documentation/v5/gfpdf_field_html_value/ for more details about this filter */
+		/* See https://docs.gravitypdf.com/v6/developers/filters/gfpdf_field_html_value for more details about this filter */
 
 		return apply_filters( 'gfpdf_field_html_value', $html, $value, $show_label, $label, $this->field, $this->form, $this->entry, $this );
 	}
@@ -334,7 +334,7 @@ abstract class Helper_Abstract_Fields {
 	/**
 	 * Prevent user-data shortcodes from being processed by the PDF templates
 	 *
-	 * @param  string $value The text to be converted
+	 * @param string $value The text to be converted
 	 *
 	 * @return string
 	 *

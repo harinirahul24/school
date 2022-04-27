@@ -2,18 +2,19 @@
 
 namespace GFPDF\Helper\Fields;
 
+use Exception;
+use GF_Field;
+use GFPDF\Helper\Helper_Abstract_Fields;
 use GFPDF\Helper\Helper_Abstract_Form;
 use GFPDF\Helper\Helper_Field_Container;
+use GFPDF\Helper\Helper_Field_Container_Gf25;
 use GFPDF\Helper\Helper_Misc;
-use GFPDF\Helper\Helper_Abstract_Fields;
-
 use GP_Field_Nested_Form;
-
-use Exception;
+use GPDFAPI;
 
 /**
  * @package     Gravity PDF
- * @copyright   Copyright (c) 2019, Blue Liquid Designs
+ * @copyright   Copyright (c) 2022, Blue Liquid Designs
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU Public License
  */
 
@@ -32,11 +33,11 @@ class Field_Form extends Helper_Abstract_Fields {
 	/**
 	 * Check the appropriate variables are parsed in send to the parent construct
 	 *
-	 * @param object                             $field The GF_Field_* Object
-	 * @param array                              $entry The Gravity Forms Entry
+	 * @param object               $field The GF_Field_* Object
+	 * @param array                $entry The Gravity Forms Entry
 	 *
-	 * @param \GFPDF\Helper\Helper_Abstract_Form $gform
-	 * @param \GFPDF\Helper\Helper_Misc          $misc
+	 * @param Helper_Abstract_Form $gform
+	 * @param Helper_Misc          $misc
 	 *
 	 * @throws Exception
 	 *
@@ -60,6 +61,7 @@ class Field_Form extends Helper_Abstract_Fields {
 	 *
 	 * @return string
 	 *
+	 * @throws Exception
 	 * @since 5.1
 	 */
 	public function html( $value = '', $label = true ) {
@@ -94,26 +96,29 @@ class Field_Form extends Helper_Abstract_Fields {
 	 *
 	 * @return false|string
 	 *
+	 * @throws Exception
 	 * @since 5.1
 	 */
 	public function get_repeater_html( $form, $entry ) {
 		ob_start();
 
-		$container = new Helper_Field_Container( [ 'class_map' => [] ] );
-		$pdf_model = \GPDFAPI::get_mvc_class( 'Model_PDF' );
-		$products  = new Field_Products( new \GF_Field(), $entry, $this->gform, $this->misc );
+		$container = ! \GFCommon::is_legacy_markup_enabled( $form['id'] ) ? new Helper_Field_Container_Gf25() : new Helper_Field_Container();
+		$container = apply_filters( 'gfpdf_field_container_class', $container );
+
+		$pdf_model = GPDFAPI::get_mvc_class( 'Model_PDF' );
+		$products  = new Field_Products( new GF_Field(), $entry, $this->gform, $this->misc );
 
 		/* Loop through the Repeater fields */
 		foreach ( $form['fields'] as $field ) {
 			/* Output a field using the standard method if not empty */
 			$class = $pdf_model->get_field_class( $field, $form, $entry, $products );
 			if ( ! $class->is_empty() && strpos( $field->cssClass, 'exclude' ) === false ) {
-				$field->cssClass = '';
 				$container->generate( $field );
 				echo $class->html();
-				$container->close( $field );
 			}
 		}
+
+		$container->close( $field );
 
 		return $this->gform->process_tags( ob_get_clean(), $form, $entry );
 	}

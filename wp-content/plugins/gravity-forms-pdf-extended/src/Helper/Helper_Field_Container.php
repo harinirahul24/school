@@ -6,7 +6,7 @@ use GF_Field;
 
 /**
  * @package     Gravity PDF
- * @copyright   Copyright (c) 2019, Blue Liquid Designs
+ * @copyright   Copyright (c) 2022, Blue Liquid Designs
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU Public License
  */
 
@@ -28,7 +28,7 @@ class Helper_Field_Container {
 	 *
 	 * @since 4.0
 	 */
-	private $current_width = 0;
+	protected $current_width = 0;
 
 	/**
 	 * Boolean value to tell if the element is currently opened
@@ -37,7 +37,7 @@ class Helper_Field_Container {
 	 *
 	 * @since 4.0
 	 */
-	private $currently_open = false;
+	protected $currently_open = false;
 
 	/**
 	 * Matches class names to width percentages
@@ -46,7 +46,7 @@ class Helper_Field_Container {
 	 *
 	 * @since 4.0
 	 */
-	private $class_map = [
+	protected $class_map = [
 		'gf_left_half'      => 50,
 		'gf_right_half'     => 50,
 		'gf_left_third'     => 33.3,
@@ -65,7 +65,7 @@ class Helper_Field_Container {
 	 *
 	 * @since 4.0
 	 */
-	private $open_tag = '<div class="row-separator">';
+	protected $open_tag = '<div class="row-separator">';
 
 	/**
 	 * The HTML tag used when closing the container
@@ -74,7 +74,7 @@ class Helper_Field_Container {
 	 *
 	 * @since 4.0
 	 */
-	private $close_tag = '</div>';
+	protected $close_tag = '</div>';
 
 	/**
 	 * Whether to enable/disable the faux column feature
@@ -83,7 +83,7 @@ class Helper_Field_Container {
 	 *
 	 * @since 5.0
 	 */
-	private $faux_column = true;
+	protected $faux_column = true;
 
 	/**
 	 * The Gravity Form fields we should not wrap in a container
@@ -92,7 +92,7 @@ class Helper_Field_Container {
 	 *
 	 * @since 4.0
 	 */
-	private $skip_fields = [
+	protected $skip_fields = [
 		'page',
 		'section',
 		'html',
@@ -105,7 +105,7 @@ class Helper_Field_Container {
 	 *
 	 * @since 4.2
 	 */
-	private $row_stopper_classes = [
+	protected $row_stopper_classes = [
 		'pagebreak',
 	];
 
@@ -116,7 +116,7 @@ class Helper_Field_Container {
 	 *
 	 * @since 4.0
 	 */
-	private $counter = 0;
+	protected $counter = 0;
 
 	/**
 	 * Set up the object
@@ -147,13 +147,14 @@ class Helper_Field_Container {
 		$this->skip_fields         = apply_filters( 'gfpdf_container_skip_fields', $this->skip_fields );
 		$this->row_stopper_classes = apply_filters( 'gfpdf_container_row_stopper_classes', $this->row_stopper_classes );
 		$this->faux_column         = apply_filters( 'gfpdf_container_disable_faux_columns', $this->faux_column );
+		$this->class_map           = apply_filters( 'gfpdf_container_class_map', $this->class_map );
 	}
 
 
 	/**
 	 * Handles the opening and closing of our container
 	 *
-	 * @param  GF_Field $field The Gravity Form field currently being processed
+	 * @param GF_Field $field The Gravity Form field currently being processed
 	 *
 	 * @return void
 	 *
@@ -177,7 +178,7 @@ class Helper_Field_Container {
 
 	/**
 	 * Close the current container if still open.
-	 * This is usually called publically after the form loop
+	 * This is usually called publicly after the form loop
 	 *
 	 * @return void
 	 *
@@ -192,7 +193,7 @@ class Helper_Field_Container {
 
 	/**
 	 * Will check if the current field will fit in the open row, or if a new row needs to be open
-	 * to accomidate the field.
+	 * to accommodate the field.
 	 *
 	 * @param GF_Field $field The Gravity Form field currently being processed
 	 *
@@ -236,13 +237,13 @@ class Helper_Field_Container {
 	/**
 	 * Open the container
 	 *
-	 * @param  GF_Field $field The Gravity Form field currently being processed
+	 * @param GF_Field $field The Gravity Form field currently being processed
 	 *
 	 * @return void
 	 *
 	 * @since 4.0
 	 */
-	private function handle_closed_container( GF_Field $field ) {
+	protected function handle_closed_container( GF_Field $field ) {
 		$this->start();
 		$this->open_container();
 		$this->increment_width( $field->cssClass );
@@ -251,13 +252,13 @@ class Helper_Field_Container {
 	/**
 	 * Determine if we should close a container based on its classes
 	 *
-	 * @param  GF_Field $field The Gravity Form field currently being processed
+	 * @param GF_Field $field The Gravity Form field currently being processed
 	 *
 	 * @return void
 	 *
 	 * @since 4.0
 	 */
-	private function handle_open_container( GF_Field $field ) {
+	protected function handle_open_container( GF_Field $field ) {
 
 		/* if the current field width is more than 100 we will close the container */
 		if ( false === $this->does_fit_in_row( $field ) || $this->does_field_have_stopper_class( $field ) ) {
@@ -270,13 +271,13 @@ class Helper_Field_Container {
 	/**
 	 * Process our skipped Gravity Form fields (close the container if needed)
 	 *
-	 * @param  GF_Field $field The Gravity Form field currently being processed
+	 * @param GF_Field $field The Gravity Form field currently being processed
 	 *
 	 * @return boolean true if we processed a skipped field, false otherwise
 	 *
 	 * @since 4.0
 	 */
-	private function process_skipped_fields( GF_Field $field ) {
+	protected function process_skipped_fields( GF_Field $field ) {
 		/* if we have a skipped field and the container is open we will close it */
 		if ( in_array( $field->type, $this->skip_fields, true ) ) {
 			$this->strip_field_of_any_classmaps( $field );
@@ -291,13 +292,13 @@ class Helper_Field_Container {
 	/**
 	 * Remove any mapped classes from our skipped fields
 	 *
-	 * @param  GF_Field $field The Gravity Form field currently being processed
+	 * @param GF_Field $field The Gravity Form field currently being processed
 	 *
 	 * @return void
 	 *
 	 * @since  4.0
 	 */
-	private function strip_field_of_any_classmaps( GF_Field $field ) {
+	protected function strip_field_of_any_classmaps( GF_Field $field ) {
 		$field->cssClass = str_replace( array_keys( $this->class_map ), ' ', $field->cssClass );
 	}
 
@@ -308,7 +309,7 @@ class Helper_Field_Container {
 	 *
 	 * @since 4.0
 	 */
-	private function open_container() {
+	protected function open_container() {
 
 		$class = $this->is_row_odd_or_even();
 		echo str_replace( 'row-separator', 'row-separator ' . $class, $this->open_tag );
@@ -323,7 +324,7 @@ class Helper_Field_Container {
 	 *
 	 * @since 4.0
 	 */
-	private function close_container() {
+	protected function close_container() {
 		echo $this->close_tag;
 	}
 
@@ -334,7 +335,7 @@ class Helper_Field_Container {
 	 *
 	 * @since 4.0
 	 */
-	private function start() {
+	protected function start() {
 		$this->currently_open = true;
 	}
 
@@ -345,7 +346,7 @@ class Helper_Field_Container {
 	 *
 	 * @since 4.0
 	 */
-	private function reset() {
+	protected function reset() {
 		$this->currently_open = false;
 		$this->current_width  = 0;
 	}
@@ -359,20 +360,20 @@ class Helper_Field_Container {
 	 *
 	 * @since  4.0
 	 */
-	private function increment_width( $classes ) {
+	protected function increment_width( $classes ) {
 		$this->current_width += $this->get_field_width( $classes );
 	}
 
 	/**
 	 * Loop through all classes and return our class map if found, or 100
 	 *
-	 * @param  String $classes The field classes
+	 * @param String $classes The field classes
 	 *
 	 * @return integer The field width based on assigned class
 	 *
 	 * @since  4.0
 	 */
-	private function get_field_width( $classes ) {
+	protected function get_field_width( $classes ) {
 		$classes = $this->get_field_classes( $classes );
 
 		foreach ( $classes as $class ) {
@@ -394,7 +395,7 @@ class Helper_Field_Container {
 	 *
 	 * @since 4.0
 	 */
-	private function is_row_odd_or_even() {
+	protected function is_row_odd_or_even() {
 		return ( $this->counter % 2 ) ? 'even' : 'odd';
 	}
 
@@ -405,7 +406,7 @@ class Helper_Field_Container {
 	 *
 	 * @since 4.0
 	 */
-	private function increment_row_counter() {
+	protected function increment_row_counter() {
 		$this->counter++;
 	}
 
@@ -418,7 +419,7 @@ class Helper_Field_Container {
 	 *
 	 * @since 4.2
 	 */
-	private function get_field_classes( $classes ) {
+	protected function get_field_classes( $classes ) {
 		return array_filter( explode( ' ', $classes ) );
 	}
 
@@ -431,7 +432,7 @@ class Helper_Field_Container {
 	 *
 	 * @since 4.2
 	 */
-	private function does_field_have_stopper_class( GF_Field $field ) {
+	protected function does_field_have_stopper_class( GF_Field $field ) {
 		$field_classes = array_flip( $this->get_field_classes( $field->cssClass ) );
 
 		foreach ( $this->row_stopper_classes as $class ) {

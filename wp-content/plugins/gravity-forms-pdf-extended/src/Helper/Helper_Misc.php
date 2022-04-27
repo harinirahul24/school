@@ -2,20 +2,18 @@
 
 namespace GFPDF\Helper;
 
-use Psr\Log\LoggerInterface;
-
+use DOMElement;
+use Exception;
 use GFCommon;
 use GFMultiCurrency;
-use GPDFAPI;
-
-use WP_Error;
+use Psr\Log\LoggerInterface;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
-use Exception;
+use WP_Error;
 
 /**
  * @package     Gravity PDF
- * @copyright   Copyright (c) 2019, Blue Liquid Designs
+ * @copyright   Copyright (c) 2022, Blue Liquid Designs
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU Public License
  */
 
@@ -32,7 +30,7 @@ class Helper_Misc {
 	/**
 	 * Holds the abstracted Gravity Forms API specific to Gravity PDF
 	 *
-	 * @var \GFPDF\Helper\Helper_Form
+	 * @var Helper_Form
 	 *
 	 * @since 4.0
 	 */
@@ -41,7 +39,7 @@ class Helper_Misc {
 	/**
 	 * Holds our log class
 	 *
-	 * @var \Monolog\Logger|LoggerInterface
+	 * @var LoggerInterface
 	 *
 	 * @since 4.0
 	 */
@@ -51,7 +49,7 @@ class Helper_Misc {
 	 * Holds our Helper_Data object
 	 * which we can autoload with any data needed
 	 *
-	 * @var \GFPDF\Helper\Helper_Data
+	 * @var Helper_Data
 	 *
 	 * @since 4.0
 	 */
@@ -60,9 +58,9 @@ class Helper_Misc {
 	/**
 	 * Store required classes locally
 	 *
-	 * @param \Monolog\Logger|LoggerInterface    $log
-	 * @param \GFPDF\Helper\Helper_Abstract_Form $gform
-	 * @param \GFPDF\Helper\Helper_Data          $data
+	 * @param LoggerInterface      $log
+	 * @param Helper_Abstract_Form $gform
+	 * @param Helper_Data          $data
 	 *
 	 * @since 4.0
 	 */
@@ -77,9 +75,9 @@ class Helper_Misc {
 	/**
 	 * Check if the current admin page is a Gravity PDF page
 	 *
+	 * @return boolean
 	 * @since 4.0
 	 *
-	 * @return boolean
 	 */
 	public function is_gfpdf_page() {
 		if ( is_admin() ) {
@@ -96,11 +94,11 @@ class Helper_Misc {
 	/**
 	 * Check if we are on the current global settings page / tab
 	 *
-	 * @since 4.0
-	 *
 	 * @param string $name The current page ID to check
 	 *
 	 * @return boolean
+	 * @since 4.0
+	 *
 	 */
 	public function is_gfpdf_settings_tab( $name ) {
 		if ( is_admin() ) {
@@ -178,7 +176,7 @@ class Helper_Misc {
 
 	/**
 	 * Convert image URLs to local path (where able) and add specific class names to images for better
-	 * targetting in Mpdf
+	 * targeting in Mpdf
 	 *
 	 * @param string $html
 	 *
@@ -194,7 +192,7 @@ class Helper_Misc {
 
 			$images = $wrapper->find( 'img' );
 
-			if ( sizeof( $images ) > 0 ) {
+			if ( count( $images ) > 0 ) {
 				/* Loop through each matching element */
 				foreach ( $images as $image ) {
 
@@ -218,7 +216,7 @@ class Helper_Misc {
 					 */
 					if ( strlen( $image_classes ) > 0 ) {
 						$parent_node = $image->parent()->get( 0 );
-						if ( $parent_node instanceof \DOMElement && $parent_node->nodeName === 'a' ) {
+						if ( $parent_node instanceof DOMElement && $parent_node->nodeName === 'a' ) {
 							$image->parent()->wrap( '<div class="' . $image_classes . '"></div>' );
 						} else {
 							$image->wrap( '<div class="' . $image_classes . '"></div>' );
@@ -241,7 +239,7 @@ class Helper_Misc {
 	}
 
 	/**
-	 * Processes a hex colour and returns an appopriately contrasting black or white
+	 * Processes a hex colour and returns an appropriately contrasting black or white
 	 *
 	 * @param string $hexcolor The Hex to be inverted
 	 *
@@ -270,7 +268,7 @@ class Helper_Misc {
 	 * $diff should be negative to go darker, positive to go lighter and
 	 * is subtracted from the decimal (0-255) value of the colour
 	 *
-	 * @param         $hexcolor Hex colour to be modified
+	 * @param string  $hexcolor Hex colour to be modified
 	 * @param integer $diff     amount to change the color
 	 *
 	 * @return string hex colour
@@ -332,9 +330,9 @@ class Helper_Misc {
 	/**
 	 * Push an associative array onto the beginning of an existing array
 	 *
-	 * @param  array  $array The array to push onto
-	 * @param  string $key   The key to use for the newly-pushed array
-	 * @param  mixed  $val   The value being pushed
+	 * @param array  $array The array to push onto
+	 * @param string $key   The key to use for the newly-pushed array
+	 * @param mixed  $val   The value being pushed
 	 *
 	 * @return array  The modified array
 	 *
@@ -359,6 +357,8 @@ class Helper_Misc {
 	 */
 	public function rmdir( $dir ) {
 
+		$this->log->notice( sprintf( 'Begin deleting directory recursively: %s', $dir ) );
+
 		try {
 			$files = new RecursiveIteratorIterator(
 				new RecursiveDirectoryIterator( $dir, RecursiveDirectoryIterator::SKIP_DOTS ),
@@ -370,9 +370,11 @@ class Helper_Misc {
 				if ( ! $function( $fileinfo->getRealPath() ) ) {
 					throw new Exception( 'Could not run ' . $function . ' on  ' . $fileinfo->getRealPath() );
 				}
+
+				$this->log->notice( sprintf( 'Successfully ran `%s` on %s', $function, $fileinfo->getRealPath() ) );
 			}
 		} catch ( Exception $e ) {
-			$this->log->addError(
+			$this->log->error(
 				'Filesystem Delete Error',
 				[
 					'dir'       => $dir,
@@ -383,7 +385,14 @@ class Helper_Misc {
 			return new WP_Error( 'recursion_delete_problem', $e );
 		}
 
-		return rmdir( $dir );
+		$results = rmdir( $dir );
+		if ( ! $results ) {
+			$this->log->error( sprintf( 'Could not delete the top-level directory: %s', $dir ) );
+		}
+
+		$this->log->notice( sprintf( 'End deleting directory recursively: %s', $dir ) );
+
+		return $results;
 	}
 
 	/**
@@ -402,10 +411,10 @@ class Helper_Misc {
 	 * This function recursively copies all files and folders under a given directory
 	 * equivalent to Bash: cp -R $dir
 	 *
-	 * @param  string $source      The path to be copied
-	 * @param  string $destination The path to copy to
+	 * @param string $source      The path to be copied
+	 * @param string $destination The path to copy to
 	 *
-	 * @return boolean
+	 * @return boolean|WP_Error
 	 *
 	 * @since 4.0
 	 */
@@ -414,7 +423,7 @@ class Helper_Misc {
 		try {
 			if ( ! is_dir( $destination ) ) {
 				if ( ! wp_mkdir_p( $destination ) ) {
-					$this->log->addError(
+					$this->log->error(
 						'Failed Creating Folder Structure',
 						[
 							'dir' => $destination,
@@ -433,7 +442,7 @@ class Helper_Misc {
 			foreach ( $files as $fileinfo ) {
 				if ( $fileinfo->isDir() && ! file_exists( $destination . $files->getSubPathName() ) ) {
 					if ( ! @mkdir( $destination . $files->getSubPathName() ) ) {
-						$this->log->addError(
+						$this->log->error(
 							'Failed Creating Folder',
 							[
 								'dir' => $destination . $files->getSubPathName(),
@@ -444,7 +453,7 @@ class Helper_Misc {
 					}
 				} elseif ( ! $fileinfo->isDir() ) {
 					if ( ! copy( $fileinfo, $destination . $files->getSubPathName() ) ) {
-						$this->log->addError(
+						$this->log->error(
 							'Failed Creating File',
 							[
 								'file' => $destination . $files->getSubPathName(),
@@ -456,7 +465,7 @@ class Helper_Misc {
 			}
 		} catch ( Exception $e ) {
 
-			$this->log->addError(
+			$this->log->error(
 				'Filesystem Copy Error',
 				[
 					'source'      => $source,
@@ -474,8 +483,8 @@ class Helper_Misc {
 	/**
 	 * Get a path relative to the root WP directory, provided a user hasn't moved the wp-content directory outside the ABSPATH
 	 *
-	 * @param  string $path    The relative path
-	 * @param  string $replace What ABSPATH should be replaced with
+	 * @param string $path    The relative path
+	 * @param string $replace What ABSPATH should be replaced with
 	 *
 	 * @return string
 	 *
@@ -543,7 +552,7 @@ class Helper_Misc {
 	/**
 	 * Attempt to convert the current URL to an internal path
 	 *
-	 * @param  string $url The Url to convert
+	 * @param string $url The Url to convert
 	 *
 	 * @return string|boolean      Path on success or false on failure
 	 *
@@ -601,7 +610,7 @@ class Helper_Misc {
 	/**
 	 * Attempt to convert the current path to a URL
 	 *
-	 * @param  string $path The path to convert
+	 * @param string $path The path to convert
 	 *
 	 * @return string|boolean      Url on success or false
 	 *
@@ -657,11 +666,10 @@ class Helper_Misc {
 	}
 
 
-
 	/**
 	 * Remove any characters that are invalid in filenames (mostly on Windows systems)
 	 *
-	 * @param  string $name The string / name to process
+	 * @param string $name The string / name to process
 	 *
 	 * @return string
 	 *
@@ -676,8 +684,8 @@ class Helper_Misc {
 	/**
 	 * Backwards compatibility that allows multiple IDs to be passed to the renderer
 	 *
-	 * @param  integer $entry_id The fallback ID if none present
-	 * @param  array   $settings The current PDF settings
+	 * @param integer $entry_id The fallback ID if none present
+	 * @param array   $settings The current PDF settings
 	 *
 	 * @return array
 	 *
@@ -686,7 +694,7 @@ class Helper_Misc {
 	public function get_legacy_ids( $entry_id, $settings ) {
 
 		$leads    = rgget( 'lid' );
-		$override = ( isset( $settings['public_access'] ) && $settings['public_access'] === 'Yes' ) ? true : false;
+		$override = ( $settings['public_access'] ?? '' ) === 'Yes';
 
 		if ( $leads && ( $override === true || $this->gform->has_capability( 'gravityforms_view_entries' ) ) ) {
 			$ids = explode( ',', $leads );
@@ -702,12 +710,13 @@ class Helper_Misc {
 			/* filter our any zero-value ids */
 			$ids = array_filter( $ids );
 
-			if ( sizeof( $ids ) > 0 ) {
+			if ( count( $ids ) > 0 ) {
 				return $ids;
 			}
 		}
 
 		/* if not processing legacy endpoint, or if invalid IDs were passed we'll return the original entry ID */
+
 		return [ $entry_id ];
 	}
 
@@ -729,8 +738,8 @@ class Helper_Misc {
 	/**
 	 * Remove an extension from the end of a string
 	 *
-	 * @param  string $string
-	 * @param  string $type The extension to remove from the end of the string
+	 * @param string $string
+	 * @param string $type The extension to remove from the end of the string
 	 *
 	 * @return string
 	 *
@@ -749,7 +758,7 @@ class Helper_Misc {
 	/**
 	 *  Convert our v3 boolean values into 'Yes' or 'No' responses
 	 *
-	 * @param  mixed $value
+	 * @param mixed $value
 	 *
 	 * @return mixed
 	 *
@@ -819,9 +828,9 @@ class Helper_Misc {
 	/**
 	 * Converts the 4.x settings array into a compatible 3.x settings array
 	 *
-	 * @param  array $settings The 4.x settings to be converted
-	 * @param  array $form (since 4.0.6) The Gravity Forms array
-	 * @param  array $entry (since 4.0.6) The Gravity Forms entry
+	 * @param array $settings The 4.x settings to be converted
+	 * @param array $form     (since 4.0.6) The Gravity Forms array
+	 * @param array $entry    (since 4.0.6) The Gravity Forms entry
 	 *
 	 * @return array           The 3.x compatible settings
 	 *
@@ -830,14 +839,14 @@ class Helper_Misc {
 	public function backwards_compat_conversion( $settings, $form, $entry ) {
 
 		$compat                   = [];
-		$compat['premium']        = ( isset( $settings['advanced_template'] ) && $settings['advanced_template'] === 'Yes' ) ? true : false;
-		$compat['rtl']            = ( isset( $settings['rtl'] ) && $settings['rtl'] === 'Yes' ) ? true : false;
-		$compat['dpi']            = ( isset( $settings['image_dpi'] ) ) ? (int) $settings['image_dpi'] : 96;
-		$compat['security']       = ( isset( $settings['security'] ) && $settings['security'] === 'Yes' ) ? true : false;
-		$compat['pdf_password']   = ( isset( $settings['password'] ) ) ? $this->gform->process_tags( $settings['password'], $form, $entry ) : '';
-		$compat['pdf_privileges'] = ( isset( $settings['privileges'] ) ) ? $settings['privileges'] : '';
-		$compat['pdfa1b']         = ( isset( $settings['format'] ) && $settings['format'] === 'PDFA1B' ) ? true : false;
-		$compat['pdfx1a']         = ( isset( $settings['format'] ) && $settings['format'] === 'PDFX1A' ) ? true : false;
+		$compat['premium']        = ( $settings['advanced_template'] ?? '' ) === 'Yes';
+		$compat['rtl']            = ( $settings['rtl'] ?? '' ) === 'Yes';
+		$compat['dpi']            = (int) ( $settings['image_dpi'] ?? 96 );
+		$compat['security']       = ( $settings['security'] ?? '' ) === 'Yes';
+		$compat['pdf_password']   = $this->gform->process_tags( $settings['password'] ?? '', $form, $entry );
+		$compat['pdf_privileges'] = $settings['privileges'] ?? '';
+		$compat['pdfa1b']         = ( $settings['format'] ?? '' ) === 'PDFA1B';
+		$compat['pdfx1a']         = ( $settings['format'] ?? '' ) === 'PDFX1A';
 
 		return $compat;
 	}
@@ -845,7 +854,7 @@ class Helper_Misc {
 	/**
 	 * Converts the 4.x output to into a compatible 3.x type
 	 *
-	 * @param  string $type
+	 * @param string $type
 	 *
 	 * @return string
 	 *
@@ -855,15 +864,12 @@ class Helper_Misc {
 		switch ( strtolower( $type ) ) {
 			case 'display':
 				return 'view';
-			break;
 
 			case 'download':
 				return 'download';
-			break;
 
 			default:
 				return 'save';
-			break;
 		}
 	}
 
@@ -896,7 +902,7 @@ class Helper_Misc {
 		foreach ( $haystack as $item ) {
 			/* phpcs:disable */
 			if ( ( $strict ? $item === $needle : $item == $needle ) ||
-				 ( is_array( $item ) && $this->in_array( $needle, $item, $strict ) )
+			     ( is_array( $item ) && $this->in_array( $needle, $item, $strict ) )
 			) {
 				return true;
 			}
@@ -909,9 +915,9 @@ class Helper_Misc {
 	/**
 	 * Ensure an extension is added to the end of the name
 	 *
-	 * @param  string $name      The PHP template
+	 * @param string $name      The PHP template
 	 *
-	 * @param string  $extension The extension that should be added to the filename
+	 * @param string $extension The extension that should be added to the filename
 	 *
 	 * @return string
 	 *
@@ -929,17 +935,15 @@ class Helper_Misc {
 	 * Check the Nonce and any user capabilities required before all AJAX requests
 	 * If once of these fails the appropriate response code will be sent
 	 *
-	 * @param string $endpoint_desc The name of the endpoint currently being processed (for the log)
-	 * @param string|bool $capability The capability name the logged in user is required to run this endpoint, or false if no authentation needed
-	 * @param string $nonce_name The name of the Nonce our $_POST['nonce'] should be checked against
-	 *
-	 * @todo move this to an abstract class when we refractor the AJAX code into classes
+	 * @param string      $endpoint_desc The name of the endpoint currently being processed (for the log)
+	 * @param string|bool $capability    The capability name the logged in user is required to run this endpoint, or false if no authentication needed
+	 * @param string      $nonce_name    The name of the Nonce our $_POST['nonce'] should be checked against
 	 *
 	 * @since 4.1
 	 */
 	public function handle_ajax_authentication( $endpoint_desc, $capability = 'gravityforms_edit_settings', $nonce_name = 'gfpdf_ajax_nonce' ) {
 
-		$this->log->addNotice(
+		$this->log->notice(
 			'Running AJAX Endpoint',
 			[
 				'type' => $endpoint_desc,
@@ -953,7 +957,7 @@ class Helper_Misc {
 		$nonce = ( isset( $_POST['nonce'] ) ) ? $_POST['nonce'] : '';
 		if ( ! wp_verify_nonce( $nonce, $nonce_name ) ) {
 
-			$this->log->addWarning( 'Nonce Verification Failed' );
+			$this->log->warning( 'Nonce Verification Failed' );
 
 			/* Unauthorized response */
 			wp_die( '401', 401 );
@@ -962,7 +966,7 @@ class Helper_Misc {
 		/* prevent unauthorized access */
 		if ( $capability !== false && ! $this->gform->has_capability( $capability ) ) {
 
-			$this->log->addCritical(
+			$this->log->critical(
 				'Lack of User Capabilities',
 				[
 					'user'              => wp_get_current_user(),

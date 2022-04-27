@@ -84,8 +84,8 @@ if ( ! class_exists( 'SP_EAP_Field_wp_editor' ) ) {
 			echo $this->field_before();
 
 			echo ( eapro_wp_editor_api() ) ? '<div class="eapro-wp-editor" data-editor-settings="' . esc_attr( wp_json_encode( $editor_settings ) ) . '">' : '';
-      // phpcs:ignore
-			echo '<textarea name="' . esc_attr( $this->field_name() ) . '"' . $this->field_attributes( $attributes ) . $editor_height . '>' . wp_kses( $this->value, apply_filters( 'sp_ea_description_allow_tags', $allowed_tags ) ) . '</textarea>';
+    // phpcs:ignore
+			echo '<textarea name="' . esc_attr( $this->field_name() ) . '"' . $this->field_attributes( $attributes ) . $editor_height . '>' . wp_kses( nl2br( htmlentities( $this->value, ENT_QUOTES, 'UTF-8' ) ), apply_filters( 'sp_ea_description_allow_tags', $allowed_tags ) ) . '</textarea>';
 
 			echo ( eapro_wp_editor_api() ) ? '</div>' : '';
       // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped

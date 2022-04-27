@@ -2,24 +2,25 @@
 
 namespace GFPDF\Model;
 
-use GFPDF\Helper\Helper_Abstract_Model;
-use GFPDF\Helper\Helper_PDF_List_Table;
-use GFPDF\Helper\Helper_Interface_Config;
+use GFFormsModel;
+use GFCommon;
 use GFPDF\Helper\Helper_Abstract_Form;
+use GFPDF\Helper\Helper_Abstract_Model;
+use GFPDF\Helper\Helper_Abstract_Options;
 use GFPDF\Helper\Helper_Data;
+use GFPDF\Helper\Helper_Form;
+use GFPDF\Helper\Helper_Interface_Config;
 use GFPDF\Helper\Helper_Misc;
 use GFPDF\Helper\Helper_Notices;
+use GFPDF\Helper\Helper_Options_Fields;
+use GFPDF\Helper\Helper_PDF_List_Table;
 use GFPDF\Helper\Helper_Templates;
-use GFPDF\Helper\Helper_Abstract_Options;
-
+use GFPDF\View\View_GravityForm_Settings_Markup;
 use Psr\Log\LoggerInterface;
-
-use _WP_Editors;
-use GFFormsModel;
 
 /**
  * @package     Gravity PDF
- * @copyright   Copyright (c) 2019, Blue Liquid Designs
+ * @copyright   Copyright (c) 2022, Blue Liquid Designs
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU Public License
  */
 
@@ -29,7 +30,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Model_Welcome_Screen
+ * Model_Form_Settings
  *
  * A general class for About / Intro Screen
  *
@@ -40,7 +41,7 @@ class Model_Form_Settings extends Helper_Abstract_Model {
 	/**
 	 * Holds the abstracted Gravity Forms API specific to Gravity PDF
 	 *
-	 * @var \GFPDF\Helper\Helper_Form
+	 * @var Helper_Form
 	 *
 	 * @since 4.0
 	 */
@@ -49,7 +50,7 @@ class Model_Form_Settings extends Helper_Abstract_Model {
 	/**
 	 * Holds our log class
 	 *
-	 * @var \Monolog\Logger|LoggerInterface
+	 * @var LoggerInterface
 	 *
 	 * @since 4.0
 	 */
@@ -59,7 +60,7 @@ class Model_Form_Settings extends Helper_Abstract_Model {
 	 * Holds our Helper_Data object
 	 * which we can autoload with any data needed
 	 *
-	 * @var \GFPDF\Helper\Helper_Data
+	 * @var Helper_Data
 	 *
 	 * @since 4.0
 	 */
@@ -69,7 +70,7 @@ class Model_Form_Settings extends Helper_Abstract_Model {
 	 * Holds our Helper_Abstract_Options / Helper_Options_Fields object
 	 * Makes it easy to access global PDF settings and individual form PDF settings
 	 *
-	 * @var \GFPDF\Helper\Helper_Options_Fields
+	 * @var Helper_Options_Fields
 	 *
 	 * @since 4.0
 	 */
@@ -79,7 +80,7 @@ class Model_Form_Settings extends Helper_Abstract_Model {
 	 * Holds our Helper_Misc object
 	 * Makes it easy to access common methods throughout the plugin
 	 *
-	 * @var \GFPDF\Helper\Helper_Misc
+	 * @var Helper_Misc
 	 *
 	 * @since 4.0
 	 */
@@ -89,7 +90,7 @@ class Model_Form_Settings extends Helper_Abstract_Model {
 	 * Holds our Helper_Notices object
 	 * which we can use to queue up admin messages for the user
 	 *
-	 * @var \GFPDF\Helper\Helper_Misc
+	 * @var Helper_Misc
 	 *
 	 * @since 4.0
 	 */
@@ -99,22 +100,22 @@ class Model_Form_Settings extends Helper_Abstract_Model {
 	 * Holds our Helper_Templates object
 	 * used to ease access to our PDF templates
 	 *
-	 * @var \GFPDF\Helper\Helper_Templates
+	 * @var Helper_Templates
 	 *
 	 * @since 4.0
 	 */
 	protected $templates;
 
 	/**
-	 * Setup our class by injecting all our dependancies
+	 * Setup our class by injecting all our dependencies
 	 *
-	 * @param \GFPDF\Helper\Helper_Abstract_Form    $gform   Our abstracted Gravity Forms helper functions
-	 * @param \Monolog\Logger|LoggerInterface       $log     Our logger class
-	 * @param \GFPDF\Helper\Helper_Data             $data    Our plugin data store
-	 * @param \GFPDF\Helper\Helper_Abstract_Options $options Our options class which allows us to access any settings
-	 * @param \GFPDF\Helper\Helper_Misc             $misc    Our miscellaneous class
-	 * @param \GFPDF\Helper\Helper_Notices          $notices Our notice class used to queue admin messages and errors
-	 * @param \GFPDF\Helper\Helper_Templates        $templates
+	 * @param Helper_Abstract_Form    $gform   Our abstracted Gravity Forms helper functions
+	 * @param LoggerInterface         $log     Our logger class
+	 * @param Helper_Data             $data    Our plugin data store
+	 * @param Helper_Abstract_Options $options Our options class which allows us to access any settings
+	 * @param Helper_Misc             $misc    Our miscellaneous class
+	 * @param Helper_Notices          $notices Our notice class used to queue admin messages and errors
+	 * @param Helper_Templates        $templates
 	 *
 	 * @since 4.0
 	 */
@@ -143,9 +144,11 @@ class Model_Form_Settings extends Helper_Abstract_Model {
 	 */
 	public function add_form_settings_menu( $tabs ) {
 		$tabs[] = [
-			'name'  => $this->data->slug,
-			'label' => $this->data->short_title,
-			'query' => [ 'pid' => null ],
+			'name'         => $this->data->slug,
+			'label'        => $this->data->short_title,
+			'query'        => [ 'pid' => null ],
+			'icon'         => 'dashicons-media-document',
+			'capabilities' => [ 'gravityforms_edit_settings' ],
 		];
 
 		return $tabs;
@@ -154,7 +157,7 @@ class Model_Form_Settings extends Helper_Abstract_Model {
 	/**
 	 * Setup the PDF Settings List View Logic
 	 *
-	 * @param  integer $form_id The Gravity Form ID
+	 * @param integer $form_id The Gravity Form ID
 	 *
 	 * @return void
 	 *
@@ -164,7 +167,7 @@ class Model_Form_Settings extends Helper_Abstract_Model {
 
 		/* prevent unauthorized access */
 		if ( ! $this->gform->has_capability( 'gravityforms_edit_settings' ) ) {
-			$this->log->addWarning( 'Lack of User Capabilities.' );
+			$this->log->warning( 'Lack of User Capabilities.' );
 			wp_die( esc_html__( 'You do not have permission to access this page', 'gravity-forms-pdf-extended' ) );
 		}
 
@@ -190,8 +193,8 @@ class Model_Form_Settings extends Helper_Abstract_Model {
 	/**
 	 * Setup the PDF Settings Add/Edit View Logic
 	 *
-	 * @param  integer $form_id The Gravity Form ID
-	 * @param  integer $pdf_id  The PDF configuration ID
+	 * @param integer $form_id The Gravity Form ID
+	 * @param integer $pdf_id  The PDF configuration ID
 	 *
 	 * @return void
 	 *
@@ -201,7 +204,7 @@ class Model_Form_Settings extends Helper_Abstract_Model {
 
 		/* prevent unauthorized access */
 		if ( ! $this->gform->has_capability( 'gravityforms_edit_settings' ) ) {
-			$this->log->addWarning( 'Lack of User Capabilities.' );
+			$this->log->warning( 'Lack of User Capabilities.' );
 			wp_die( esc_html__( 'You do not have permission to access this page', 'gravity-forms-pdf-extended' ) );
 		}
 
@@ -220,6 +223,12 @@ class Model_Form_Settings extends Helper_Abstract_Model {
 			}
 		}
 
+		/* add custom classes to form */
+		$form_classes = '';
+		if ( version_compare( '2.6-rc-1', GFCommon::$version, '>=' ) ) {
+			$form_classes .= 'gfpdf-gf-2-6';
+		}
+
 		$entry_meta = GFFormsModel::get_entry_meta( $form_id );
 		$entry_meta = apply_filters( 'gform_entry_meta_conditional_logic_confirmations', $entry_meta, $form, '' );
 
@@ -233,7 +242,12 @@ class Model_Form_Settings extends Helper_Abstract_Model {
 		$pdf = $this->options->get_pdf( $form_id, $pdf_id );
 
 		/* prepare our data */
-		$label = ( ! is_wp_error( $pdf ) && ! isset( $pdf['status'] ) ) ? esc_html__( 'Update PDF', 'gravity-forms-pdf-extended' ) : esc_html__( 'Add PDF', 'gravity-forms-pdf-extended' );
+		$update_pdf_text = esc_html__( 'Update PDF', 'gravity-forms-pdf-extended' );
+		$label           = esc_html__( 'Add PDF', 'gravity-forms-pdf-extended' );
+
+		if ( ( $_POST['submit'] ?? '' ) === $update_pdf_text || ( ! is_wp_error( $pdf ) && ! isset( $pdf['status'] ) ) ) {
+			$label = $update_pdf_text;
+		}
 
 		wp_enqueue_editor();
 
@@ -246,15 +260,47 @@ class Model_Form_Settings extends Helper_Abstract_Model {
 				'form'         => $form,
 				'entry_meta'   => $entry_meta,
 				'pdf'          => $pdf,
+				'form_classes' => $form_classes,
 			]
 		);
 	}
 
 	/**
-	 * Validate, Sanatize and Update PDF settings
+	 * Update our notification form settings which is specific to the PDF Form Settings Page (i.e we need an actual $form object which isn't present when we originally register the settings)
 	 *
-	 * @param  integer $form_id The Gravity Form ID
-	 * @param  integer $pdf_id  The PDF configuration ID
+	 * @param array $notifications The current form notifications
+	 *
+	 * @return void
+	 *
+	 * @since 4.0
+	 */
+	public function register_notifications( $notifications ) {
+
+		/* Loop through notifications and format it to our standard */
+		if ( is_array( $notifications ) ) {
+			$options = [];
+
+			/* Filter out the save and continue notifications */
+			$omit = [ 'form_saved', 'form_save_email_requested' ];
+
+			foreach ( $notifications as $notification ) {
+				$event = ( isset( $notification['event'] ) ) ? $notification['event'] : '';
+
+				if ( ! in_array( $event, $omit, true ) ) {
+					$options[ $notification['id'] ] = $notification['name'];
+				}
+			}
+
+			/* Apply our settings update */
+			$this->options->update_registered_field( 'form_settings', 'notification', 'options', $options );
+		}
+	}
+
+	/**
+	 * Validate, Sanitize and Update PDF settings
+	 *
+	 * @param integer $form_id The Gravity Form ID
+	 * @param integer $pdf_id  The PDF configuration ID
 	 *
 	 * @return boolean
 	 *
@@ -264,7 +310,7 @@ class Model_Form_Settings extends Helper_Abstract_Model {
 
 		/* prevent unauthorized access */
 		if ( ! $this->gform->has_capability( 'gravityforms_edit_settings' ) ) {
-			$this->log->addCritical(
+			$this->log->critical(
 				'Lack of User Capabilities.',
 				[
 					'user'      => wp_get_current_user(),
@@ -277,7 +323,7 @@ class Model_Form_Settings extends Helper_Abstract_Model {
 
 		/* Check Nonce is valid */
 		if ( ! wp_verify_nonce( rgpost( 'gfpdf_save_pdf' ), 'gfpdf_save_pdf' ) ) {
-			$this->log->addWarning( 'Nonce Verification Failed.' );
+			$this->log->warning( 'Nonce Verification Failed.' );
 			$this->notices->add_error( esc_html__( 'There was a problem saving your PDF settings. Please try again.', 'gravity-forms-pdf-extended' ) );
 
 			return false;
@@ -292,7 +338,7 @@ class Model_Form_Settings extends Helper_Abstract_Model {
 
 		/* check appropriate settings */
 		if ( ! is_array( $input ) || ! $pdf_id ) {
-			$this->log->addError(
+			$this->log->error(
 				'Invalid Data.',
 				[
 					'post' => $input,
@@ -319,7 +365,7 @@ class Model_Form_Settings extends Helper_Abstract_Model {
 
 		/* Do validation */
 		if ( empty( $sanitized['name'] ) || empty( $sanitized['filename'] ) ||
-			 ( $sanitized['pdf_size'] === 'CUSTOM' && ( (int) $sanitized['custom_pdf_size'][0] === 0 || (int) $sanitized['custom_pdf_size'][1] === 0 ) )
+			 ( $sanitized['pdf_size'] === 'CUSTOM' && ( (float) $sanitized['custom_pdf_size'][0] === 0 || (float) $sanitized['custom_pdf_size'][1] === 0 ) )
 		) {
 			$this->notices->add_error( esc_html__( 'PDF could not be saved. Please enter all required information below.', 'gravity-forms-pdf-extended' ) );
 
@@ -334,8 +380,8 @@ class Model_Form_Settings extends Helper_Abstract_Model {
 
 		/* If it updated, let's update the global variable */
 		if ( $did_update !== false ) {
-			$this->log->addNotice(
-				'Successfully Saved Global PDF Settings.',
+			$this->log->notice(
+				'Successfully Saved Form PDF Settings.',
 				[
 					'form_id'  => $form_id,
 					'pdf_id'   => $pdf_id,
@@ -348,18 +394,97 @@ class Model_Form_Settings extends Helper_Abstract_Model {
 			return true;
 		}
 
-		$this->log->addError( 'Failed to Save Global PDF Settings.' );
+		$this->log->error( 'Failed to Save Form PDF Settings.' );
 		$this->notices->add_error( esc_html__( 'There was a problem saving your PDF settings. Please try again.', 'gravity-forms-pdf-extended' ) );
 
 		return false;
 	}
 
 	/**
+	 * Similar to Helper_Abstract_Options->settings_sanitize() except we don't need as robust validation and error checking
+	 *
+	 * @param array $input Fields to process
+	 *
+	 * @return array         Sanitized fields
+	 *
+	 * @since 4.0
+	 */
+	public function settings_sanitize( $input = [] ) {
+
+		$settings = $this->options->get_registered_fields();
+		$sections = [
+			'form_settings',
+			'form_settings_appearance',
+			'form_settings_custom_appearance',
+			'form_settings_advanced',
+		];
+
+		foreach ( $sections as $s ) {
+			/*
+			 * Loop through the settings whitelist and add any missing fields to the $input
+			 */
+			foreach ( $settings[ $s ] as $key => $value ) {
+				switch ( $value['type'] ) {
+					case 'select':
+					case 'multicheck':
+						if ( ! isset( $input[ $key ] ) ) {
+							$input[ $key ] = [];
+						}
+						break;
+
+					case 'checkbox':
+						break;
+
+					default:
+						if ( ! isset( $input[ $key ] ) ) {
+							$input[ $key ] = '';
+						}
+						break;
+				}
+			}
+
+			$input = apply_filters( 'gfpdf_settings_' . $s . '_sanitize', $input );
+		}
+
+		/* Loop through each setting being saved and pass it through a sanitization filter */
+		if ( is_array( $input ) && 0 < count( $input ) ) {
+			foreach ( $input as $key => $value ) {
+
+				foreach ( $sections as $s ) {
+
+					/* only process field if found in the section */
+					if ( isset( $settings[ $s ][ $key ] ) ) {
+						$type = isset( $settings[ $s ][ $key ]['type'] ) ? $settings[ $s ][ $key ]['type'] : false;
+
+						/*
+						 * General filter
+						 *
+						 * See https://docs.gravitypdf.com/v6/developers/filters/gfpdf_form_settings_sanitize/ for more details about this filter
+						 */
+						$input[ $key ] = apply_filters( 'gfpdf_form_settings_sanitize', $input[ $key ], $key, $input, $settings[ $s ][ $key ] );
+
+						if ( $type ) {
+							/*
+							 * Field type specific filter
+							 *
+							 * See https://docs.gravitypdf.com/v6/developers/filters/gfpdf_form_settings_sanitize/ for more details about this filter
+							 */
+							$input[ $key ] = apply_filters( 'gfpdf_form_settings_sanitize_' . $type, $input[ $key ], $key, $input, $settings[ $s ][ $key ] );
+						}
+					}
+				}
+			}
+		}
+
+		return $input;
+	}
+
+	/**
 	 * Apply gfield_error class when validation fails, highlighting field blocks with problems
 	 *
-	 * @param  array $fields Array of fields to process
+	 * @param array $fields Array of fields to process
 	 *
-	 * @return array         Modified list of fields
+	 * @return array|false         Modified list of fields
 	 *
 	 * @since 4.0
 	 */
@@ -377,7 +502,7 @@ class Model_Form_Settings extends Helper_Abstract_Model {
 
 		/* Check we have a valid nonce, or throw an error */
 		if ( ! wp_verify_nonce( rgpost( 'gfpdf_save_pdf' ), 'gfpdf_save_pdf' ) ) {
-			$this->log->addWarning( 'Nonce Verification Failed.' );
+			$this->log->warning( 'Nonce Verification Failed.' );
 			$this->notices->add_error( esc_html__( 'There was a problem saving your PDF settings. Please try again.', 'gravity-forms-pdf-extended' ) );
 
 			return false;
@@ -390,37 +515,33 @@ class Model_Form_Settings extends Helper_Abstract_Model {
 
 			if ( isset( $field['required'] ) && $field['required'] === true ) {
 
-				/* Get field value */
-				$value = ( isset( $input[ $field['id'] ] ) ) ? $input[ $field['id'] ] : '';
-
-				/* Set a class if it doesn't exist */
-				$field['class'] = ( isset( $field['class'] ) ) ? $field['class'] : '';
+				$value          = $input[ $field['id'] ] ?? '';
+				$field['class'] = $field['class'] ?? '';
 
 				/* Add way to skip the highlighting of errors */
-				$skip_errors = apply_filters( 'gfpdf_skip_highlight_errors', false, $field, $input );
-
-				if ( $skip_errors ) {
+				if ( apply_filters( 'gfpdf_skip_highlight_errors', false, $field, $input ) ) {
 					continue;
 				}
 
 				/* If the value is an array ensure all items have values */
 				if ( is_array( $value ) ) {
-
-					$size = sizeof( $value );
-					if ( sizeof( array_filter( $value ) ) !== $size ) {
-						$field['class'] .= ' gfield_error';
+					if ( count( array_filter( $value ) ) !== count( $value ) ) {
+						$field['class'] .= ' gform-settings-input__container--invalid';
+						$field['desc2']  = '<div class="gform-settings-validation__error">' . esc_html__( 'This field is required.', 'gravityforms' ) . '</div>';
 					}
-				} else {
 
-					/*
-					 * If string, sanitize and add error if appropriate
-					 *
-					 * See https://gravitypdf.com/documentation/v5/gfpdf_form_settings_sanitize/ for more details about this filter
-					 */
-					$value = apply_filters( 'gfpdf_form_settings_sanitize_text', $value, $key );
-					if ( empty( $value ) ) {
-						$field['class'] .= ' gfield_error';
-					}
+					continue;
+				}
+
+				/*
+				 * If string, sanitize and add error if appropriate
+				 *
+				 * See https://docs.gravitypdf.com/v6/developers/filters/gfpdf_form_settings_sanitize/ for more details about this filter
+				 */
+				$value = apply_filters( 'gfpdf_form_settings_sanitize_text', $value, $key );
+				if ( empty( $value ) ) {
+					$field['class'] .= ' gform-settings-input__container--invalid';
+					$field['desc2']  = '<div class="gform-settings-validation__error">' . esc_html__( 'This field is required.', 'gravityforms' ) . '</div>';
 				}
 			}
 		}
@@ -432,9 +553,9 @@ class Model_Form_Settings extends Helper_Abstract_Model {
 	 * Do further checks to see if the custom PDF size should in fact be marked as an error
 	 * Because it is dependant on the paper size option in some cases it shouldn't be highlighted
 	 *
-	 * @param  boolean $skip  Whether to skip error highlighting checks
-	 * @param  array   $field The Gravity Form field
-	 * @param  array   $input The user input
+	 * @param boolean $skip  Whether to skip error highlighting checks
+	 * @param array   $field The Gravity Form field
+	 * @param array   $input The user input
 	 *
 	 * @return boolean
 	 *
@@ -454,60 +575,33 @@ class Model_Form_Settings extends Helper_Abstract_Model {
 	}
 
 	/**
-	 * Similar to Helper_Abstract_Options->settings_sanitize() except we don't need as robust validation and error checking
+	 * If the PDF ID exists (either POST or GET) and we have a template with a config file
+	 * we will load any fields loaded in the config file
 	 *
-	 * @param  array $input Fields to process
+	 * @param array $settings Any existing settings loaded
 	 *
-	 * @return array         Sanitized fields
+	 * @return array
+	 *
+	 * @since  4.0
+	 */
+	public function register_custom_appearance_settings( $settings ) {
+		$template = $this->get_template_name_from_current_page();
+		$class    = $this->templates->get_config_class( $template );
+
+		return $this->setup_custom_appearance_settings( $class, $settings );
+	}
+
+	/*
+	 * To allow for correct backwards compatibility with our v3 templates we need to hide the font, size and colour
+	 * information when selected. To allow this behaviour we're going to assign a 'data-template_group' attribute
+	 * to the template select box which our JS can pick up and use to toggle those fields
+	 *
+	 * @param array $settings The current PDF settings
+	 *
+	 * @return array
 	 *
 	 * @since 4.0
 	 */
-	public function settings_sanitize( $input = [] ) {
-
-		$settings = $this->options->get_registered_fields();
-		$sections = [
-			'form_settings',
-			'form_settings_appearance',
-			'form_settings_custom_appearance',
-			'form_settings_advanced',
-		];
-
-		foreach ( $sections as $s ) {
-			$input = apply_filters( 'gfpdf_settings_' . $s . '_sanitize', $input );
-		}
-
-		/* Loop through each setting being saved and pass it through a sanitization filter */
-		if ( is_array( $input ) && 0 < sizeof( $input ) ) {
-			foreach ( $input as $key => $value ) {
-
-				foreach ( $sections as $s ) {
-
-					/* only process field if found in the section */
-					if ( isset( $settings[ $s ][ $key ] ) ) {
-						$type = isset( $settings[ $s ][ $key ]['type'] ) ? $settings[ $s ][ $key ]['type'] : false;
-
-						/*
-						 * General filter
-						 *
-						* See https://gravitypdf.com/documentation/v5/gfpdf_form_settings_sanitize/ for more details about this filter
-						 */
-						$input[ $key ] = apply_filters( 'gfpdf_form_settings_sanitize', $input[ $key ], $key, $input, $settings[ $s ][ $key ] );
-
-						if ( $type ) {
-							/*
-							 * Field type specific filter
-							 *
-							* See https://gravitypdf.com/documentation/v5/gfpdf_form_settings_sanitize/ for more details about this filter
-							 */
-							$input[ $key ] = apply_filters( 'gfpdf_form_settings_sanitize_' . $type, $input[ $key ], $key, $input, $settings[ $s ][ $key ] );
-						}
-					}
-				}
-			}
-		}
-
-		return $input;
-	}
 
 	/**
 	 * Check if we are on the Form Settings Edit page and gets the appropriate template name
@@ -539,53 +633,10 @@ class Model_Form_Settings extends Helper_Abstract_Model {
 	}
 
 	/**
-	 * If the PDF ID exists (either POST or GET) and we have a template with a config file
-	 * we will load any fields loaded in the config file
-	 *
-	 * @param  array $settings Any existing settings loaded
-	 *
-	 * @return array
-	 *
-	 * @since  4.0
-	 */
-	public function register_custom_appearance_settings( $settings ) {
-		$template = $this->get_template_name_from_current_page();
-		$class    = $this->templates->get_config_class( $template );
-
-		return $this->setup_custom_appearance_settings( $class, $settings );
-	}
-
-	/*
-	 * To allow for correct backwards compatibility with our v3 templates we need to hide the font, size and colour
-	 * information when selected. To allow this behaviour we're going to assign a 'data-template_group' attribute
-	 * to the template select box which our JS can pick up and use to toggle those fields
-	 *
-	 * @param array $settings The current PDF settings
-	 *
-	 * @return array
-	 *
-	 * @since 4.0
-	 */
-	public function register_template_group( $settings ) {
-
-		/* Add our template group */
-		if ( isset( $settings['template'] ) && is_array( $settings['template'] ) ) {
-
-			$template_info = $this->templates->get_template_info_by_id( $this->get_template_name_from_current_page() );
-
-			/* Ensure the key we want is an array, otherwise set it to one */
-			$settings['template']['data']                   = ( isset( $settings['template']['data'] ) && is_array( $settings['template']['data'] ) ) ? $settings['template']['data'] : [];
-			$settings['template']['data']['template_group'] = $template_info['group'];
-		}
-
-		return $settings;
-	}
-
-	/**
 	 * Load our custom appearance settings (if needed)
 	 *
-	 * @param  object $class    The template configuration class
-	 * @param  array  $settings Any current settings
+	 * @param object $class    The template configuration class
+	 * @param array  $settings Any current settings
 	 *
 	 * @return array
 	 *
@@ -596,7 +647,7 @@ class Model_Form_Settings extends Helper_Abstract_Model {
 		/* If class isn't an instance of our interface return $settings */
 		if ( ! ( $class instanceof Helper_Interface_Config ) ) {
 
-			$this->log->addWarning(
+			$this->log->warning(
 				'Instanceof Failed.',
 				[
 					'object' => get_class( $class ),
@@ -627,15 +678,15 @@ class Model_Form_Settings extends Helper_Abstract_Model {
 	/**
 	 * Setup any core fields that are registered to the PDF template
 	 *
-	 * @param  array                                 $settings          Any current settings
-	 * @param  \GFPDF\Helper\Helper_Interface_Config $class             The template configuration class
-	 * @param  array                                 $template_settings Loaded configuration array
+	 * @param array                   $settings          Any current settings
+	 * @param Helper_Interface_Config $class             The template configuration class
+	 * @param array                   $template_settings Loaded configuration array
 	 *
 	 * @return array
 	 *
 	 * @since 4.0
 	 */
-	public function setup_core_custom_appearance_settings( $settings = [], Helper_Interface_Config $class, $template_settings ) {
+	public function setup_core_custom_appearance_settings( array $settings, Helper_Interface_Config $class, array $template_settings ) {
 
 		/* register our core fields */
 		$core_fields = [
@@ -654,7 +705,7 @@ class Model_Form_Settings extends Helper_Abstract_Model {
 			'first_footer'         => [ $this->options, 'get_first_page_footer_field' ],
 		];
 
-		/* See https://gravitypdf.com/documentation/v5/gfpdf_core_template_fields_list/ for more details about this filter */
+		/* See https://docs.gravitypdf.com/v6/developers/filters/gfpdf_core_template_fields_list/ for more details about this filter */
 		$core_fields = apply_filters( 'gfpdf_core_template_fields_list', $core_fields, $template_settings, $class );
 
 		foreach ( $core_fields as $id => $method ) {
@@ -667,11 +718,26 @@ class Model_Form_Settings extends Helper_Abstract_Model {
 		return $settings;
 	}
 
+	public function register_template_group( $settings ) {
+
+		/* Add our template group */
+		if ( isset( $settings['template'] ) && is_array( $settings['template'] ) ) {
+
+			$template_info = $this->templates->get_template_info_by_id( $this->get_template_name_from_current_page() );
+
+			/* Ensure the key we want is an array, otherwise set it to one */
+			$settings['template']['data']                   = ( isset( $settings['template']['data'] ) && is_array( $settings['template']['data'] ) ) ? $settings['template']['data'] : [];
+			$settings['template']['data']['template_group'] = $template_info['group'];
+		}
+
+		return $settings;
+	}
+
 	/**
 	 * Auto strip the .pdf extension when sanitizing
 	 *
-	 * @param  string $value The value entered by the user
-	 * @param  string $key   The field to be parsed
+	 * @param string $value The value entered by the user
+	 * @param string $key   The field to be parsed
 	 *
 	 * @return string        The sanitized data
 	 */
@@ -687,10 +753,10 @@ class Model_Form_Settings extends Helper_Abstract_Model {
 	/**
 	 * Auto decode the JSON conditional logic string
 	 *
-	 * @param  string $value The value entered by the user
-	 * @param  string $key   The field to be parsed
+	 * @param string $value The value entered by the user
+	 * @param string $key   The field to be parsed
 	 *
-	 * @return string        The sanitized data
+	 * @return array|string        The sanitized data
 	 */
 	public function decode_json( $value, $key ) {
 
@@ -699,38 +765,6 @@ class Model_Form_Settings extends Helper_Abstract_Model {
 		}
 
 		return $value;
-	}
-
-
-	/**
-	 * Update our notification form settings which is specific to the PDF Form Settings Page (i.e we need an actual $form object which isn't present when we originally register the settings)
-	 *
-	 * @param  array $notifications The current form notifications
-	 *
-	 * @return void
-	 *
-	 * @since 4.0
-	 */
-	public function register_notifications( $notifications ) {
-
-		/* Loop through notifications and format it to our standard */
-		if ( is_array( $notifications ) ) {
-			$options = [];
-
-			/* Filter out the save and continue notifications */
-			$omit = [ 'form_saved', 'form_save_email_requested' ];
-
-			foreach ( $notifications as $notification ) {
-				$event = ( isset( $notification['event'] ) ) ? $notification['event'] : '';
-
-				if ( ! in_array( $event, $omit, true ) ) {
-					$options[ $notification['id'] ] = $notification['name'];
-				}
-			}
-
-			/* Apply our settings update */
-			$this->options->update_registered_field( 'form_settings', 'notification', 'options', $options );
-		}
 	}
 
 	/**
@@ -758,7 +792,7 @@ class Model_Form_Settings extends Helper_Abstract_Model {
 
 		if ( $results && ! is_wp_error( $results ) ) {
 
-			$this->log->addNotice( 'AJAX – Successfully Deleted PDF Settings' );
+			$this->log->notice( 'AJAX – Successfully Deleted PDF Settings' );
 
 			$return = [
 				'msg' => esc_html__( 'PDF successfully deleted.', 'gravity-forms-pdf-extended' ),
@@ -776,7 +810,7 @@ class Model_Form_Settings extends Helper_Abstract_Model {
 			];
 		}
 
-		$this->log->addError( 'AJAX Endpoint Failed', $errors );
+		$this->log->error( 'AJAX Endpoint Failed', $errors );
 
 		/* Internal Server Error */
 		wp_die( '500', 500 );
@@ -814,7 +848,7 @@ class Model_Form_Settings extends Helper_Abstract_Model {
 			$results = $this->options->update_pdf( $fid, $config['id'], $config );
 
 			if ( $results ) {
-				$this->log->addNotice( 'AJAX – Successfully Duplicated PDF Setting' );
+				$this->log->notice( 'AJAX – Successfully Duplicated PDF Setting' );
 
 				/* @todo just use the same nonce for all requests since WP nonces aren't one-time user (time based) */
 				$dup_nonce   = wp_create_nonce( "gfpdf_duplicate_nonce_{$fid}_{$config['id']}" );
@@ -828,6 +862,7 @@ class Model_Form_Settings extends Helper_Abstract_Model {
 					'dup_nonce'   => $dup_nonce,
 					'del_nonce'   => $del_nonce,
 					'state_nonce' => $state_nonce,
+					'status'      => esc_html__( 'Inactive', 'gravity-forms-pdf-extended' ),
 				];
 
 				echo json_encode( $return );
@@ -835,7 +870,7 @@ class Model_Form_Settings extends Helper_Abstract_Model {
 			}
 		}
 
-		$this->log->addError(
+		$this->log->error(
 			'AJAX Endpoint Failed',
 			[
 				'WP_Error_Message' => $config->get_error_message(),
@@ -875,16 +910,14 @@ class Model_Form_Settings extends Helper_Abstract_Model {
 			/* toggle state */
 			$config['active'] = ( $config['active'] === true ) ? false : true;
 			$state            = ( $config['active'] ) ? esc_attr__( 'Active', 'gravity-forms-pdf-extended' ) : esc_attr__( 'Inactive', 'gravity-forms-pdf-extended' );
-			$src              = $this->gform->get_plugin_url() . '/images/active' . intval( $config['active'] ) . '.png';
 
 			$results = $this->options->update_pdf( $fid, $config['id'], $config );
 
 			if ( $results ) {
-				$this->log->addNotice( 'AJAX – Successfully Updated PDF State' );
+				$this->log->notice( 'AJAX – Successfully Updated PDF State' );
 
 				$return = [
 					'state' => $state,
-					'src'   => $src,
 					'fid'   => $fid,
 					'pid'   => $config['id'],
 				];
@@ -894,7 +927,7 @@ class Model_Form_Settings extends Helper_Abstract_Model {
 			}
 		}
 
-		$this->log->addError(
+		$this->log->error(
 			'AJAX Endpoint Failed',
 			[
 				'WP_Error_Message' => $config->get_error_message(),
@@ -950,11 +983,8 @@ class Model_Form_Settings extends Helper_Abstract_Model {
 			$this->options->register_settings( $this->options->get_registered_fields() );
 
 			/* generate the HTML */
-			ob_start();
-
-			do_settings_fields( 'gfpdf_settings_form_settings_custom_appearance', 'gfpdf_settings_form_settings_custom_appearance' );
-
-			$html = ob_get_clean();
+			$markup = new View_GravityForm_Settings_Markup();
+			$html   = $markup->do_settings_fields( 'gfpdf_settings_form_settings_custom_appearance', $markup::ENABLE_PANEL_TITLE );
 
 			/*
 			 * Pass the required wp_editor IDs and settings in our AJAX response so the client
@@ -981,7 +1011,7 @@ class Model_Form_Settings extends Helper_Abstract_Model {
 			'template_type' => $template_type,
 		];
 
-		$this->log->addNotice( 'AJAX – Successfully Rendered Template Custom Fields', $return );
+		$this->log->notice( 'AJAX – Successfully Rendered Template Custom Fields', $return );
 
 		echo json_encode( $return );
 

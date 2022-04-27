@@ -4,7 +4,7 @@ namespace GFPDF\Helper;
 
 /**
  * @package     Gravity PDF
- * @copyright   Copyright (c) 2019, Blue Liquid Designs
+ * @copyright   Copyright (c) 2022, Blue Liquid Designs
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU Public License
  */
 
@@ -23,9 +23,9 @@ interface Helper_Interface_Filters {
 	/**
 	 * Apply any actions needed for the settings page
 	 *
+	 * @return void
 	 * @since 4.0
 	 *
-	 * @return void
 	 */
 	public function add_filters();
 }

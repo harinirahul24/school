@@ -2,13 +2,12 @@
 
 namespace GFPDF\Helper\Fields;
 
-use GFPDF\Helper\Helper_Abstract_Fields;
-
 use GFCommon;
+use GFPDF\Helper\Helper_Abstract_Fields;
 
 /**
  * @package     Gravity PDF
- * @copyright   Copyright (c) 2019, Blue Liquid Designs
+ * @copyright   Copyright (c) 2022, Blue Liquid Designs
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU Public License
  */
 
@@ -88,7 +87,7 @@ class Field_Rank extends Helper_Abstract_Fields {
 			}
 		}
 
-		$this->cache( $value ); /* for backwards compatbility we'll wrap it in an array */
+		$this->cache( $value ); /* for backwards compatibility we'll wrap it in an array */
 
 		return $this->cache();
 	}

@@ -2,6 +2,7 @@
 
 namespace GFPDF\Templates\Config;
 
+use GFPDF\Helper\Helper_Abstract_Config_Settings;
 use GFPDF\Helper\Helper_Interface_Config;
 
 /**
@@ -14,7 +15,7 @@ use GFPDF\Helper\Helper_Interface_Config;
 
 /**
  * @package     Gravity PDF
- * @copyright   Copyright (c) 2019, Blue Liquid Designs
+ * @copyright   Copyright (c) 2022, Blue Liquid Designs
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU Public License
  */
 
@@ -35,7 +36,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @since 4.0
  */
-class Focus_Gravity implements Helper_Interface_Config {
+class Focus_Gravity extends Helper_Abstract_Config_Settings implements Helper_Interface_Config {
 
 	/**
 	 * Return the templates configuration structure which control what extra fields will be shown in the "Template" tab when configuring a form's PDF.

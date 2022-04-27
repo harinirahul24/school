@@ -1,7 +1,7 @@
 === Newsletter ===
 Tags: newsletter, email marketing, welcome email, signup forms, contact, lead generation, marketing automation
 Tested up to: 5.9.2
-Stable tag: 7.4.1
+Stable tag: 7.4.2
 Contributors: satollo,webagile,michael-travan
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -63,6 +63,7 @@ Improve The Newsletter Plugin with these free addons:
 * [Popup Maker Integration](https://wordpress.org/plugins/newsletter-popupmaker/) - (3rd party) integration of Newsletter forms with Popup Maker plugin
 * [BuddyPress integration](https://wordpress.org/plugins/newsletter-buddypress/) - subscription opt-in inside BuddyPress signup form
 * [WP User Manager addon for Newsletter](https://wordpress.org/plugins/wpum-newsletter/) - adds the subscription option on registration forms
+* [Plaintext Generator](https://wordpress.org/plugins/plaintext-newsletter/) - generates the plaintext version from an HTML newsletter
 
 = Professional Addons =
 
@@ -124,6 +125,15 @@ Thank you, The Newsletter Team
 3. The Reports extension
 
 == Changelog ==
+
+= 7.4.2 =
+
+* Fixed the post date (regression)
+* Added link to the automatic plaintext generator plugin by franciscus
+* Possible fix for our Gutenberg block (sometimes) not working
+* Added uoloads dir and url on System>Status panel
+* Fixed Status panel error when a newsletter is in "error" status
+* Added default width to the logo on header block
 
 = 7.4.1 =
 

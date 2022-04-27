@@ -2,11 +2,11 @@
 
 namespace GFPDF\Helper;
 
-use Monolog\Logger;
+use Psr\Log\LoggerInterface;
 
 /**
  * @package     Gravity PDF
- * @copyright   Copyright (c) 2019, Blue Liquid Designs
+ * @copyright   Copyright (c) 2022, Blue Liquid Designs
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU Public License
  */
 
@@ -23,23 +23,23 @@ trait Helper_Trait_Logger {
 	/**
 	 * Holds our log class
 	 *
-	 * @var \Monolog\Logger
+	 * @var LoggerInterface
 	 *
 	 * @since 4.3
 	 */
 	protected $logger;
 
 	/**
-	 * @param Logger $log
+	 * @param LoggerInterface $log
 	 *
 	 * @since 4.3
 	 */
-	public function set_logger( Logger $log ) {
+	public function set_logger( LoggerInterface $log ) {
 		$this->logger = $log;
 	}
 
 	/**
-	 * @return Logger
+	 * @return LoggerInterface
 	 *
 	 * @since 4.3
 	 */

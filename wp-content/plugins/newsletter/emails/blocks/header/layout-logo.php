@@ -9,4 +9,4 @@ if ($options['logo_width']) {
 }
 $media->set_width($image_width);
 ?>
-<a href="<?php echo esc_url($media->link) ?>" target="_blank"><img src="<?php echo $media->url ?>" width="<?php echo $media->width ?>" height="<?php echo $media->height ?>" border="0" alt="<?php echo esc_attr($media->alt) ?>" class="fluid"></a>                
+<a href="<?php echo esc_url($media->link) ?>" target="_blank"><img src="<?php echo $media->url ?>" width="<?php echo $media->width ?>" height="<?php echo $media->height ?>" border="0" alt="<?php echo esc_attr($media->alt) ?>"></a>                

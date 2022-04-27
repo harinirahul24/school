@@ -2,14 +2,13 @@
 
 namespace GFPDF\Helper\Fields;
 
+use Exception;
 use GFPDF\Helper\Helper_Abstract_Fields;
 use GFPDF\Helper\Helper_QueryPath;
 
-use Exception;
-
 /**
  * @package     Gravity PDF
- * @copyright   Copyright (c) 2019, Blue Liquid Designs
+ * @copyright   Copyright (c) 2022, Blue Liquid Designs
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU Public License
  */
 
@@ -111,12 +110,12 @@ class Field_Quiz extends Helper_Abstract_Fields {
 		}
 
 		/* Ensure results are formatted to v3 expectations */
-		if ( 1 === sizeof( $formatted ) ) {
+		if ( 1 === count( $formatted ) ) {
 			return $formatted[0];
 		}
 
 		/* Return our results, if we have any */
-		if ( 0 < sizeof( $formatted ) ) {
+		if ( 0 < count( $formatted ) ) {
 			return $formatted;
 		}
 

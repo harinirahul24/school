@@ -2,13 +2,12 @@
 
 namespace GFPDF\Helper\Fields;
 
-use GFPDF\Helper\Helper_Abstract_Fields;
-
 use GFFormsModel;
+use GFPDF\Helper\Helper_Abstract_Fields;
 
 /**
  * @package     Gravity PDF
- * @copyright   Copyright (c) 2019, Blue Liquid Designs
+ * @copyright   Copyright (c) 2022, Blue Liquid Designs
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU Public License
  */
 
@@ -37,7 +36,7 @@ class Field_Signature extends Helper_Abstract_Fields {
 	public function html( $value = '', $label = true ) {
 		$value = $this->value();
 
-		$output = ( ! $this->is_empty() ) ? $value['img'] : ''; /* prevents image loading error when non existant */
+		$output = ( ! $this->is_empty() ) ? $value['img'] : ''; /* prevents image loading error when non existent */
 
 		return parent::html( $output );
 	}
@@ -120,7 +119,7 @@ class Field_Signature extends Helper_Abstract_Fields {
 			 */
 			$optimised_width = apply_filters( 'gfpdfe_signature_width', $signature_details[0] / 3, $signature_details[0] ); /* backwards compat */
 
-			/* See https://gravitypdf.com/documentation/v5/gfpdf_signature_width/ for more details about this filter */
+			/* See https://docs.gravitypdf.com/v6/developers/filters/gfpdf_signature_width/ for more details about this filter */
 			$optimised_width = apply_filters( 'gfpdf_signature_width', $optimised_width, $signature_details[0] );
 
 			$optimised_height = $signature_details[1] / 3;

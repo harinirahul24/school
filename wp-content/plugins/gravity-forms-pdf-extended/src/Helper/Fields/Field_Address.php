@@ -2,17 +2,15 @@
 
 namespace GFPDF\Helper\Fields;
 
+use Exception;
+use GF_Field_Address;
+use GFPDF\Helper\Helper_Abstract_Fields;
 use GFPDF\Helper\Helper_Abstract_Form;
 use GFPDF\Helper\Helper_Misc;
-use GFPDF\Helper\Helper_Abstract_Fields;
-
-use GF_Field_Address;
-
-use Exception;
 
 /**
  * @package     Gravity PDF
- * @copyright   Copyright (c) 2019, Blue Liquid Designs
+ * @copyright   Copyright (c) 2022, Blue Liquid Designs
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU Public License
  */
 
@@ -31,11 +29,11 @@ class Field_Address extends Helper_Abstract_Fields {
 	/**
 	 * Check the appropriate variables are parsed in send to the parent construct
 	 *
-	 * @param object                             $field The GF_Field_* Object
-	 * @param array                              $entry The Gravity Forms Entry
+	 * @param object               $field The GF_Field_* Object
+	 * @param array                $entry The Gravity Forms Entry
 	 *
-	 * @param \GFPDF\Helper\Helper_Abstract_Form $gform
-	 * @param \GFPDF\Helper\Helper_Misc          $misc
+	 * @param Helper_Abstract_Form $gform
+	 * @param Helper_Misc          $misc
 	 *
 	 * @throws Exception
 	 *
@@ -66,7 +64,7 @@ class Field_Address extends Helper_Abstract_Fields {
 		$address = [];
 
 		/* check if we should display the zip before the city */
-		$address_display_format = apply_filters( 'gform_address_display_format', 'default' );
+		$address_display_format = apply_filters( 'gform_address_display_format', 'default', $this->field );
 
 		/* Start putting our address together */
 		if ( ! empty( $data['street'] ) ) {

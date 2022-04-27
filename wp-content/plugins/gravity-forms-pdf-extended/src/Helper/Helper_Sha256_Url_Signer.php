@@ -2,11 +2,11 @@
 
 namespace GFPDF\Helper;
 
-use Spatie\UrlSigner\BaseUrlSigner;
+use GFPDF_Vendor\Spatie\UrlSigner\BaseUrlSigner;
 
 /**
  * @package     Gravity PDF
- * @copyright   Copyright (c) 2019, Blue Liquid Designs
+ * @copyright   Copyright (c) 2022, Blue Liquid Designs
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU Public License
  */
 
@@ -25,8 +25,8 @@ class Helper_Sha256_Url_Signer extends BaseUrlSigner {
 	/**
 	 * Generate a token to identify the secure action.
 	 *
-	 * @param \League\Url\UrlImmutable|string $url
-	 * @param string                          $expiration
+	 * @param string $url
+	 * @param string $expiration
 	 *
 	 * @return string
 	 */

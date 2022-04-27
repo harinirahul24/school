@@ -2,16 +2,15 @@
 
 namespace GFPDF\Statics;
 
-use GFPDF\Helper\Helper_PDF;
-
-use Psr\Log\LoggerInterface;
-use GFCommon;
-use GPDFAPI;
 use Exception;
+use GFCommon;
+use GFPDF\Helper\Helper_PDF;
+use GFPDF\Model\Model_PDF;
+use GPDFAPI;
 
 /**
  * @package     Gravity PDF
- * @copyright   Copyright (c) 2019, Blue Liquid Designs
+ * @copyright   Copyright (c) 2022, Blue Liquid Designs
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU Public License
  */
 
@@ -44,7 +43,7 @@ class Queue_Callbacks {
 		$results = GPDFAPI::create_pdf( $entry_id, $pdf_id );
 
 		if ( is_wp_error( $results ) ) {
-			$log->addError(
+			$log->error(
 				'PDF Generation Error',
 				[
 					'code'    => $results->get_error_code(),
@@ -54,6 +53,8 @@ class Queue_Callbacks {
 
 			throw new Exception();
 		}
+
+		$log->notice( sprintf( 'PDF successfully generated and saved to %s', $results ) );
 	}
 
 	/**
@@ -63,12 +64,35 @@ class Queue_Callbacks {
 	 * @param int   $entry_id
 	 * @param array $notification
 	 *
+	 * @throws Exception
 	 * @since 5.0
 	 */
 	public static function send_notification( $form_id, $entry_id, $notification ) {
+		$log   = GPDFAPI::get_log_class();
 		$gform = GPDFAPI::get_form_class();
 
-		GFCommon::send_notification( $notification, $gform->get_form( $form_id ), $gform->get_entry( $entry_id ) );
+		$form  = $gform->get_form( $form_id );
+		$entry = $gform->get_entry( $entry_id );
+
+		if ( $form === null ) {
+			$log->error( 'Could not locate form', [ 'id' => $form_id ] );
+
+			throw new Exception();
+		}
+
+		if ( is_wp_error( $entry ) ) {
+			$log->error(
+				'Entry Error',
+				[
+					'code'    => $entry->get_error_code(),
+					'message' => $entry->get_error_message(),
+				]
+			);
+
+			throw new Exception();
+		}
+
+		GFCommon::send_notification( $notification, $form, $entry );
 	}
 
 	/**
@@ -76,6 +100,8 @@ class Queue_Callbacks {
 	 *
 	 * @param $form_id
 	 * @param $entry_id
+	 *
+	 * @throws Exception
 	 *
 	 * @since 5.0
 	 */
@@ -85,15 +111,36 @@ class Queue_Callbacks {
 		$misc      = GPDFAPI::get_misc_class();
 		$templates = GPDFAPI::get_templates_class();
 		$log       = GPDFAPI::get_log_class();
+
+		/** @var Model_PDF $model_pdf */
 		$model_pdf = GPDFAPI::get_mvc_class( 'Model_PDF' );
 
 		$form  = $gform->get_form( $form_id );
 		$entry = $gform->get_entry( $entry_id );
-		$pdfs  = ( isset( $form['gfpdf_form_settings'] ) ) ? $model_pdf->get_active_pdfs( $form['gfpdf_form_settings'], $entry ) : [];
+
+		if ( $form === null ) {
+			$log->error( 'Could not locate form', [ 'id' => $form_id ] );
+
+			throw new Exception();
+		}
+
+		if ( is_wp_error( $entry ) ) {
+			$log->error(
+				'Entry Error',
+				[
+					'code'    => $entry->get_error_code(),
+					'message' => $entry->get_error_message(),
+				]
+			);
+
+			throw new Exception();
+		}
+
+		$pdfs = ( isset( $form['gfpdf_form_settings'] ) ) ? $model_pdf->get_active_pdfs( $form['gfpdf_form_settings'], $entry ) : [];
 
 		foreach ( $pdfs as $pdf ) {
 			$notification = ( isset( $pdf['notification'] ) && is_array( $pdf['notification'] ) ) ? $pdf['notification'] : [];
-			if ( count( $notification ) > 0 || $pdf['save'] === 'Yes' ) {
+			if ( count( $notification ) > 0 || $model_pdf->maybe_always_save_pdf( $pdf ) ) {
 				$pdf_generator = new Helper_PDF( $entry, $pdf, $gform, $data, $misc, $templates, $log );
 				$misc->rmdir( $pdf_generator->get_path() );
 				break;

@@ -6,7 +6,7 @@ use GFPDF\Helper\Helper_Abstract_Fields;
 
 /**
  * @package     Gravity PDF
- * @copyright   Copyright (c) 2019, Blue Liquid Designs
+ * @copyright   Copyright (c) 2022, Blue Liquid Designs
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU Public License
  */
 
@@ -55,7 +55,7 @@ class Field_V3_List extends Field_List {
 
 		<ul class="bulleted single-column-list">
 			<?php foreach ( $value as $item ) : ?>
-				<li><?php echo $item; ?></li>
+				<li><?= $item; ?></li>
 			<?php endforeach; ?>
 		</ul>
 		<?php

@@ -8,7 +8,7 @@ use GFPDF\Helper\Helper_Interface_Actions;
 
 /**
  * @package     Gravity PDF
- * @copyright   Copyright (c) 2019, Blue Liquid Designs
+ * @copyright   Copyright (c) 2022, Blue Liquid Designs
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU Public License
  */
 
@@ -28,7 +28,7 @@ class Controller_Templates extends Helper_Abstract_Controller implements Helper_
 	/**
 	 * Controller_Templates constructor.
 	 *
-	 * Setup our class by injecting all our dependancies
+	 * Setup our class by injecting all our dependencies
 	 *
 	 * @param Helper_Abstract_Model $model
 	 *

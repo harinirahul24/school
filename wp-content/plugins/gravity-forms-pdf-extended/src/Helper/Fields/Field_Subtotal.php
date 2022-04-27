@@ -2,13 +2,12 @@
 
 namespace GFPDF\Helper\Fields;
 
-use GFPDF\Helper\Helper_Abstract_Field_Products;
-
 use GFCommon;
+use GFPDF\Helper\Helper_Abstract_Field_Products;
 
 /**
  * @package     Gravity PDF
- * @copyright   Copyright (c) 2019, Blue Liquid Designs
+ * @copyright   Copyright (c) 2022, Blue Liquid Designs
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU Public License
  */
 
@@ -32,7 +31,7 @@ class Field_Subtotal extends Helper_Abstract_Field_Products {
 			return true;
 		}
 
-		parent::is_empty();
+		return parent::is_empty();
 	}
 
 	/**
@@ -93,7 +92,7 @@ class Field_Subtotal extends Helper_Abstract_Field_Products {
 		$this->cache(
 			[
 				'total'           => esc_html( $subtotal ),
-				'total_formatted' => esc_html( GFCommon::to_money( $subtotal ), $this->entry['currency'] ),
+				'total_formatted' => esc_html( GFCommon::to_money( $subtotal, $this->entry['currency'] ) ),
 			]
 		);
 

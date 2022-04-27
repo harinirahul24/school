@@ -6,7 +6,7 @@ use GF_Field;
 
 /**
  * @package     Gravity PDF
- * @copyright   Copyright (c) 2019, Blue Liquid Designs
+ * @copyright   Copyright (c) 2022, Blue Liquid Designs
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU Public License
  */
 
@@ -45,6 +45,8 @@ class Helper_Field_Container_Void extends Helper_Field_Container {
 	/**
 	 * Empty method easily disables Helper_Field_Container functionality
 	 *
+	 * @param GF_Field $field
+	 *
 	 * @return void
 	 *
 	 * @since 4.0
@@ -55,6 +57,8 @@ class Helper_Field_Container_Void extends Helper_Field_Container {
 
 	/**
 	 * Empty method easily disables Helper_Field_Container functionality
+	 *
+	 * @param GF_Field $field
 	 *
 	 * @return void
 	 *

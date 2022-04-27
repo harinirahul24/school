@@ -3,17 +3,19 @@
 namespace GFPDF\Controller;
 
 use GFPDF\Helper\Helper_Abstract_Controller;
-use GFPDF\Helper\Helper_Interface_Actions;
+use GFPDF\Helper\Helper_Abstract_Form;
 use GFPDF\Helper\Helper_Abstract_Model;
 use GFPDF\Helper\Helper_Abstract_View;
-use GFPDF\Helper\Helper_Abstract_Form;
+use GFPDF\Helper\Helper_Form;
+use GFPDF\Helper\Helper_Interface_Actions;
 use GFPDF\Helper\Helper_Notices;
-
+use GFPDF\Model\Model_Actions;
+use GFPDF\View\View_Actions;
 use Psr\Log\LoggerInterface;
 
 /**
  * @package     Gravity PDF
- * @copyright   Copyright (c) 2019, Blue Liquid Designs
+ * @copyright   Copyright (c) 2022, Blue Liquid Designs
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU Public License
  */
 
@@ -34,7 +36,7 @@ class Controller_Actions extends Helper_Abstract_Controller implements Helper_In
 	/**
 	 * Holds the abstracted Gravity Forms API specific to Gravity PDF
 	 *
-	 * @var \GFPDF\Helper\Helper_Form
+	 * @var Helper_Form
 	 *
 	 * @since 4.0
 	 */
@@ -43,7 +45,7 @@ class Controller_Actions extends Helper_Abstract_Controller implements Helper_In
 	/**
 	 * Holds our log class
 	 *
-	 * @var \Monolog\Logger|LoggerInterface
+	 * @var LoggerInterface
 	 *
 	 * @since 4.0
 	 */
@@ -53,20 +55,20 @@ class Controller_Actions extends Helper_Abstract_Controller implements Helper_In
 	 * Holds our Helper_Notices object
 	 * which we can use to queue up admin messages for the user
 	 *
-	 * @var \GFPDF\Helper\Helper_Notices
+	 * @var Helper_Notices
 	 *
 	 * @since 4.0
 	 */
 	protected $notices;
 
 	/**
-	 * Setup our class by injecting all our dependancies
+	 * Setup our class by injecting all our dependencies
 	 *
-	 * @param Helper_Abstract_Model|\GFPDF\Model\Model_Actions $model   Our Actions Model the controller will manage
-	 * @param Helper_Abstract_View|\GFPDF\View\View_Actions    $view    Our Actions View the controller will manage
-	 * @param \GFPDF\Helper\Helper_Abstract_Form               $gform   Our abstracted Gravity Forms helper functions
-	 * @param \Monolog\Logger|LoggerInterface                  $log     Our logger class
-	 * @param \GFPDF\Helper\Helper_Notices                     $notices Our notice class used to queue admin messages and errors
+	 * @param Helper_Abstract_Model|Model_Actions $model   Our Actions Model the controller will manage
+	 * @param Helper_Abstract_View|View_Actions   $view    Our Actions View the controller will manage
+	 * @param Helper_Abstract_Form                $gform   Our abstracted Gravity Forms helper functions
+	 * @param LoggerInterface                     $log     Our logger class
+	 * @param Helper_Notices                      $notices Our notice class used to queue admin messages and errors
 	 *
 	 * @since 4.0
 	 */
@@ -88,9 +90,9 @@ class Controller_Actions extends Helper_Abstract_Controller implements Helper_In
 	/**
 	 * Initialise our class defaults
 	 *
+	 * @return void
 	 * @since 4.0
 	 *
-	 * @return void
 	 */
 	public function init() {
 		$this->add_actions();
@@ -99,16 +101,13 @@ class Controller_Actions extends Helper_Abstract_Controller implements Helper_In
 	/**
 	 * Apply any actions
 	 *
+	 * @return void
 	 * @since 4.0
 	 *
-	 * @return void
 	 */
 	public function add_actions() {
 		add_action( 'admin_init', [ $this, 'route' ] );
 		add_action( 'admin_init', [ $this, 'route_notices' ], 20 ); /* Run later than our route check */
-
-		/* Add AJAX endpoints */
-		add_action( 'wp_ajax_multisite_v3_migration', [ $this->model, 'ajax_multisite_v3_migration' ] );
 	}
 
 	/**
@@ -129,15 +128,6 @@ class Controller_Actions extends Helper_Abstract_Controller implements Helper_In
 
 		$routes = [
 			[
-				'action'      => 'migrate_v3_to_v4',
-				'action_text' => esc_html__( 'Begin Migration', 'gravity-forms-pdf-extended' ),
-				'condition'   => [ $this->model, 'migration_condition' ],
-				'process'     => [ $this->model, 'begin_migration' ],
-				'view'        => [ $this->view, 'migration' ],
-				'capability'  => 'update_plugins',
-			],
-
-			[
 				'action'      => 'install_core_fonts',
 				'action_text' => esc_html__( 'Install Core Fonts', 'gravity-forms-pdf-extended' ),
 				'condition'   => [ $this->model, 'core_font_condition' ],
@@ -147,7 +137,8 @@ class Controller_Actions extends Helper_Abstract_Controller implements Helper_In
 			],
 		];
 
-		/* See https://gravitypdf.com/documentation/v5/gfpdf_one_time_action_routes/ for more details about this filter */
+		/* See https://docs.gravitypdf.com/v6/developers/filters/gfpdf_one_time_action_routes for more details about this filter */
+
 		return apply_filters( 'gfpdf_one_time_action_routes', $routes );
 	}
 
@@ -175,7 +166,7 @@ class Controller_Actions extends Helper_Abstract_Controller implements Helper_In
 				 call_user_func( $route['condition'] )
 			) {
 
-				$this->log->addNotice(
+				$this->log->notice(
 					'Trigger Action Notification.',
 					[
 						'route' => $route,
@@ -189,7 +180,7 @@ class Controller_Actions extends Helper_Abstract_Controller implements Helper_In
 	}
 
 	/**
-	 * Run approprate events
+	 * Run appropriate events
 	 *
 	 * @return void
 	 *
@@ -205,7 +196,7 @@ class Controller_Actions extends Helper_Abstract_Controller implements Helper_In
 				/* Check user capability */
 				if ( ! $this->gform->has_capability( $route['capability'] ) ) {
 
-					$this->log->addCritical(
+					$this->log->critical(
 						'Lack of User Capabilities.',
 						[
 							'user'      => wp_get_current_user(),
@@ -219,7 +210,7 @@ class Controller_Actions extends Helper_Abstract_Controller implements Helper_In
 				/* Check nonce is valid */
 				if ( ! wp_verify_nonce( rgpost( 'gfpdf_action_' . $route['action'] ), 'gfpdf_action_' . $route['action'] ) ) {
 
-					$this->log->addWarning( 'Nonce Verification Failed.' );
+					$this->log->warning( 'Nonce Verification Failed.' );
 					$this->notices->add_error( esc_html__( 'There was a problem processing the action. Please try again.', 'gravity-forms-pdf-extended' ) );
 
 					continue;
@@ -227,7 +218,7 @@ class Controller_Actions extends Helper_Abstract_Controller implements Helper_In
 
 				/* Check if the user wants to dismiss the notice, otherwise process the route */
 				if ( isset( $_POST['gfpdf-dismiss-notice'] ) ) {
-					$this->log->addNotice(
+					$this->log->notice(
 						'Dismiss Action.',
 						[
 							'route' => $route,
@@ -236,7 +227,7 @@ class Controller_Actions extends Helper_Abstract_Controller implements Helper_In
 
 					$this->model->dismiss_notice( $route['action'] );
 				} else {
-					$this->log->addNotice(
+					$this->log->notice(
 						'Trigger Action Process.',
 						[
 							'route' => $route,

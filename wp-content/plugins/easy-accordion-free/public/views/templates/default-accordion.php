@@ -20,7 +20,7 @@ if ( $acc_section_title ) {
 echo '<div id="sp-ea-' . esc_attr( $post_id ) . '" class="' . esc_attr( $accordion_wrapper_class ) . '" data-ex-icon="' . esc_attr( $eap_expand_icon ) . '" data-col-icon="' . esc_attr( $eap_collapse_icon ) . '"  data-ea-active="' . esc_attr( $eap_active_event ) . '"  data-ea-mode="' . esc_attr( $accordion_layout ) . '" data-preloader="' . esc_attr( $eap_preloader ) . '">';
 if ( $eap_preloader ) {
 	echo '<div id="eap-preloader-' . esc_attr( $post_id ) . '" class="accordion-preloader">';
-	echo '<img src="' . esc_url( SP_EA_URL . 'public/assets/ea_loader.gif' ) . '"/>';
+	echo '<img src="' . esc_url( SP_EA_URL . 'public/assets/ea_loader.gif' ) . '" alt="Loader image"/>';
 	echo '</div>';
 }
 $ea_key = 1;

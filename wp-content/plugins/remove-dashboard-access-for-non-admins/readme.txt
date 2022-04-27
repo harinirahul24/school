@@ -1,10 +1,10 @@
 === Plugin Name ===
-Contributors: DrewAPicture
-Donate link: http://www.werdswords.com
-Tags: dashboard, access, users, administration
+Contributors: TrustedLogin
+Donate link: https://www.trustedlogin.com
+Tags: dashboard, access, users, administration, login, redirect, membership, restrict
 Requires at least: 3.1.0
-Tested up to: 5.2
-Stable tag: 1.1.3
+Tested up to: 5.9.3
+Stable tag: 1.1.5
 
 Allows you to disable Dashboard access for users of a specific role or capability. Disallowed users are redirected to a chosen URL.
 
@@ -61,7 +61,7 @@ No. Disable the plugin if you don't wish to leverage the functionality.
 
 * In the HTML page source, look for the `<li>` container for the menu node you're targeting. It should take the form of `<li id="wp-admin-bar-SOMETHING">`
 * In `<li id="wp-admin-bar-SOMETHING">`, you want the "SOMETHING" part.
-	
+
 <strong>How to filter the disallowed Toolbar nodes on the front-end:</strong>
 
 `
@@ -98,6 +98,15 @@ example.com/options-general.php?page=dashboard-access&rda_debug=1
 3. Optional login message.
 
 == Changelog ==
+
+= 1.1.4 & 1.1.5 on April 18, 2022 =
+
+Remove Dashboard Access is now being maintained by [TrustedLogin](https://www.trustedlogin.com/2022/02/21/remove-dashboard-access/)! Remove Dashboard Access aligns with what we do at TrustedLogin: simply making WordPress more secure. Email any questions to [support@trustedlogin.com](mailto:support@trustedlogin.com).
+
+* Fixed: Deactivating and activating the plugin will no longer overwrite plugin settings
+* Fixed: Deprecated function `screen_icon()` warning
+* Fixed: Issue when front-end editing of profiles when the `$pagenow` global is not defined ([#24](https://github.com/trustedlogin/Remove-Dashboard-Access/issues/24))
+* Fixed: Potential `Invalid argument supplied for foreach()` PHP warning ([#22](https://github.com/trustedlogin/Remove-Dashboard-Access/pull/22))
 
 = 1.1.3 =
 
@@ -139,7 +148,7 @@ Bug Fixes:
 * New Filter: `rda_toolbar_nodes` - Filter which back-end Toolbar nodes are hidden
 * New Filter: `rda_frontend_toolbar_nodes` - Filter which front-end Toolbar nodes are hidden
 
-= 0.4 = 
+= 0.4 =
 
 * Refined DOING_AJAX check for logged-out users, props @nacin and @BoiteAWeb
 
@@ -157,7 +166,7 @@ Bug Fixes:
 
 == Upgrade Notice ==
 
-= 0.4 = 
+= 0.4 =
 
 * Refined DOING_AJAX check for logged-out users
 

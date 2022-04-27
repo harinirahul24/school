@@ -21,9 +21,11 @@ class TNP_Media {
 
     /** Sets the width recalculating the height */
     public function set_width($width) {
-        $width = (int)$width;
-        if (empty($width)) return;
-        if ($this->width < $width) return;
+        $width = (int) $width;
+        if (empty($width))
+            return;
+        if ($this->width < $width)
+            return;
         $this->height = floor(($width / $this->width) * $this->height);
         $this->width = $width;
     }
@@ -310,11 +312,11 @@ class TNP_Subscription {
     public function __construct() {
         $this->data = new TNP_Subscription_Data();
     }
-    
+
     public function is_single_optin() {
         return $this->optin == 'single';
     }
-    
+
     public function is_double_optin() {
         return $this->optin == 'double';
     }
@@ -338,7 +340,7 @@ class TNP_User {
     const STATUS_UNSUBSCRIBED = 'U';
     const STATUS_BOUNCED = 'B';
     const STATUS_COMPLAINED = 'P';
-    
+
     var $ip = '';
 
     public static function get_status_label($status) {
@@ -971,8 +973,21 @@ class NewsletterModule {
             return false;
         }
         if (empty($list)) {
-            return array();
+            return [];
         }
+        return $list;
+    }
+
+    function get_emails_by_status($status) {
+        global $wpdb;
+        $list = $wpdb->get_results($wpdb->prepare("select * from " . NEWSLETTER_EMAILS_TABLE . " where status=%s order by id desc", $status));
+
+        array_walk($list, function ($email) {
+            $email->options = maybe_unserialize($email->options);
+            if (!is_array($email->options)) {
+                $email->options = [];
+            }
+        });
         return $list;
     }
 
@@ -981,31 +996,34 @@ class NewsletterModule {
      * @param mixed $value
      * @return TNP_Email[]
      */
-    function get_emails_by_field($key, $value) {
-        global $wpdb;
-
-        $value_placeholder = is_int($value) ? '%d' : '%s';
-
-        $query = $wpdb->prepare("SELECT * FROM " . NEWSLETTER_EMAILS_TABLE . " WHERE %1s=$value_placeholder ORDER BY id DESC", $key, $value);
-
-        $email_list = $wpdb->get_results($query);
-
-        if ($wpdb->last_error) {
-            $this->logger->error($wpdb->last_error);
-
-            return [];
-        }
-
-        //Unserialize options
-        array_walk($email_list, function ($email) {
-            $email->options = maybe_unserialize($email->options);
-            if (!is_array($email->options)) {
-                $email->options = [];
-            }
-        });
-
-        return $email_list;
-    }
+//    function get_emails_by_field($key, $value) {
+//        global $wpdb;
+//
+//        $value_placeholder = is_int($value) ? '%d' : '%s';
+//
+//        $key = '`' . str_replace('`', '', $key) . '`';
+//
+//        $query = $wpdb->prepare("SELECT * FROM " . NEWSLETTER_EMAILS_TABLE . " WHERE $key=$value_placeholder ORDER BY id DESC", $value);
+//        //die($query);
+//
+//        $email_list = $wpdb->get_results($query);
+//
+//        if ($wpdb->last_error) {
+//            $this->logger->error($wpdb->last_error);
+//
+//            return [];
+//        }
+//
+//        //Unserialize options
+//        array_walk($email_list, function ($email) {
+//            $email->options = maybe_unserialize($email->options);
+//            if (!is_array($email->options)) {
+//                $email->options = [];
+//            }
+//        });
+//
+//        return $email_list;
+//    }
 
     /**
      * Retrieves an email from DB and unserialize the options.
@@ -1348,8 +1366,9 @@ class NewsletterModule {
     }
 
     function get_user_status_label($user, $html = false) {
-        if (!$html) return TNP_User::get_status_label($user->status);
-        
+        if (!$html)
+            return TNP_User::get_status_label($user->status);
+
         $label = TNP_User::get_status_label($user->status);
         $class = 'unknown';
         switch ($user->status) {
@@ -1836,7 +1855,7 @@ class NewsletterModule {
     }
 
     function process_ip($ip) {
-        
+
         $option = Newsletter::instance()->options['ip'];
         if (empty($option)) {
             return $ip;
@@ -2329,13 +2348,14 @@ class NewsletterModule {
             return '';
         }
         $ip = preg_replace('/[^0-9a-fA-F:., ]/', '', trim($ip));
-        if (strlen($ip) > 50) $ip = substr($ip, 0, 50);
-        
+        if (strlen($ip) > 50)
+            $ip = substr($ip, 0, 50);
+
         // When more than one IP is present due to firewalls, proxies, and so on. The first one should be the origin.
         if (strpos($ip, ',') !== false) {
             list($ip, $tail) = explode(',', $ip, 2);
         }
-        return $ip; 
+        return $ip;
     }
 
     static function get_remote_ip() {

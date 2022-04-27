@@ -1146,8 +1146,6 @@ class NewsletterEmails extends NewsletterModule {
 
     function get_composer_css() {
         $css = file_get_contents(__DIR__ . '/tnp-composer/css/newsletter.css');
-        $css .= "\n\n";
-        $css .= file_get_contents(__DIR__ . '/tnp-composer/css/backend.css');
         $blocks = $this->get_blocks();
         foreach ($blocks as $block) {
             if (!file_exists($block['dir'] . '/style.css')) {
@@ -1159,6 +1157,13 @@ class NewsletterEmails extends NewsletterModule {
         }
         return $css;
     }
+    
+    function get_composer_backend_css() {
+        $css = file_get_contents(__DIR__ . '/tnp-composer/css/backend.css');
+        $css .= "\n\n";
+        $css .= $this->get_composer_css();
+        return $css;
+    }    
 
     /**
      * Send an email to the test subscribers.

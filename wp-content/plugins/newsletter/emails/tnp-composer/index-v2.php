@@ -45,7 +45,7 @@ $rev_dir = is_rtl() ? 'ltr' : 'rlt';
 
 
 <style>
-<?php echo NewsletterEmails::instance()->get_composer_css(); ?>
+<?php echo NewsletterEmails::instance()->get_composer_backend_css(); ?>
 </style>
 <div id="newsletter-builder" dir="ltr">
 

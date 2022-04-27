@@ -2,31 +2,30 @@
 
 namespace GFPDF\View;
 
-use GFPDF\Helper\Helper_Abstract_Model;
-use GFPDF\Helper\Helper_Abstract_View;
-use GFPDF\Helper\Helper_Field_Container;
-use GFPDF\Helper\Helper_Field_Container_Void;
-use GFPDF\Helper\Helper_Abstract_Form;
-use GFPDF\Helper\Helper_PDF;
-use GFPDF\Helper\Helper_Abstract_Options;
-use GFPDF\Helper\Helper_Data;
-use GFPDF\Helper\Helper_Misc;
-use GFPDF\Helper\Helper_Templates;
-
-use Psr\Log\LoggerInterface;
-
-use GFPDF\Helper\Fields\Field_Products;
-
-use GFFormsModel;
-use GFCommon;
-use GF_Field;
-
-use mPDF;
 use Exception;
+use GF_Field;
+use GFCommon;
+use GFPDF\Helper\Fields\Field_Products;
+use GFPDF\Helper\Helper_Abstract_Form;
+use GFPDF\Helper\Helper_Abstract_Model;
+use GFPDF\Helper\Helper_Abstract_Options;
+use GFPDF\Helper\Helper_Abstract_View;
+use GFPDF\Helper\Helper_Data;
+use GFPDF\Helper\Helper_Field_Container;
+use GFPDF\Helper\Helper_Field_Container_Gf25;
+use GFPDF\Helper\Helper_Field_Container_Void;
+use GFPDF\Helper\Helper_Form;
+use GFPDF\Helper\Helper_Misc;
+use GFPDF\Helper\Helper_PDF;
+use GFPDF\Helper\Helper_Templates;
+use GFPDFEntryDetail;
+use GWConditionalLogicDateFields;
+use Psr\Log\LoggerInterface;
+use WP_Error;
 
 /**
  * @package     Gravity PDF
- * @copyright   Copyright (c) 2019, Blue Liquid Designs
+ * @copyright   Copyright (c) 2022, Blue Liquid Designs
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU Public License
  */
 
@@ -56,7 +55,7 @@ class View_PDF extends Helper_Abstract_View {
 	/**
 	 * Holds the abstracted Gravity Forms API specific to Gravity PDF
 	 *
-	 * @var \GFPDF\Helper\Helper_Form
+	 * @var Helper_Form
 	 *
 	 * @since 4.0
 	 */
@@ -65,7 +64,7 @@ class View_PDF extends Helper_Abstract_View {
 	/**
 	 * Holds our log class
 	 *
-	 * @var \Monolog\Logger|LoggerInterface
+	 * @var LoggerInterface
 	 *
 	 * @since 4.0
 	 */
@@ -75,7 +74,7 @@ class View_PDF extends Helper_Abstract_View {
 	 * Holds our Helper_Abstract_Options / Helper_Options_Fields object
 	 * Makes it easy to access global PDF settings and individual form PDF settings
 	 *
-	 * @var \GFPDF\Helper\Helper_Abstract_Options
+	 * @var Helper_Abstract_Options
 	 * @since 4.0
 	 */
 	protected $options;
@@ -84,7 +83,7 @@ class View_PDF extends Helper_Abstract_View {
 	 * Holds our Helper_Data object
 	 * which we can autoload with any data needed
 	 *
-	 * @var \GFPDF\Helper\Helper_Data
+	 * @var Helper_Data
 	 *
 	 * @since 4.0
 	 */
@@ -94,7 +93,7 @@ class View_PDF extends Helper_Abstract_View {
 	 * Holds our Helper_Misc object
 	 * Makes it easy to access common methods throughout the plugin
 	 *
-	 * @var \GFPDF\Helper\Helper_Misc
+	 * @var Helper_Misc
 	 *
 	 * @since 4.0
 	 */
@@ -104,26 +103,26 @@ class View_PDF extends Helper_Abstract_View {
 	 * Holds our Helper_Templates object
 	 * used to ease access to our PDF templates
 	 *
-	 * @var \GFPDF\Helper\Helper_Templates
+	 * @var Helper_Templates
 	 *
 	 * @since 4.0
 	 */
 	protected $templates;
 
 	/**
-	 * Setup our class by injecting all our dependancies
+	 * Setup our class by injecting all our dependencies
 	 *
-	 * @param array                                          $data_cache An array of data to pass to the view
-	 * @param \GFPDF\Helper\Helper_Form|Helper_Abstract_Form $gform      Our abstracted Gravity Forms helper functions
-	 * @param \Monolog\Logger|LoggerInterface                $log        Our logger class
-	 * @param \GFPDF\Helper\Helper_Abstract_Options          $options    Our options class which allows us to access any settings
-	 * @param \GFPDF\Helper\Helper_Data                      $data       Our plugin data store
-	 * @param \GFPDF\Helper\Helper_Misc                      $misc       Our miscellanious methods
-	 * @param \GFPDF\Helper\Helper_Templates                 $templates
+	 * @param array                            $data_cache An array of data to pass to the view
+	 * @param Helper_Form|Helper_Abstract_Form $gform      Our abstracted Gravity Forms helper functions
+	 * @param LoggerInterface                  $log        Our logger class
+	 * @param Helper_Abstract_Options          $options    Our options class which allows us to access any settings
+	 * @param Helper_Data                      $data       Our plugin data store
+	 * @param Helper_Misc                      $misc       Our miscellaneous methods
+	 * @param Helper_Templates                 $templates
 	 *
 	 * @since 4.0
 	 */
-	public function __construct( $data_cache = [], Helper_Abstract_Form $gform, LoggerInterface $log, Helper_Abstract_Options $options, Helper_Data $data, Helper_Misc $misc, Helper_Templates $templates ) {
+	public function __construct( array $data_cache, Helper_Abstract_Form $gform, LoggerInterface $log, Helper_Abstract_Options $options, Helper_Data $data, Helper_Misc $misc, Helper_Templates $templates ) {
 
 		/* Call our parent constructor */
 		parent::__construct( $data_cache );
@@ -140,8 +139,8 @@ class View_PDF extends Helper_Abstract_View {
 	/**
 	 * Our PDF Generator
 	 *
-	 * @param  array $entry    The Gravity Forms Entry to process
-	 * @param  array $settings The Gravity Form PDF Settings
+	 * @param array $entry    The Gravity Forms Entry to process
+	 * @param array $settings The Gravity Form PDF Settings
 	 *
 	 * @return void
 	 *
@@ -209,7 +208,7 @@ class View_PDF extends Helper_Abstract_View {
 
 				/* Check if we should process this document using our legacy system */
 				if ( $model->handle_legacy_tier_2_processing( $pdf, $entry, $settings, $args ) ) {
-					return true;
+					return;
 				}
 			}
 
@@ -226,7 +225,7 @@ class View_PDF extends Helper_Abstract_View {
 
 		} catch ( Exception $e ) {
 
-			$this->log->addError(
+			$this->log->error(
 				'PDF Generation Error',
 				[
 					'entry'     => $entry,
@@ -274,11 +273,14 @@ class View_PDF extends Helper_Abstract_View {
 	 *
 	 * @Internal Fixed an intermittent issue with the Product table not functioning correctly
 	 *
+	 * @param array $form
+	 *
+	 * @return array
 	 * @since    4.5
 	 */
 	private function add_gravity_perk_conditional_logic_date_support( $form ) {
 		if ( method_exists( 'GWConditionalLogicDateFields', 'convert_conditional_logic_date_field_values' ) ) {
-			$form = \GWConditionalLogicDateFields::convert_conditional_logic_date_field_values( $form );
+			$form = GWConditionalLogicDateFields::convert_conditional_logic_date_field_values( $form );
 		}
 
 		return $form;
@@ -287,7 +289,7 @@ class View_PDF extends Helper_Abstract_View {
 	/**
 	 * Ensure a PHP extension is added to the end of the template name
 	 *
-	 * @param  string $name The PHP template
+	 * @param string $name The PHP template
 	 *
 	 * @return string
 	 *
@@ -304,12 +306,13 @@ class View_PDF extends Helper_Abstract_View {
 	/**
 	 * Start the PDF HTML Generation Process
 	 *
-	 * @param  array                              $entry  The Gravity Forms Entry Array
-	 * @param \GFPDF\Helper\Helper_Abstract_Model $model
-	 * @param  array                              $config Any configuration data passed in
+	 * @param array                 $entry  The Gravity Forms Entry Array
+	 * @param Helper_Abstract_Model $model
+	 * @param array                 $config Any configuration data passed in
 	 *
 	 * @return string The generated HTML
 	 *
+	 * @throws Exception
 	 * @since 4.0
 	 */
 	public function process_html_structure( $entry, Helper_Abstract_Model $model, $config = [] ) {
@@ -327,7 +330,7 @@ class View_PDF extends Helper_Abstract_View {
 		<div id="container">
 			<?php
 			/*
-			 * See https://gravitypdf.com/documentation/v5/gfpdf_pre_html_fields/ for more details about this action
+			 * See https://docs.gravitypdf.com/v6/developers/actions/gfpdf_pre_html_fields for more details about this action
 			 * @since 4.1
 			 */
 			do_action( 'gfpdf_pre_html_fields', $entry, $config );
@@ -337,7 +340,7 @@ class View_PDF extends Helper_Abstract_View {
 
 			<?php
 			/*
-			 * See https://gravitypdf.com/documentation/v5/gfpdf_post_html_fields/ for more details about this action
+			 * See https://docs.gravitypdf.com/v6/developers/actions/gfpdf_post_html_fields for more details about this action
 			 * @since 4.1
 			 */
 			do_action( 'gfpdf_post_html_fields', $entry, $config );
@@ -356,11 +359,11 @@ class View_PDF extends Helper_Abstract_View {
 	/**
 	 * Build our HTML structure
 	 *
-	 * @param  array $entry  The Gravity Forms Entry Array
-	 * @param  array $config Any configuration data passed in
+	 * @param array                 $entry  The Gravity Forms Entry Array
+	 * @param Helper_Abstract_Model $model
+	 * @param array                 $config Any configuration data passed in
 	 *
-	 * @return string         The generated HTML
-	 *
+	 * @throws Exception
 	 * @since 4.0
 	 */
 	public function generate_html_structure( $entry, Helper_Abstract_Model $model, $config = [] ) {
@@ -369,13 +372,22 @@ class View_PDF extends Helper_Abstract_View {
 		$form        = $this->gform->get_form( $entry['form_id'] );
 		$products    = new Field_Products( new GF_Field(), $entry, $this->gform, $this->misc );
 		$page_number = 0;
-		$container   = ( isset( $config['meta']['enable_css_ready_classes'] ) && false === $config['meta']['enable_css_ready_classes'] ) ? new Helper_Field_Container_Void() : new Helper_Field_Container();
+
+		$enable_columns = ! isset( $config['meta']['enable_css_ready_classes'] ) || $config['meta']['enable_css_ready_classes'];
+		if ( $enable_columns ) {
+			$container = ! GFCommon::is_legacy_markup_enabled( $form['id'] ) ? new Helper_Field_Container_Gf25() : new Helper_Field_Container();
+		} else {
+			$container = new Helper_Field_Container_Void();
+		}
+
+		$container = apply_filters( 'gfpdf_field_container_class', $container, $form, $entry, $config );
 
 		/* Allow the config to be changed through a filter */
 		$config['meta'] = ( isset( $config['meta'] ) ) ? $config['meta'] : [];
 
 		/**
-		 * See https://gravitypdf.com/documentation/v5/gfpdf_current_pdf_configuration/ for usage
+		 * See https://docs.gravitypdf.com/v6/developers/filters/gfpdf_current_pdf_configuration/ for usage
+		 *
 		 * @since 4.2
 		 */
 		$config = apply_filters( 'gfpdf_current_pdf_configuration', $config, $entry, $form );
@@ -390,7 +402,7 @@ class View_PDF extends Helper_Abstract_View {
 
 		/*
 		 * Display the form title, if needed
-		 *  Use the filter 'gfpdf_current_pdf_configuration' to programically disable this functionality
+		 *  Use the filter 'gfpdf_current_pdf_configuration' to programmatically disable this functionality
 		 */
 		$this->show_form_title( $show_title, $form );
 
@@ -399,7 +411,7 @@ class View_PDF extends Helper_Abstract_View {
 
 			/*
 			 * Load our page name, if needed
-			 * Use the filter 'gfpdf_current_pdf_configuration' to programically disable this functionality
+			 * Use the filter 'gfpdf_current_pdf_configuration' to programmatically disable this functionality
 			 */
 			if ( $show_page_names === true && $field->pageNumber !== $page_number ) {
 				$this->display_page_name( $page_number, $form, $container );
@@ -409,9 +421,9 @@ class View_PDF extends Helper_Abstract_View {
 			/*
 			 * Middleware filter to check if the field should be skipped.
 			 *
-			 * If $middlware is true the field will not be displayed in the PDF
+			 * If $middleware is true the field will not be displayed in the PDF
 			 *
-			 * See https://gravitypdf.com/documentation/v5/gfpdf_field_middleware/ for usage
+			 * See https://docs.gravitypdf.com/v6/developers/filters/gfpdf_field_middleware/ for usage
 			 *
 			 * @since 4.2
 			 */
@@ -432,7 +444,7 @@ class View_PDF extends Helper_Abstract_View {
 		/*
 		 * Filter to prevent the product table showing
 		 *
-		 * See https://gravitypdf.com/documentation/v5/gfpdf_disable_product_table/
+		 * See https://docs.gravitypdf.com/v6/developers/filters/gfpdf_disable_product_table/
 		 *
 		 * @since 5.1
 		 */
@@ -445,14 +457,13 @@ class View_PDF extends Helper_Abstract_View {
 	/**
 	 * Handle our field loader and display the generated HTML
 	 *
-	 * @param  GF_Field                             $field    The field to process
-	 * @param  array                                $entry    The Gravity Form Entry
-	 * @param  array                                $form     The Gravity Form Field
-	 * @param  array                                $config   The user-passed configuration data
-	 * @param  \GFPDF\Helper\Fields\Field_Products  $products A Field_Products Object
-	 * @param  \GFPDF\Helper\Helper_Field_Container $container
-	 *
-	 * @return void
+	 * @param GF_Field               $field    The field to process
+	 * @param array                  $entry    The Gravity Form Entry
+	 * @param array                  $form     The Gravity Form Field
+	 * @param array                  $config   The user-passed configuration data
+	 * @param Field_Products         $products A Field_Products Object
+	 * @param Helper_Field_Container $container
+	 * @param Helper_Abstract_Model  $model
 	 *
 	 * @since 4.0
 	 */
@@ -475,7 +486,7 @@ class View_PDF extends Helper_Abstract_View {
 			if ( ! $class->is_empty() || $show_empty_fields === true ) {
 				/* Load our legacy CSS class names */
 				if ( $load_legacy_css === true ) {
-					$this->load_legacy_css( $field );
+					GFPDFEntryDetail::load_legacy_css( $field );
 				}
 
 				/**
@@ -490,7 +501,7 @@ class View_PDF extends Helper_Abstract_View {
 				$container->maybe_display_faux_column( $field );
 			}
 		} catch ( Exception $e ) {
-			$this->log->addError(
+			$this->log->error(
 				'PDF Generation Error',
 				[
 					'field'     => $field,
@@ -506,8 +517,8 @@ class View_PDF extends Helper_Abstract_View {
 	/**
 	 * If enabled, we'll show the Gravity Form Title in the document
 	 *
-	 * @param  boolean $show_title Whether or not to show the title
-	 * @param  array   $form       The Gravity Form array
+	 * @param boolean $show_title Whether or not to show the title
+	 * @param array   $form       The Gravity Form array
 	 *
 	 * @return void
 	 *
@@ -528,12 +539,9 @@ class View_PDF extends Helper_Abstract_View {
 	/**
 	 * Output the current page name HTML
 	 *
-	 * @param  integer                $page The current page number
-	 * @param  array                  $form The form array
-	 * @param  Helper_Field_Container $container
-	 *
-	 * @return string The page HTML output
-	 *
+	 * @param integer                $page The current page number
+	 * @param array                  $form The form array
+	 * @param Helper_Field_Container $container
 	 *
 	 * @since    4.0
 	 */
@@ -573,10 +581,10 @@ class View_PDF extends Helper_Abstract_View {
 	/**
 	 * Automatically render our core PDF fields and add styles in templates to simplify there usage for users
 	 *
-	 * @param  string $html The current HTML template being processed
-	 * @param  array  $form
-	 * @param  array  $entry
-	 * @param  array  $settings
+	 * @param string $html The current HTML template being processed
+	 * @param array  $form
+	 * @param array  $entry
+	 * @param array  $settings
 	 *
 	 * @return string
 	 * @since 4.0
@@ -597,8 +605,8 @@ class View_PDF extends Helper_Abstract_View {
 	/**
 	 * Loads the core template styles and runs it through a filter
 	 *
-	 * @param  array $entry    The Gravity Form entry being processed
-	 * @param  array $settings The current PDF settings
+	 * @param array $entry    The Gravity Form entry being processed
+	 * @param array $settings The current PDF settings
 	 *
 	 * @return string
 	 *
@@ -620,13 +628,11 @@ class View_PDF extends Helper_Abstract_View {
 	 *
 	 * @param $settings
 	 *
-	 * @return string|\WP_Error
+	 * @return string|WP_Error
 	 *
 	 * @since 4.0
 	 */
 	public function load_core_template_styles( $settings ) {
-		$controller = $this->getController();
-
 		return $this->load( 'core_template_styles', [ 'settings' => $settings ], false );
 	}
 

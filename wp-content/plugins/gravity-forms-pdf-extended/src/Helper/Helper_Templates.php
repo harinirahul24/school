@@ -2,14 +2,14 @@
 
 namespace GFPDF\Helper;
 
-use Psr\Log\LoggerInterface;
-
 use Exception;
+use GPDFAPI;
+use Psr\Log\LoggerInterface;
 use stdClass;
 
 /**
  * @package     Gravity PDF
- * @copyright   Copyright (c) 2019, Blue Liquid Designs
+ * @copyright   Copyright (c) 2022, Blue Liquid Designs
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU Public License
  */
 
@@ -30,7 +30,7 @@ class Helper_Templates {
 	/**
 	 * Holds our log class
 	 *
-	 * @var \Monolog\Logger|LoggerInterface
+	 * @var LoggerInterface
 	 *
 	 * @since 4.1
 	 */
@@ -40,7 +40,7 @@ class Helper_Templates {
 	 * Holds our Helper_Data object
 	 * which we can autoload with any data needed
 	 *
-	 * @var \GFPDF\Helper\Helper_Data
+	 * @var Helper_Data
 	 *
 	 * @since 4.1
 	 */
@@ -49,18 +49,18 @@ class Helper_Templates {
 	/**
 	 * Holds the abstracted Gravity Forms API specific to Gravity PDF
 	 *
-	 * @var \GFPDF\Helper\Helper_Form
+	 * @var Helper_Form
 	 *
 	 * @since 4.3
 	 */
 	protected $gform;
 
 	/**
-	 * Setup our class by injecting all our dependancies
+	 * Setup our class by injecting all our dependencies
 	 *
-	 * @param \Monolog\Logger|LoggerInterface    $log  Our logger class
-	 * @param \GFPDF\Helper\Helper_Data          $data Our plugin data store
-	 * @param \GFPDF\Helper\Helper_Abstract_Form $gform
+	 * @param LoggerInterface      $log  Our logger class
+	 * @param Helper_Data          $data Our plugin data store
+	 * @param Helper_Abstract_Form $gform
 	 *
 	 * @since 4.1
 	 */
@@ -154,7 +154,7 @@ class Helper_Templates {
 		$raw_templates[] = glob( $this->data->template_location . '*.php' );
 		$raw_templates[] = $this->get_core_pdf_templates();
 
-		return $raw_templates;
+		return apply_filters( 'gfpdf_unfiltered_template_list', $raw_templates );
 	}
 
 	/**
@@ -255,7 +255,7 @@ class Helper_Templates {
 	public function get_all_template_info() {
 		return array_map(
 			function( $template_path ) {
-					return $this->get_template_info_by_path( $template_path );
+				return $this->get_template_info_by_path( $template_path );
 			},
 			$this->get_all_templates()
 		);
@@ -276,21 +276,26 @@ class Helper_Templates {
 	public function get_template_path_by_id( $template_id, $include_core = true ) {
 
 		/* Check if template found in multisite PDF working directory */
-		$path_to_test = ( is_multisite() ) ? $this->data->multisite_template_location . $template_id . '.php' : false;
-		if ( is_multisite() && is_file( $path_to_test ) ) {
+		$path_to_test = is_multisite() ? realpath( $this->data->multisite_template_location . $template_id . '.php' ) : false;
+		if ( $path_to_test !== false && strpos( $path_to_test, realpath( $this->data->multisite_template_location ) ) === 0 ) {
 			return $path_to_test;
 		}
 
 		/* Check if template found in PDF working directory */
-		$path_to_test = $this->data->template_location . $template_id . '.php';
-		if ( is_file( $path_to_test ) ) {
+		$path_to_test = realpath( $this->data->template_location . $template_id . '.php' );
+		if ( $path_to_test !== false && strpos( $path_to_test, realpath( $this->data->template_location ) ) === 0 ) {
 			return $path_to_test;
 		}
 
 		/* Check if template found in the core template files */
-		$path_to_test = PDF_PLUGIN_DIR . 'src/templates/' . $template_id . '.php';
-		if ( $include_core && is_file( $path_to_test ) ) {
+		$path_to_test = realpath( PDF_PLUGIN_DIR . 'src/templates/' . $template_id . '.php' );
+		if ( $include_core && $path_to_test !== false && strpos( $path_to_test, realpath( realpath( PDF_PLUGIN_DIR . 'src/templates/' ) ) ) === 0 ) {
 			return $path_to_test;
+		}
+
+		$fallback_template = apply_filters( 'gfpdf_fallback_template_path_by_id', false, $template_id );
+		if ( is_string( $fallback_template ) ) {
+			return $fallback_template;
 		}
 
 		throw new Exception( sprintf( 'Could not find the template: %s.php', $template_id ) );
@@ -312,7 +317,7 @@ class Helper_Templates {
 
 			return $this->get_template_info_by_path( $template_path );
 		} catch ( Exception $e ) {
-			$this->log->addWarning( $e->getMessage() );
+			$this->log->warning( $e->getMessage() );
 
 			return [
 				'group' => esc_html__( 'Legacy', 'gravity-forms-pdf-extended' ),
@@ -373,7 +378,7 @@ class Helper_Templates {
 	 * @since 4.1
 	 */
 	public function get_template_info_by_path( $template_path, $cache_name = '', $cache_time = 604800 ) {
-		$options = \GPDFAPI::get_options_class();
+		$options = GPDFAPI::get_options_class();
 		$debug   = $options->get_option( 'debug_mode', 'No' );
 
 		if ( $debug === 'No' ) {
@@ -401,7 +406,7 @@ class Helper_Templates {
 
 		/* Save the results to a transient so we don't hit the disk every page load */
 		if ( $debug === 'No' ) {
-			$cache                   = is_array( $cache ) ? $cache : [];
+			$cache                   = $cache ?? [];
 			$cache[ $template_path ] = $info;
 
 			set_transient( $cache_name, $cache, $cache_time );
@@ -475,27 +480,28 @@ class Helper_Templates {
 	public function get_config_path_by_id( $template_id, $include_core = true ) {
 
 		/* Check if there's a configuration class in the following directories */
-		$test_config_paths = [
+		$config_paths = [
 			$this->data->template_location . 'config/',
 		];
 
 		if ( is_multisite() ) {
-			array_unshift( $test_config_paths, $this->data->multisite_template_location . 'config/' );
+			array_unshift( $config_paths, $this->data->multisite_template_location . 'config/' );
 		}
 
 		if ( $include_core ) {
-			array_push( $test_config_paths, PDF_PLUGIN_DIR . 'src/templates/config/' );
+			array_push( $config_paths, PDF_PLUGIN_DIR . 'src/templates/config/' );
 		}
 
-		foreach ( $test_config_paths as $path ) {
-			$file = $path . $template_id . '.php';
+		$config_paths = apply_filters( 'gfpdf_template_config_paths', $config_paths );
 
-			if ( is_file( $file ) ) {
+		foreach ( $config_paths as $path ) {
+			$file = realpath( $path . $template_id . '.php' );
+			if ( $file !== false && strpos( $file, realpath( $path ) ) === 0 ) {
 				return $file;
 			}
 		}
 
-		throw new Exception( sprintf( 'Could not locate configuration for "%s" template', $template_id ) );
+		throw new Exception( sprintf( 'No optional configuration file exists for %s.php', $template_id ) );
 	}
 
 	/**
@@ -503,7 +509,7 @@ class Helper_Templates {
 	 * We first look in the PDF_EXTENDED_TEMPLATE directory (in case a user has overridden the file)
 	 * Then we try and load the core configuration file
 	 *
-	 * @param  string $template_id The template config to load
+	 * @param string $template_id The template config to load
 	 *
 	 * @return object
 	 *
@@ -511,7 +517,7 @@ class Helper_Templates {
 	 */
 	public function get_config_class( $template_id ) {
 
-		/* Allow a user to change the current tempalte configuration file if they have the appropriate capabilities */
+		/* Allow a user to change the current template configuration file if they have the appropriate capabilities */
 		if ( rgget( 'template' ) && is_user_logged_in() && $this->gform->has_capability( 'gravityforms_edit_settings' ) ) {
 			$template_id = rgget( 'template' );
 
@@ -523,10 +529,16 @@ class Helper_Templates {
 
 		try {
 			$class_path = $this->get_config_path_by_id( $template_id );
-
-			return $this->load_template_config_file( $class_path );
 		} catch ( Exception $e ) {
-			$this->log->addWarning( $e->getMessage() );
+			$this->log->notice( $e->getMessage() );
+		}
+
+		try {
+			if ( ! empty( $class_path ) ) {
+				return $this->load_template_config_file( $class_path );
+			}
+		} catch ( Exception $e ) {
+			$this->log->warning( $e->getMessage() );
 		}
 
 		/* If class still empty it's either a legacy template or doesn't have a config. Check for legacy templates which support certain fields */
@@ -543,7 +555,7 @@ class Helper_Templates {
 			try {
 				$class = $this->load_template_config_file( PDF_PLUGIN_DIR . 'src/templates/config/legacy.php' );
 			} catch ( Exception $e ) {
-				$this->log->addError( 'Legacy Template Configuration Failed to Load' );
+				$this->log->error( 'Legacy Template Configuration Failed to Load' );
 			}
 		}
 
@@ -558,13 +570,13 @@ class Helper_Templates {
 	/**
 	 * Load our template configuration file, if it exists
 	 *
-	 * @param  string $file The file to load
+	 * @param string $file The file to load
 	 *
 	 * @return object
 	 *
+	 * @throws Exception
 	 * @since 4.1
 	 *
-	 * @throws Exception
 	 */
 	public function load_template_config_file( $file ) {
 
@@ -577,12 +589,12 @@ class Helper_Templates {
 			require_once( $file );
 		}
 
-		/* Insure the class we are trying to load exists and impliments our Helper_Interface_Config interface */
+		/* Insure the class we are trying to load exists */
 		if ( class_exists( $fqcn ) ) {
 			return new $fqcn();
 		}
 
-		throw new Exception( 'Template Configuration Failed to Load' );
+		throw new Exception( 'Template configuration failed to load: ' . $fqcn );
 	}
 
 	/**
@@ -643,23 +655,26 @@ class Helper_Templates {
 	public function get_template_image( $template, $type = 'url', $include_core = true ) {
 
 		/* Check if there's an image in the following directories */
-		$test_image_paths = [
+		$image_paths = [
 			$this->data->template_location_url . 'images/' => $this->data->template_location . 'images/',
 		];
 
 		if ( is_multisite() ) {
-			$test_image_paths = [ $this->data->multisite_template_location_url . 'images/' => $this->data->multisite_template_location . 'images/' ] + $test_image_paths;
+			$image_paths = [ $this->data->multisite_template_location_url . 'images/' => $this->data->multisite_template_location . 'images/' ] + $image_paths;
 		}
 
 		if ( $include_core ) {
-			$test_image_paths[ PDF_PLUGIN_URL . 'src/templates/images/' ] = PDF_PLUGIN_DIR . 'src/templates/images/';
+			$image_paths[ PDF_PLUGIN_URL . 'src/templates/images/' ] = PDF_PLUGIN_DIR . 'src/templates/images/';
 		}
+
+		$image_paths = apply_filters( 'gfpdf_template_image_paths', $image_paths );
 
 		/* Check if our image exists in one of our directories and return the URL */
 		$template .= '.png';
-		foreach ( $test_image_paths as $url => $path ) {
-			if ( is_file( $path . $template ) ) {
-				return ( $type === 'url' ) ? $url . $template : $path . $template;
+		foreach ( $image_paths as $url => $path ) {
+			$file = realpath( $path . $template );
+			if ( $file !== false && strpos( $file, realpath( $path ) ) === 0 ) {
+				return ( $type === 'url' ) ? $url . $template : realpath( $path . $template );
 			}
 		}
 
@@ -669,13 +684,13 @@ class Helper_Templates {
 	/**
 	 * Get the arguments array that should be passed to our PDF Template
 	 *
-	 * @param  array  $form       The Gravity Form array
-	 * @param  array  $fields     The Gravity Form fields array, with the field ID as the array key
-	 * @param  array  $entry      Gravity Form Entry The Gravity Forms entry array
-	 * @param  array  $form_data  The form data array, formatted form the $entry array
-	 * @param  array  $settings   PDF Settings The current PDF settings
-	 * @param  object $config     The current PDF template configuration class
-	 * @param  array  $legacy_ids An array of multiple entry IDs for legacy templates only
+	 * @param array  $form       The Gravity Form array
+	 * @param array  $fields     The Gravity Form fields array, with the field ID as the array key
+	 * @param array  $entry      Gravity Form Entry The Gravity Forms entry array
+	 * @param array  $form_data  The form data array, formatted form the $entry array
+	 * @param array  $settings   PDF Settings The current PDF settings
+	 * @param object $config     The current PDF template configuration class
+	 * @param array  $legacy_ids An array of multiple entry IDs for legacy templates only
 	 *
 	 * @return array
 	 *
@@ -687,7 +702,12 @@ class Helper_Templates {
 		/* Disable the field encryption checks which can slow down our entry queries */
 		add_filter( 'gform_is_encrypted_field', '__return_false' );
 
-		/* See https://gravitypdf.com/documentation/v5/gfpdf_template_args/ for more details about this filter */
+		/* Inject the settings into our config object, if requested */
+		if ( $config instanceof Helper_Interface_Config_Settings ) {
+			$config->set_settings( $settings );
+		}
+
+		/* See https://docs.gravitypdf.com/v6/developers/filters/gfpdf_template_args/ for more details about this filter */
 
 		return apply_filters(
 			'gfpdf_template_args',

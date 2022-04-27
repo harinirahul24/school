@@ -1,5 +1,6 @@
 (function (blocks, editor, element, components) {
 
+
     const el = element.createElement;
     const {registerBlockType} = blocks;
     const { RichText, InspectorControls, withColors, PanelColorSettings, getColorClassName, AlignmentToolbar, BlockControls } = editor;

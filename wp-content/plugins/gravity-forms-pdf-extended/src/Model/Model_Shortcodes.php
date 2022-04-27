@@ -2,17 +2,17 @@
 
 namespace GFPDF\Model;
 
-use GFPDF\Helper\Helper_Abstract_Pdf_Shortcode;
+use Exception;
 use GFPDF\Exceptions\GravityPdfShortcodeEntryIdException;
 use GFPDF\Exceptions\GravityPdfShortcodePdfConditionalLogicFailedException;
 use GFPDF\Exceptions\GravityPdfShortcodePdfConfigNotFoundException;
 use GFPDF\Exceptions\GravityPdfShortcodePdfInactiveException;
-
+use GFPDF\Helper\Helper_Abstract_Pdf_Shortcode;
 use GPDFAPI;
 
 /**
  * @package     Gravity PDF
- * @copyright   Copyright (c) 2019, Blue Liquid Designs
+ * @copyright   Copyright (c) 2022, Blue Liquid Designs
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU Public License
  */
 
@@ -47,7 +47,7 @@ class Model_Shortcodes extends Helper_Abstract_Pdf_Shortcode {
 	 * @internal Deprecated in 5.2. Use self::process()
 	 */
 	public function gravitypdf( $attributes ) {
-		_doing_it_wrong( __METHOD__, __( 'This method has been superceeded by self::process()', 'gravity-forms-pdf-extended' ), '5.2' );
+		_doing_it_wrong( __METHOD__, __( 'This method has been superseded by self::process()', 'gravity-forms-pdf-extended' ), '5.2' );
 
 		return $this->process( $attributes );
 	}
@@ -66,7 +66,7 @@ class Model_Shortcodes extends Helper_Abstract_Pdf_Shortcode {
 	public function process( $attributes ) {
 		$controller = $this->getController();
 
-		$shortcode_error_messages_enabled = $this->options->get_option( 'debug_mode', 'No' ) === 'Yes' ? true : false;
+		$shortcode_error_messages_enabled = $this->options->get_option( 'debug_mode', 'No' ) === 'Yes';
 		$has_view_permissions             = $shortcode_error_messages_enabled && $this->gform->has_capability( 'gravityforms_view_entries' );
 
 		/* merge in any missing defaults */
@@ -87,7 +87,7 @@ class Model_Shortcodes extends Helper_Abstract_Pdf_Shortcode {
 			static::SHORTCODE
 		);
 
-		/* See https://gravitypdf.com/documentation/v5/gfpdf_gravityforms_shortcode_attributes/ for more information about this filter */
+		/* See https://docs.gravitypdf.com/v6/developers/filters/gfpdf_gravityforms_shortcode_attributes/ for more information about this filter */
 		$attributes = apply_filters( 'gfpdf_gravityforms_shortcode_attributes', $attributes );
 
 		try {
@@ -107,7 +107,7 @@ class Model_Shortcodes extends Helper_Abstract_Pdf_Shortcode {
 				$attributes['url'] = $this->url_signer->sign( $attributes['url'], $attributes['expires'] );
 			}
 
-			$this->log->addNotice( 'Generating Shortcode Markup', [ 'attr' => $attributes ] );
+			$this->log->notice( 'Generating Shortcode Markup', [ 'attr' => $attributes ] );
 
 			if ( $raw ) {
 				return $attributes['url'];
@@ -123,7 +123,7 @@ class Model_Shortcodes extends Helper_Abstract_Pdf_Shortcode {
 			return $has_view_permissions ? $controller->view->pdf_not_active() : '';
 		} catch ( GravityPdfShortcodePdfConditionalLogicFailedException $e ) {
 			return $has_view_permissions ? $controller->view->conditional_logic_not_met() : '';
-		} catch ( \Exception $e ) {
+		} catch ( Exception $e ) {
 			return $has_view_permissions ? $e->getMessage() : '';
 		}
 	}

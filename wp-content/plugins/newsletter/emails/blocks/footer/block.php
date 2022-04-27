@@ -6,11 +6,11 @@
  */
 
 $default_options = array(
-    'view' => 'View online',
+    'view' => __('View online', 'newsletter'),
     'view_enabled' => 1,
-    'profile' => 'Manage your subscription',
+    'profile' => __('Manage your subscription', 'newsletter'),
     'profile_enabled' => 1,
-    'unsubscribe' => 'Unsubscribe',
+    'unsubscribe' => __('Unsubscribe', 'newsletter'),
     'unsubscribe_enabled' => 1,
     'font_family' => '',
     'font_size' => '',

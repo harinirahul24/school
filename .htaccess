@@ -1,17 +1,16 @@
-#This Apache config file was created by Duplicator Installer on 2022-03-10 14:13:01.
-#The original can be found in archived file with the name htaccess.orig
 
 # BEGIN WordPress
-# The directives (lines) between `BEGIN WordPress` and `END WordPress` are
+# The directives (lines) between "BEGIN WordPress" and "END WordPress" are
 # dynamically generated, and should only be modified via WordPress filters.
 # Any changes to the directives between these markers will be overwritten.
 <IfModule mod_rewrite.c>
 RewriteEngine On
-RewriteBase /hfnschools/
+RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+RewriteBase /hf/hf-schools/
 RewriteRule ^index\.php$ - [L]
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule . /hfnschools/index.php [L]
+RewriteRule . /hf/hf-schools/index.php [L]
 </IfModule>
 
 # END WordPress

@@ -42,7 +42,8 @@ function save_stour_submission()
 		$count = get_post_meta($id, $prefix.'count', true);
 		$vehicle_number = get_post_meta($id, $prefix.'vehicle_number', true);
 		$updated_date = date("d/m/Y H:i");
-		
+		//Remove updatekey on one-time update
+		update_post_meta($id, 'update_key','');
 		
 		$dataForSheet = array();
 		$dataForSheet[] = array($parent_name, $email, $phone, $student_name, $standard, $address, $date, $slot, $transport, $count, $vehicle_number, $updated_date);
@@ -51,6 +52,8 @@ function save_stour_submission()
 		
 		$row_index = get_google_sheet_row_index($id, $sheet_id, $sheet_name);
 		update_sheet($dataForSheet, $row_index, $col_index, $sheet_id, $sheet_range);
+		$mail_content = get_field('update_mail_content', 'option');	
+		send_email($id,$mail_content);
 		echo true;
 	}else{
 		//Save Submissions			
@@ -87,15 +90,16 @@ function save_stour_submission()
 		$dataForSheet = array();
 		$dataForSheet[] = array($id, $created_date, $parent_name, $email, $phone, $student_name, $standard, $address, $date, $slot, $transport, $count, $vehicle_number, $updated_date);
 				
-		append_sheet($dataForSheet, $sheet_id, $sheet_range);	
-		send_email($id);
+		append_sheet($dataForSheet, $sheet_id, $sheet_range);
+		$mail_content = get_field('mail_content', 'option');	
+		send_email($id,$mail_content);
 		echo true;
 	}	
 	echo false;
 	exit;
 }
 
-function send_email($id)
+function send_email($id,$mail_content)
 {
 	
 	$prefix = 'stour_';
@@ -106,9 +110,10 @@ function send_email($id)
 	$count = get_post_meta($id, $prefix.'count', true);
 	$vehicle_number = get_post_meta($id, $prefix.'vehicle_number', true);
 	$updated_date = date("d/m/Y H:i");
+	$updateKey = get_post_meta($id,'update_key', true);
 	
 	$update_link = get_field('update_link', 'option');
-	$update_link = str_replace("[ID]",urlencode($id), $update_link);
+	$update_link = str_replace("[ID]",urlencode($updateKey), $update_link);
 	
 	$subject = get_field('subject', 'option');
 	$from_name = get_field('from_name', 'option');
@@ -116,9 +121,9 @@ function send_email($id)
 
 	$headers = array('Content-Type: text/html; charset=UTF-8');
 	$headers[]= "From: ".$from_name." <".$from_email.">";
-	 
-	$mail_content = get_field('mail_content', 'option');
-	
+
+	// Mail Template 
+
 	$mail_content = str_replace("[STOUR_DATE]",$date, $mail_content);
 	$mail_content = str_replace("[STOUR_SLOT]",$slot, $mail_content);
 	$mail_content = str_replace("[STOUR_ID]",$id, $mail_content);
@@ -139,7 +144,50 @@ function get_submission_count(){
 	$prefix = 'stour_';
 	$date = $_POST['date'];
 	$slot = $_POST['slot'];
+    //check for slot exist
+    
+    if($_POST['sub_id'] != ''){
+        //Update Submissions        
+    $id = $_POST['sub_id'];
+    $bk_date = get_post_meta($id, $prefix.'date', true);
+    $bk_slot = get_post_meta($id, $prefix.'slot', true);
+
+    if(($date == $bk_date) && ($slot == $bk_slot))      
+    {   echo "booked";
+        die(0); 
+    }else{
+        $args = array( 'post_type' => $p_type,
+	'post_status' => 'publish',	
+	'posts_per_page' => -1,	
+	'orderby' => 'id',
+	'order'	=> 'DESC',
+	'meta_query' => array(
+		'relation' => 'AND',				
+		array(
+			'key' => $prefix.'date',
+			'value' => $date,
+			'compare' => '='
+		),
+		array(
+			'key' => $prefix.'slot',
+			'value' => $slot,
+			'compare' => '='
+		)
+	)
+	);
+
+	$the_query = new WP_Query( $args ); 
+	if ( $the_query->have_posts() ){
+		echo $the_query->found_posts;		
+	}else{
+		echo '0';
+	}
 	
+    die(0);
+    }
+      }
+
+    //check for slot exist
 	$args = array( 'post_type' => $p_type,
 	'post_status' => 'publish',	
 	'posts_per_page' => -1,	
@@ -159,6 +207,7 @@ function get_submission_count(){
 		)
 	)
 	);
+
 	$the_query = new WP_Query( $args ); 
 	if ( $the_query->have_posts() ){
 		echo $the_query->found_posts;		

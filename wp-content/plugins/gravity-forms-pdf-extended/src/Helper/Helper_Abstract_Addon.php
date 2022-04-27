@@ -2,9 +2,11 @@
 
 namespace GFPDF\Helper;
 
+use Psr\Log\LoggerInterface;
+
 /**
  * @package     Gravity PDF
- * @copyright   Copyright (c) 2019, Blue Liquid Designs
+ * @copyright   Copyright (c) 2022, Blue Liquid Designs
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU Public License
  */
 
@@ -54,7 +56,7 @@ abstract class Helper_Abstract_Addon {
 	private $addon_path_main_plugin_file;
 
 	/**
-	 * Holds our registred objects
+	 * Holds our registered objects
 	 *
 	 * @var Helper_Singleton
 	 *
@@ -85,7 +87,7 @@ abstract class Helper_Abstract_Addon {
 	/**
 	 * Holds our log class
 	 *
-	 * @var \Monolog\Logger
+	 * @var LoggerInterface
 	 *
 	 * @since 4.2
 	 */
@@ -257,7 +259,7 @@ abstract class Helper_Abstract_Addon {
 		 * @Internal Due to WordPress.org rules we cannot initialisation the updater code in the core plugin
 		 *           Add-ons have to initialise this functionality via GFPDF\Helper\Licensing\EDD_SL_Plugin_Updater
 		 */
-		add_action( 'admin_init', [ $this, 'plugin_updater' ] );
+		add_action( 'init', [ $this, 'plugin_updater' ] );
 
 		/*
 		 * Automatically register our addon with the main plugin to enable license management in the UI
@@ -347,9 +349,9 @@ abstract class Helper_Abstract_Addon {
 	 *   ]
 	 * );
 	 *
+	 * @return void
 	 * @since 4.2
 	 *
-	 * @return void
 	 */
 	public abstract function plugin_updater();
 
@@ -377,7 +379,7 @@ abstract class Helper_Abstract_Addon {
 	final public function register_addon_fields( $settings ) {
 		/*
 		 * Because this method is called via a filter it needs to be public
-		 * so we'll check the class impliments the correct interface before
+		 * so we'll check the class implements the correct interface before
 		 * doing anything.
 		 */
 		if ( ! $this instanceof Helper_Interface_Extension_Settings ) {
@@ -478,7 +480,7 @@ abstract class Helper_Abstract_Addon {
 	}
 
 	/**
-	 * @return string Returns the currenct add-on license status
+	 * @return string Returns the current add-on license status
 	 *
 	 * @since 4.2
 	 */
@@ -498,7 +500,7 @@ abstract class Helper_Abstract_Addon {
 	/**
 	 * Register our license check event one week into the future.
 	 *
-	 * @Internal Using wp_schedule_single_event() means we don't need to 1. Add a weekly internval to wp_schedule_event()
+	 * @Internal Using wp_schedule_single_event() means we don't need to 1. Add a weekly interval to wp_schedule_event()
 	 *           and 2. Need to clear the scheduled hook when the plugin is deactivated
 	 *
 	 * @since    4.2
@@ -552,7 +554,7 @@ abstract class Helper_Abstract_Addon {
 			return false;
 		}
 
-		/* Error occured. Update status and message in the license settings */
+		/* Error occurred. Update status and message in the license settings */
 		$possible_responses = $this->data->addon_license_responses( $this->get_name() );
 
 		/* Ensure we have a known error */
@@ -567,7 +569,11 @@ abstract class Helper_Abstract_Addon {
 
 		/* Include the expiry date if license expired */
 		if ( $license_check->license === 'expired' ) {
-			$license_info['message'] = sprintf( $license_info['message'], date_i18n( get_option( 'date_format' ), strtotime( $license_check->expires, current_time( 'timestamp' ) ) ) );
+			$date_format = get_option( 'date_format' );
+			$dt          = new \DateTimeImmutable( $license_check->expires, wp_timezone() );
+			$date        = $dt === false ? gmdate( $date_format, false ) : $dt->format( $date_format );
+
+			$license_info['message'] = sprintf( $license_info['message'], $date );
 		}
 
 		$this->log->notice( 'License key no longer valid', $license_info );
@@ -618,8 +624,8 @@ abstract class Helper_Abstract_Addon {
 	/**
 	 * Show row meta on the plugin screen.
 	 *
-	 * @param    mixed $links Plugin Row Meta
-	 * @param    mixed $file  Plugin Base file
+	 * @param mixed $links Plugin Row Meta
+	 * @param mixed $file  Plugin Base file
 	 *
 	 * @return    array
 	 *
@@ -632,7 +638,7 @@ abstract class Helper_Abstract_Addon {
 
 			$doc_slug = $this->get_addon_documentation_slug();
 			if ( ! empty( $doc_slug ) ) {
-				$row_meta['docs'] = '<a href="' . esc_url( 'https://gravitypdf.com/documentation/v5/' . $doc_slug . '/' ) . '" title="' . esc_attr__( 'View plugin Documentation', 'gravity-forms-pdf-extended' ) . '">' . esc_html__( 'Docs', 'gravity-forms-pdf-extended' ) . '</a>';
+				$row_meta['docs'] = '<a href="' . esc_url( 'https://docs.gravitypdf.com/v6/extensions/' . str_replace( 'shop-plugin-', '', $doc_slug ) . '/' ) . '" title="' . esc_attr__( 'View plugin Documentation', 'gravity-forms-pdf-extended' ) . '">' . esc_html__( 'Docs', 'gravity-forms-pdf-extended' ) . '</a>';
 			}
 
 			$row_meta['support'] = '<a href="' . esc_url( 'https://gravitypdf.com/support/#contact-support' ) . '" title="' . esc_attr__( 'Get Help and Support', 'gravity-forms-pdf-extended' ) . '">' . esc_html__( 'Support', 'gravity-forms-pdf-extended' ) . '</a>';

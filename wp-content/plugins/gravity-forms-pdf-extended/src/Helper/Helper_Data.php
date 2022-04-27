@@ -4,7 +4,7 @@ namespace GFPDF\Helper;
 
 /**
  * @package     Gravity PDF
- * @copyright   Copyright (c) 2019, Blue Liquid Designs
+ * @copyright   Copyright (c) 2022, Blue Liquid Designs
  * @license     http://opensource.org/licenses/gpl-2.0.php GNU Public License
  */
 
@@ -37,9 +37,15 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @property string  $multisite_template_location     The current path to the multisite PDF working directory
  * @property string  $multisite_template_location_url The current URL to the multisite PDF working directory
  * @property string  $template_transient_cache        The ID for the template header transient cache
+ * @property bool    $allow_url_fopen                 The current PHP allow_url_fopen ini setting status
  *
  */
 class Helper_Data {
+
+	/**
+	 * @since 6.0
+	 */
+	public const REST_API_BASENAME = 'gravity-pdf/';
 
 	/**
 	 * Location for the overloaded data
@@ -54,7 +60,7 @@ class Helper_Data {
 	 * PHP Magic Method __set()
 	 * Run when writing data to inaccessible properties
 	 *
-	 * @param string $name  Name of the peroperty being interacted with
+	 * @param string $name  Name of the property being interacted with
 	 * @param mixed  $value Data to assign to the $name property
 	 *
 	 * @since 4.0
@@ -101,7 +107,7 @@ class Helper_Data {
 	 * PHP Magic Method __isset()
 	 * Triggered when isset() or empty() is called on inaccessible properties
 	 *
-	 * @param  string $name Name of the property being interacted with
+	 * @param string $name Name of the property being interacted with
 	 *
 	 * @return boolean       Whether property exists
 	 *
@@ -115,7 +121,7 @@ class Helper_Data {
 	 * PHP Magic Method __isset()
 	 * Triggered when unset() is called on inaccessible properties
 	 *
-	 * @param  string $name Name of the property being interacted with
+	 * @param string $name Name of the property being interacted with
 	 *
 	 * @return void
 	 *
@@ -147,7 +153,7 @@ class Helper_Data {
 	public function set_plugin_titles() {
 		$this->short_title = esc_html__( 'PDF', 'gravity-forms-pdf-extended' );
 		$this->title       = esc_html__( 'Gravity PDF', 'gravity-forms-pdf-extended' );
-		$this->slug        = 'pdf';
+		$this->slug        = 'PDF';
 	}
 
 	/**
@@ -188,8 +194,8 @@ class Helper_Data {
 	/**
 	 * A key-value array to be used in a localized script call for our Gravity PDF javascript files
 	 *
-	 * @param \GFPDF\Helper\Helper_Abstract_Options $options
-	 * @param \GFPDF\Helper\Helper_Abstract_Form    $gform
+	 * @param Helper_Abstract_Options $options
+	 * @param Helper_Abstract_Form    $gform
 	 *
 	 * @return array
 	 *
@@ -197,20 +203,26 @@ class Helper_Data {
 	 */
 	public function get_localised_script_data( Helper_Abstract_Options $options, Helper_Abstract_Form $gform ) {
 
-		$custom_fonts = array_values( $options->get_custom_fonts() );
+		$custom_fonts      = array_values( $options->get_custom_fonts() );
+		$user_data         = get_userdata( get_current_user_id() );
+		$user_capabilities = is_object( $user_data ) ? $user_data->allcaps : [];
+		$user_capabilities = is_super_admin() ? [ 'administrator' => true ] : $user_capabilities;
 
-		/* See https://gravitypdf.com/documentation/v5/gfpdf_localised_script_array/ for more details about this filter */
+		/* See https://docs.gravitypdf.com/v6/developers/filters/gfpdf_localised_script_array/ for more details about this filter */
 
 		return apply_filters(
 			'gfpdf_localised_script_array',
 			[
 				'ajaxUrl'                              => admin_url( 'admin-ajax.php' ),
 				'ajaxNonce'                            => wp_create_nonce( 'gfpdf_ajax_nonce' ),
+				'restUrl'                              => rest_url( 'gravity-pdf/v1/' ),
+				'restNonce'                            => wp_create_nonce( 'wp_rest' ),
 				'currentVersion'                       => PDF_EXTENDED_VERSION,
 				'pdfWorkingDir'                        => PDF_TEMPLATE_LOCATION,
 				'pluginUrl'                            => PDF_PLUGIN_URL,
 				'pluginPath'                           => PDF_PLUGIN_DIR,
 				'customFontData'                       => json_encode( $custom_fonts ),
+				'userCapabilities'                     => $user_capabilities,
 
 				'spinnerUrl'                           => admin_url( 'images/spinner-2x.gif' ),
 				'spinnerAlt'                           => esc_html__( 'Loading...', 'gravity-forms-pdf-extended' ),
@@ -229,22 +241,20 @@ class Helper_Data {
 				'yes'                                  => esc_html__( 'Yes', 'gravity-forms-pdf-extended' ),
 				'standard'                             => esc_html__( 'Standard', 'gravity-forms-pdf-extended' ),
 				'advanced'                             => esc_html__( 'Advanced', 'gravity-forms-pdf-extended' ),
+				'manage'                               => esc_html__( 'Manage', 'gravity-forms-pdf-extended' ),
+				'details'                              => esc_html__( 'Details', 'gravity-forms-pdf-extended' ),
 				'select'                               => esc_html__( 'Select', 'gravity-forms-pdf-extended' ),
 				'version'                              => esc_html__( 'Version', 'gravity-forms-pdf-extended' ),
 				'group'                                => esc_html__( 'Group', 'gravity-forms-pdf-extended' ),
 				'tags'                                 => esc_html__( 'Tags', 'gravity-forms-pdf-extended' ),
 
-				'migratingSite'                        => esc_html__( 'Migrating site #%s', 'gravity-forms-pdf-extended' ),
-				'siteMigrationComplete'                => esc_html__( 'Site #%s migration complete.', 'gravity-forms-pdf-extended' ),
-				'migrationError'                       => esc_html__( 'Migration Error', 'gravity-forms-pdf-extended' ),
-				'siteMigrationErrors'                  => esc_html__( 'Site #%s migration errors.', 'gravity-forms-pdf-extended' ),
-
+				'template'                             => esc_html__( 'Template', 'gravity-forms-pdf-extended' ),
+				'manageTemplates'                      => esc_html__( 'Manage PDF Templates', 'gravity-forms-pdf-extended' ),
 				'addNewTemplate'                       => esc_html__( 'Add New Template', 'gravity-forms-pdf-extended' ),
-				'showAdvancedOptions'                  => esc_html__( 'Show Advanced Options...', 'gravity-forms-pdf-extended' ),
-				'hideAdvancedOptions'                  => esc_html__( 'Hide Advanced Options...', 'gravity-forms-pdf-extended' ),
 				'thisFormHasNoPdfs'                    => esc_html__( "This form doesn't have any PDFs.", 'gravity-forms-pdf-extended' ),
 				'letsGoCreateOne'                      => esc_html__( "Let's go create one", 'gravity-forms-pdf-extended' ),
 				'installedPdfs'                        => esc_html__( 'Installed PDFs', 'gravity-forms-pdf-extended' ),
+				'searchTemplatePlaceholder'            => esc_html__( 'Search Installed Templates', 'gravity-forms-pdf-extended' ),
 
 				'searchPlaceholder'                    => esc_html__( 'Search the Gravity PDF Knowledgebase...', 'gravity-forms-pdf-extended' ),
 				'searchResultHeadingText'              => esc_html__( 'Gravity PDF Documentation', 'gravity-forms-pdf-extended' ),
@@ -275,6 +285,51 @@ class Helper_Data {
 				'coreFontItemErrorMessage'             => esc_html__( 'Failed installation of %s', 'gravity-forms-pdf-extended' ),
 				'coreFontCounter'                      => esc_html__( 'Fonts remaining:', 'gravity-forms-pdf-extended' ),
 				'coreFontRetry'                        => esc_html__( 'Retry Failed Downloads?', 'gravity-forms-pdf-extended' ),
+				'coreFontAriaLabel'                    => esc_html__( 'Core font installation', 'gravity-forms-pdf-extended' ),
+
+				/* Font Manager */
+				'fontManagerSearchPlaceHolder'         => esc_html__( 'Search installed fonts', 'gravity-forms-pdf-extended' ),
+				'fontListInstalledFonts'               => esc_html__( 'Installed Fonts', 'gravity-forms-pdf-extended' ),
+				'fontListRegular'                      => esc_html__( 'Regular', 'gravity-forms-pdf-extended' ),
+				'fontListRegularRequired'              => esc_html__( 'Regular %1$s(required)%2$s', 'gravity-forms-pdf-extended' ),
+				'fontListItalics'                      => esc_html__( 'Italics', 'gravity-forms-pdf-extended' ),
+				'fontListBold'                         => esc_html__( 'Bold', 'gravity-forms-pdf-extended' ),
+				'fontListBoldItalics'                  => esc_html__( 'Bold Italics', 'gravity-forms-pdf-extended' ),
+				'fontManagerAddTitle'                  => esc_html__( 'Add Font', 'gravity-forms-pdf-extended' ),
+				'fontManagerUpdateTitle'               => esc_html__( 'Update Font', 'gravity-forms-pdf-extended' ),
+				'fontManagerAddDesc'                   => esc_html__( 'Install new fonts for use in your PDF documents.', 'gravity-forms-pdf-extended' ),
+				'fontManagerUpdateDesc'                => esc_html__( 'Once saved, PDFs configured to use this font will have your changes applied automatically for newly-generated documents.', 'gravity-forms-pdf-extended' ),
+				'fontManagerFontNameLabel'             => esc_html__( 'Font Name %1$s(required)%2$s', 'gravity-forms-pdf-extended' ),
+				'fontManagerFontNameDesc'              => esc_html__( 'The font name can only contain letters, numbers and spaces.', 'gravity-forms-pdf-extended' ),
+				'fontManagerFontNameValidationError'   => esc_html__( 'Please choose a name contains letters and/or numbers (and a space if you want it).', 'gravity-forms-pdf-extended' ),
+				'fontManagerFontFilesLabel'            => esc_html__( 'Font Files', 'gravity-forms-pdf-extended' ),
+				'fontManagerFontFilesDesc'             => esc_html__( 'Select or drag and drop your .ttf font file for the variants below. Only the Regular type is required.', 'gravity-forms-pdf-extended' ),
+				'fontManagerFontFileRequiredRegular'   => esc_html__( 'Add a .ttf font file.', 'gravity-forms-pdf-extended' ),
+				'fontManagerTemplateTooltipLabel'      => esc_html__( 'View template usage', 'gravity-forms-pdf-extended' ),
+				'fontManagerCancelButtonText'          => esc_html__( '← Cancel', 'gravity-forms-pdf-extended' ),
+				'fontManagerDeleteFontConfirmation'    => esc_html__( 'Are you sure you want to delete this font?', 'gravity-forms-pdf-extended' ),
+				'fontManagerTemplateTooltipDesc'       => esc_html__( 'Add this snippet %1$sin a custom template%3$s to selectively set the font on blocks of text. If you want to apply the font to the entire PDF, %2$suse the Font setting%3$s when configuring the PDF on the form.', 'gravity-forms-pdf-extended' ),
+				'fontManagerUpdateFontAriaLabel'       => esc_html__( 'Update font', 'gravity-forms-pdf-extended' ),
+				'fontManagerSelectFontAriaLabel'       => esc_html__( 'Select font', 'gravity-forms-pdf-extended' ),
+				'fontManagerDeleteFontAriaLabel'       => esc_html__( 'Delete font', 'gravity-forms-pdf-extended' ),
+
+				/* Font Manager API response */
+				'fontListEmpty'                        => esc_html__( 'Font list empty.', 'gravity-forms-pdf-extended' ),
+				'searchResultEmpty'                    => esc_html__( 'No fonts matching your search found.', 'gravity-forms-pdf-extended' ),
+				'searchClear'                          => esc_html__( 'Clear Search.', 'gravity-forms-pdf-extended' ),
+				'addUpdateFontSuccess'                 => esc_html__( 'Your font has been saved.', 'gravity-forms-pdf-extended' ),
+				'addUpdateFontError'                   => esc_html__( '%1$sThe action could not be completed.%2$s Resolve the highlighted issues above and then try again.', 'gravity-forms-pdf-extended' ),
+				'addFatalError'                        => esc_html__( 'A problem occurred. Reload the page and try again.', 'gravity-forms-pdf-extended' ),
+				'fontFileMissing'                      => esc_html__( '%1$sFont file(s) missing from the server.%2$s Please upload the font(s) again and then save.', 'gravity-forms-pdf-extended' ),
+				'fontFileInvalid'                      => esc_html__( '%1$sFont file(s) are malformed%2$s and cannot be used with Gravity PDF.', 'gravity-forms-pdf-extended' ),
+
+				'uninstallWarning'                     => esc_html__( "Warning! ALL Gravity PDF data, including templates, will be deleted. This cannot be undone. 'OK' to delete, 'Cancel' to stop.", 'gravity-forms-pdf-extended' ),
+				'pdfDeleteWarning'                     => esc_html__( "WARNING: You are about to delete this PDF. 'Cancel' to stop, 'OK' to delete.", 'gravity-forms-pdf-extended' ),
+
+				/* Help page */
+				'searchBoxPlaceHolderText'             => esc_html__( 'Search the Gravity PDF Documentation...', 'gravity-forms-pdf-extended' ),
+				'searchBoxSubmitTitle'                 => esc_html__( 'Submit your search query.', 'gravity-forms-pdf-extended' ),
+				'searchBoxResetTitle'                  => esc_html__( 'Clear your search query.', 'gravity-forms-pdf-extended' ),
 			]
 		);
 	}

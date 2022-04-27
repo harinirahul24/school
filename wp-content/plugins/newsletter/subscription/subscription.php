@@ -77,7 +77,7 @@ class NewsletterSubscription extends NewsletterModule {
 
         if (function_exists('register_block_type')) {
             // Add custom blocks to Gutenberg
-            wp_register_script('tnp-blocks', plugins_url('newsletter') . '/includes/tnp-blocks.js', array('wp-blocks', 'wp-element'), NEWSLETTER_VERSION);
+            wp_register_script('tnp-blocks', plugins_url('newsletter') . '/includes/tnp-blocks.js', array('wp-block-editor', 'wp-blocks', 'wp-element', 'wp-components'), NEWSLETTER_VERSION);
             register_block_type('tnp/minimal', array('editor_script' => 'tnp-blocks'));
         }
     }
